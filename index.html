@@ -43,8 +43,11 @@
         }
 
         .chapter-card:hover {
-            border-color: rgba(139, 92, 246, 0.3);
-            transform: translateY(-2px)
+            border-color: rgba(139, 92, 246, 0.3)
+        }
+
+        .chapter-card.ignored {
+            opacity: 0.4
         }
 
         .lecture-row {
@@ -76,6 +79,20 @@
         .btn-primary:hover {
             transform: scale(1.02);
             box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4)
+        }
+
+        .btn-sm {
+            padding: 6px 10px;
+            font-size: 12px
+        }
+
+        .btn-danger {
+            background: #ef4444;
+            color: #fff
+        }
+
+        .btn-danger:hover {
+            background: #dc2626
         }
 
         .progress-bar {
@@ -114,7 +131,8 @@
         }
 
         .drag-handle {
-            cursor: grab
+            cursor: grab;
+            user-select: none
         }
 
         .drag-handle:active {
@@ -151,6 +169,23 @@
             border-radius: 14px;
             padding: 16px;
             margin: 8px 0
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 14px
+        }
+
+        .icon-btn.active {
+            transform: scale(1.1)
         }
 
         input,
@@ -247,10 +282,14 @@
             <!-- Dashboard -->
             <div x-show="tab==='dashboard'" x-transition>
                 <!-- Stats Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">⏰ أيام للامتحان</p>
                         <p class="text-4xl font-bold text-purple-400" x-text="daysToExam"></p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-gray-400 text-sm mb-2">🎯 الهدف اليومي</p>
+                        <p class="text-3xl font-bold text-orange-400" x-text="settings.dailyTarget+' ساعة'"></p>
                     </div>
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">📈 التقدم الكلي</p>
@@ -373,62 +412,82 @@
                         </div>
                     </div>
 
+                    <p class="text-sm text-gray-500 mb-4">💡 اسحب الأيقونة ☰ لإعادة ترتيب الفصول</p>
+
                     <!-- Chapters List - Sortable -->
-                    <div :id="subj+'-list'" class="space-y-4">
+                    <div :id="subj+'-chapters'" class="space-y-4">
                         <template x-for="(ch,ci) in data[subj]" :key="ch.id">
-                            <div class="chapter-card" :data-id="ch.id">
+                            <div class="chapter-card" :class="ch.ignored?'ignored':''" :data-id="ch.id">
                                 <!-- Chapter Header -->
-                                <div class="p-5 flex items-center justify-between cursor-pointer"
-                                    @click="toggleCh(subj,ci)">
+                                <div class="p-5 flex items-center justify-between">
                                     <div class="flex items-center gap-4">
-                                        <span class="drag-handle text-2xl cursor-grab" @click.stop
-                                            x-text="ch.icon">📚</span>
-                                        <div>
+                                        <span class="drag-handle text-xl cursor-grab px-2 py-1 bg-gray-700 rounded"
+                                            title="اسحب لإعادة الترتيب">☰</span>
+                                        <span class="text-2xl" x-text="ch.icon">📚</span>
+                                        <div class="cursor-pointer" @click="toggleCh(subj,ci)">
                                             <h3 class="font-bold text-lg" x-text="ch.name"></h3>
                                             <p class="text-sm text-gray-400"
-                                                x-text="getChProg(subj,ci)+'% مكتمل • '+ch.lectures.length+' محاضرة • '+getChHrs(subj,ci)+' ساعة'">
+                                                x-text="getChProg(subj,ci)+'% • '+ch.lectures.length+' محاضرة • '+getChHrs(subj,ci)+' ساعة'">
                                             </p>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-32 progress-bar">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-24 progress-bar hidden sm:block">
                                             <div class="progress-fill"
                                                 :class="subj==='medicine'?'progress-purple':'progress-cyan'"
                                                 :style="'width:'+getChProg(subj,ci)+'%'"></div>
                                         </div>
-                                        <span class="text-gray-400" x-text="openCh[subj+ci]?'▲':'▼'"></span>
+                                        <!-- Ignore Chapter -->
+                                        <button @click="ch.ignored=!ch.ignored;save()" class="icon-btn"
+                                            :class="ch.ignored?'bg-gray-500 text-white':'bg-gray-700 text-gray-400'"
+                                            title="تجاهل الفصل">👁</button>
+                                        <!-- Delete Chapter -->
+                                        <button @click="deleteChapter(subj,ci)"
+                                            class="icon-btn bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
+                                            title="حذف الفصل">🗑️</button>
+                                        <!-- Toggle -->
+                                        <button @click="toggleCh(subj,ci)" class="icon-btn bg-gray-700 text-gray-400"
+                                            x-text="openCh[subj+ci]?'▲':'▼'"></button>
                                     </div>
                                 </div>
-                                <!-- Lectures -->
+                                <!-- Lectures - Sortable -->
                                 <div x-show="openCh[subj+ci]" x-transition
                                     class="px-5 pb-5 border-t border-white/5 pt-4">
-                                    <template x-for="(lec,li) in ch.lectures" :key="lec.id">
-                                        <div class="lecture-row flex items-center justify-between"
-                                            :class="lec.done?'opacity-50':''">
-                                            <div class="flex items-center gap-3">
-                                                <span
-                                                    class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
-                                                    :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-300'"
-                                                    x-text="li+1"></span>
-                                                <div>
-                                                    <p class="font-medium"
-                                                        :class="lec.done?'line-through text-gray-500':''"
-                                                        x-text="lec.title"></p>
-                                                    <p class="text-sm text-gray-500" x-text="lec.duration+' دقيقة'"></p>
+                                    <p class="text-xs text-gray-500 mb-3">💡 اسحب ☰ لإعادة ترتيب المحاضرات</p>
+                                    <div :id="'lec-'+ch.id" class="space-y-2">
+                                        <template x-for="(lec,li) in ch.lectures" :key="lec.id">
+                                            <div class="lecture-row flex items-center justify-between"
+                                                :class="lec.done?'opacity-50':''" :data-id="lec.id">
+                                                <div class="flex items-center gap-3">
+                                                    <span
+                                                        class="drag-handle text-sm cursor-grab px-2 py-1 bg-gray-700 rounded"
+                                                        title="اسحب">☰</span>
+                                                    <span
+                                                        class="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold"
+                                                        :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-300'"
+                                                        x-text="li+1"></span>
+                                                    <div>
+                                                        <p class="font-medium"
+                                                            :class="lec.done?'line-through text-gray-500':''"
+                                                            x-text="lec.title"></p>
+                                                        <p class="text-sm text-gray-500" x-text="lec.duration+' دقيقة'">
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex gap-2">
+                                                    <button @click="lec.done=!lec.done;save()" class="icon-btn"
+                                                        :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-400'"
+                                                        title="مكتمل">✓</button>
+                                                    <button @click="lec.review=!lec.review;save()" class="icon-btn"
+                                                        :class="lec.review?'bg-yellow-500 text-white':'bg-gray-700 text-gray-400'"
+                                                        title="للمراجعة">⭐</button>
+                                                    <button @click="deleteLecture(subj,ci,li)"
+                                                        class="icon-btn bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
+                                                        title="حذف">🗑️</button>
                                                 </div>
                                             </div>
-                                            <div class="flex gap-2">
-                                                <button @click="lec.done=!lec.done;save()"
-                                                    class="w-9 h-9 rounded-lg transition"
-                                                    :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-400 hover:bg-green-500/30'"
-                                                    title="مكتمل">✓</button>
-                                                <button @click="lec.review=!lec.review;save()"
-                                                    class="w-9 h-9 rounded-lg transition"
-                                                    :class="lec.review?'bg-yellow-500 text-white':'bg-gray-700 text-gray-400 hover:bg-yellow-500/30'"
-                                                    title="للمراجعة">⭐</button>
-                                            </div>
-                                        </div>
-                                    </template>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
                         </template>
@@ -456,21 +515,50 @@
 
                     <!-- Smart Parser -->
                     <div class="stat-card border-purple-500/30">
-                        <h3 class="font-bold text-purple-400 mb-4 text-lg">📥 إضافة فصل جديد (Smart Parser)</h3>
-                        <p class="text-sm text-gray-400 mb-4">أدخل كل محاضرة في سطر منفصل بالشكل: <code
-                                class="bg-black/30 px-2 py-1 rounded">اسم المحاضرة - المدة</code></p>
+                        <h3 class="font-bold text-purple-400 mb-4 text-lg">📥 إضافة محاضرات</h3>
+                        <p class="text-sm text-gray-400 mb-4">أضف محاضرات لفصل موجود أو أنشئ فصل جديد</p>
 
                         <div class="space-y-3">
-                            <select x-model="parser.subject">
-                                <option value="medicine">🫀 الباطنة</option>
-                                <option value="pediatrics">👶 الأطفال</option>
-                            </select>
-                            <input type="text" x-model="parser.name" placeholder="اسم الفصل (مثل: Cardiology)">
-                            <input type="text" x-model="parser.icon" placeholder="الأيقونة (مثل: ❤️)">
-                            <textarea x-model="parser.text" rows="5" placeholder="Lecture 1 - 30
+                            <!-- Subject -->
+                            <div>
+                                <label class="text-sm text-gray-500 mb-1 block">المادة</label>
+                                <select x-model="parser.subject" @change="parser.chapter=''">
+                                    <option value="medicine">🫀 الباطنة</option>
+                                    <option value="pediatrics">👶 الأطفال</option>
+                                </select>
+                            </div>
+
+                            <!-- Existing Chapters Dropdown -->
+                            <div>
+                                <label class="text-sm text-gray-500 mb-1 block">اختر فصل موجود أو أنشئ جديد</label>
+                                <select x-model="parser.chapter">
+                                    <option value="">➕ إنشاء فصل جديد...</option>
+                                    <template x-for="ch in data[parser.subject]" :key="ch.id">
+                                        <option :value="ch.id" x-text="ch.icon+' '+ch.name"></option>
+                                    </template>
+                                </select>
+                            </div>
+
+                            <!-- New Chapter Name (only if creating new) -->
+                            <div x-show="parser.chapter===''">
+                                <label class="text-sm text-gray-500 mb-1 block">اسم الفصل الجديد</label>
+                                <input type="text" x-model="parser.newName" placeholder="مثل: Cardiology">
+                            </div>
+                            <div x-show="parser.chapter===''">
+                                <label class="text-sm text-gray-500 mb-1 block">أيقونة الفصل</label>
+                                <input type="text" x-model="parser.newIcon" placeholder="مثل: ❤️">
+                            </div>
+
+                            <!-- Lectures Text -->
+                            <div>
+                                <label class="text-sm text-gray-500 mb-1 block">المحاضرات (كل سطر: اسم - مدة)</label>
+                                <textarea x-model="parser.text" rows="5" placeholder="Lecture 1 - 30
 Lecture 2 - 45
 Lecture 3 - 60"></textarea>
-                            <button @click="parseAndAdd()" class="btn btn-primary w-full py-3">➕ إضافة الفصل</button>
+                            </div>
+
+                            <button @click="parseAndAdd()" class="btn btn-primary w-full py-3">➕ إضافة
+                                المحاضرات</button>
                         </div>
                     </div>
 
@@ -493,7 +581,7 @@ Lecture 3 - 60"></textarea>
         const DEFAULT_DATA = {
             medicine: [
                 {
-                    id: 'm1', name: 'Neurology', icon: '🧠', lectures: [
+                    id: 'm1', name: 'Neurology', icon: '🧠', ignored: false, lectures: [
                         { id: 'm1a', title: 'Neurology Intro', duration: 30, done: false, review: false },
                         { id: 'm1b', title: 'Stroke Part 1', duration: 45, done: false, review: false },
                         { id: 'm1c', title: 'Stroke Part 2', duration: 40, done: false, review: false },
@@ -504,7 +592,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'm2', name: 'Cardiology', icon: '❤️', lectures: [
+                    id: 'm2', name: 'Cardiology', icon: '❤️', ignored: false, lectures: [
                         { id: 'm2a', title: 'Cardiology Basics', duration: 30, done: false, review: false },
                         { id: 'm2b', title: 'Ischemic Heart Disease', duration: 60, done: false, review: false },
                         { id: 'm2c', title: 'Heart Failure', duration: 55, done: false, review: false },
@@ -514,7 +602,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'm3', name: 'Nephrology', icon: '🫘', lectures: [
+                    id: 'm3', name: 'Nephrology', icon: '🫘', ignored: false, lectures: [
                         { id: 'm3a', title: 'Nephrology Intro', duration: 30, done: false, review: false },
                         { id: 'm3b', title: 'Acute Kidney Injury', duration: 45, done: false, review: false },
                         { id: 'm3c', title: 'Chronic Kidney Disease', duration: 50, done: false, review: false },
@@ -523,7 +611,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'm4', name: 'Endocrinology', icon: '🦋', lectures: [
+                    id: 'm4', name: 'Endocrinology', icon: '🦋', ignored: false, lectures: [
                         { id: 'm4a', title: 'Diabetes Part 1', duration: 45, done: false, review: false },
                         { id: 'm4b', title: 'Diabetes Part 2', duration: 45, done: false, review: false },
                         { id: 'm4c', title: 'Thyroid Disorders', duration: 50, done: false, review: false },
@@ -532,7 +620,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'm5', name: 'Hematology', icon: '🩸', lectures: [
+                    id: 'm5', name: 'Hematology', icon: '🩸', ignored: false, lectures: [
                         { id: 'm5a', title: 'Anemia Approach', duration: 30, done: false, review: false },
                         { id: 'm5b', title: 'Iron Deficiency', duration: 25, done: false, review: false },
                         { id: 'm5c', title: 'Hemolytic Anemia', duration: 40, done: false, review: false },
@@ -542,7 +630,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'm6', name: 'Pulmonology', icon: '🫁', lectures: [
+                    id: 'm6', name: 'Pulmonology', icon: '🫁', ignored: false, lectures: [
                         { id: 'm6a', title: 'Pneumonia', duration: 45, done: false, review: false },
                         { id: 'm6b', title: 'Asthma', duration: 40, done: false, review: false },
                         { id: 'm6c', title: 'COPD', duration: 35, done: false, review: false },
@@ -551,7 +639,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'm7', name: 'Gastroenterology', icon: '🫃', lectures: [
+                    id: 'm7', name: 'Gastroenterology', icon: '🫃', ignored: false, lectures: [
                         { id: 'm7a', title: 'Liver Cirrhosis', duration: 50, done: false, review: false },
                         { id: 'm7b', title: 'Hepatitis', duration: 45, done: false, review: false },
                         { id: 'm7c', title: 'IBD', duration: 40, done: false, review: false },
@@ -559,7 +647,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'm8', name: 'Rheumatology', icon: '🦴', lectures: [
+                    id: 'm8', name: 'Rheumatology', icon: '🦴', ignored: false, lectures: [
                         { id: 'm8a', title: 'SLE', duration: 45, done: false, review: false },
                         { id: 'm8b', title: 'Rheumatoid Arthritis', duration: 40, done: false, review: false },
                         { id: 'm8c', title: 'Vasculitis', duration: 35, done: false, review: false }
@@ -568,7 +656,7 @@ Lecture 3 - 60"></textarea>
             ],
             pediatrics: [
                 {
-                    id: 'p1', name: 'Endocrinology', icon: '🦋', lectures: [
+                    id: 'p1', name: 'Endocrinology', icon: '🦋', ignored: false, lectures: [
                         { id: 'p1a', title: 'Rickets', duration: 31, done: false, review: false },
                         { id: 'p1b', title: 'Hypoglycemia', duration: 20, done: false, review: false },
                         { id: 'p1c', title: 'Growth', duration: 21, done: false, review: false },
@@ -580,7 +668,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'p2', name: 'Neurology', icon: '🧠', lectures: [
+                    id: 'p2', name: 'Neurology', icon: '🧠', ignored: false, lectures: [
                         { id: 'p2a', title: 'Meningitis Part 1', duration: 28, done: false, review: false },
                         { id: 'p2b', title: 'Guillain Barre', duration: 26, done: false, review: false },
                         { id: 'p2c', title: 'Cerebral Palsy', duration: 36, done: false, review: false },
@@ -589,7 +677,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'p3', name: 'Hematology', icon: '🩸', lectures: [
+                    id: 'p3', name: 'Hematology', icon: '🩸', ignored: false, lectures: [
                         { id: 'p3a', title: 'Anemia Approach', duration: 25, done: false, review: false },
                         { id: 'p3b', title: 'Iron Deficiency', duration: 25, done: false, review: false },
                         { id: 'p3c', title: 'Thalassemia', duration: 30, done: false, review: false },
@@ -598,7 +686,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'p4', name: 'Neonatology', icon: '👶', lectures: [
+                    id: 'p4', name: 'Neonatology', icon: '👶', ignored: false, lectures: [
                         { id: 'p4a', title: 'Neonatal Sepsis', duration: 42, done: false, review: false },
                         { id: 'p4b', title: 'Respiratory Distress', duration: 32, done: false, review: false },
                         { id: 'p4c', title: 'Prematurity', duration: 32, done: false, review: false },
@@ -608,7 +696,7 @@ Lecture 3 - 60"></textarea>
                     ]
                 },
                 {
-                    id: 'p5', name: 'Emergency', icon: '🚨', lectures: [
+                    id: 'p5', name: 'Emergency', icon: '🚨', ignored: false, lectures: [
                         { id: 'p5a', title: 'Pediatric PLS', duration: 22, done: false, review: false },
                         { id: 'p5b', title: 'PALS', duration: 10, done: false, review: false },
                         { id: 'p5c', title: 'Anaphylaxis', duration: 9, done: false, review: false },
@@ -628,8 +716,9 @@ Lecture 3 - 60"></textarea>
                 unsub: null,
                 openCh: {},
                 settings: { examDate: '2026-04-15', startDate: '2026-02-01', dailyTarget: 3 },
-                parser: { subject: 'medicine', name: '', icon: '📚', text: '' },
+                parser: { subject: 'medicine', chapter: '', newName: '', newIcon: '📚', text: '' },
                 data: { medicine: [], pediatrics: [] },
+                sortables: {},
 
                 async init() {
                     this.data = JSON.parse(JSON.stringify(DEFAULT_DATA));
@@ -675,31 +764,69 @@ Lecture 3 - 60"></textarea>
                 async save() {
                     if (!this.user) return;
                     await window.fb.setDoc(window.fb.doc(window.fb.db, 'users', this.user.uid), {
-                        data: this.data,
+                        data: JSON.parse(JSON.stringify(this.data)),
                         settings: this.settings
                     }, { merge: true });
                 },
 
                 initSortable() {
+                    const self = this;
+                    // Chapters sortable
                     ['medicine', 'pediatrics'].forEach(subj => {
-                        const el = document.getElementById(subj + '-list');
+                        const el = document.getElementById(subj + '-chapters');
                         if (el && !el._sortable) {
                             el._sortable = new Sortable(el, {
                                 handle: '.drag-handle',
                                 animation: 200,
                                 ghostClass: 'sortable-ghost',
-                                dragClass: 'sortable-drag',
                                 onEnd: (evt) => {
                                     const items = [...el.querySelectorAll('[data-id]')].map(e => e.dataset.id);
-                                    this.data[subj] = items.map(id => this.data[subj].find(ch => ch.id === id));
-                                    this.save();
+                                    const newOrder = items.map(id => self.data[subj].find(ch => ch.id === id)).filter(Boolean);
+                                    self.data[subj] = newOrder;
+                                    self.save();
                                 }
                             });
                         }
                     });
+                    // Lectures sortable
+                    ['medicine', 'pediatrics'].forEach(subj => {
+                        this.data[subj].forEach((ch, ci) => {
+                            const el = document.getElementById('lec-' + ch.id);
+                            if (el && !el._sortable) {
+                                el._sortable = new Sortable(el, {
+                                    handle: '.drag-handle',
+                                    animation: 200,
+                                    ghostClass: 'sortable-ghost',
+                                    onEnd: (evt) => {
+                                        const items = [...el.querySelectorAll('[data-id]')].map(e => e.dataset.id);
+                                        const newOrder = items.map(id => ch.lectures.find(l => l.id === id)).filter(Boolean);
+                                        ch.lectures = newOrder;
+                                        self.save();
+                                    }
+                                });
+                            }
+                        });
+                    });
                 },
 
-                toggleCh(subj, i) { this.openCh[subj + i] = !this.openCh[subj + i]; },
+                toggleCh(subj, i) {
+                    this.openCh[subj + i] = !this.openCh[subj + i];
+                    this.$nextTick(() => this.initSortable());
+                },
+
+                deleteChapter(subj, ci) {
+                    if (confirm('حذف هذا الفصل وجميع محاضراته؟')) {
+                        this.data[subj].splice(ci, 1);
+                        this.save();
+                    }
+                },
+
+                deleteLecture(subj, ci, li) {
+                    if (confirm('حذف هذه المحاضرة؟')) {
+                        this.data[subj][ci].lectures.splice(li, 1);
+                        this.save();
+                    }
+                },
 
                 // Calculations
                 get daysToExam() { return Math.max(0, Math.ceil((new Date(this.settings.examDate) - new Date()) / 86400000)); },
@@ -707,7 +834,7 @@ Lecture 3 - 60"></textarea>
 
                 get totalHours() {
                     let t = 0;
-                    ['medicine', 'pediatrics'].forEach(s => this.data[s]?.forEach(c => c.lectures?.forEach(l => t += l.duration)));
+                    ['medicine', 'pediatrics'].forEach(s => this.data[s]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => t += l.duration); }));
                     return (t / 60).toFixed(1);
                 },
                 get hoursDone() {
@@ -722,7 +849,7 @@ Lecture 3 - 60"></textarea>
 
                 getProgress(subj) {
                     let t = 0, d = 0;
-                    this.data[subj]?.forEach(c => c.lectures?.forEach(l => { t++; if (l.done) d++; }));
+                    this.data[subj]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => { t++; if (l.done) d++; }); });
                     return t > 0 ? Math.round(d / t * 100) : 0;
                 },
                 getStats(subj) {
@@ -751,12 +878,12 @@ Lecture 3 - 60"></textarea>
                 get extraMinutes() { return this.daysToExam > 0 ? Math.round(this.delayHours * 60 / this.daysToExam) : 0; },
                 get status() { return this.delayHours > 0 ? 'behind' : 'ontrack'; },
 
-                // Daily tasks based on chapter order
                 getTodayTasks(subj) {
                     const tasks = [];
                     let mins = 0;
-                    const target = this.settings.dailyTarget * 30; // Half for each subject
+                    const target = this.settings.dailyTarget * 30;
                     for (const ch of (this.data[subj] || [])) {
+                        if (ch.ignored) continue;
                         for (const l of (ch.lectures || [])) {
                             if (!l.done && mins < target) {
                                 tasks.push({ ...l, subject: subj, chapter: ch.name, chapterId: ch.id });
@@ -771,11 +898,7 @@ Lecture 3 - 60"></textarea>
                     for (const s of ['medicine', 'pediatrics']) {
                         for (const ch of (this.data[s] || [])) {
                             for (const l of (ch.lectures || [])) {
-                                if (l.id === task.id) {
-                                    l.done = true;
-                                    this.save();
-                                    return;
-                                }
+                                if (l.id === task.id) { l.done = true; this.save(); return; }
                             }
                         }
                     }
@@ -784,6 +907,7 @@ Lecture 3 - 60"></textarea>
                 forceReload() {
                     this.data = JSON.parse(JSON.stringify(DEFAULT_DATA));
                     this.save();
+                    this.$nextTick(() => this.initSortable());
                     alert('تم تحميل البيانات الأصلية!');
                 },
 
@@ -795,32 +919,50 @@ Lecture 3 - 60"></textarea>
                 },
 
                 parseAndAdd() {
-                    if (!this.parser.name || !this.parser.text.trim()) {
-                        alert('أدخل اسم الفصل والمحاضرات');
+                    if (!this.parser.text.trim()) {
+                        alert('أدخل المحاضرات');
                         return;
                     }
+
                     const lines = this.parser.text.trim().split('\n');
-                    const lectures = lines.map((line, i) => {
+                    const newLectures = lines.map((line, i) => {
                         const parts = line.split('-');
                         return {
-                            id: Date.now() + '_' + i,
+                            id: 'lec_' + Date.now() + '_' + i,
                             title: parts[0]?.trim() || 'محاضرة',
                             duration: parseInt(parts[1]) || 30,
                             done: false,
                             review: false
                         };
                     });
-                    const newChapter = {
-                        id: 'ch_' + Date.now(),
-                        name: this.parser.name,
-                        icon: this.parser.icon || '📚',
-                        lectures
-                    };
-                    this.data[this.parser.subject].push(newChapter);
-                    this.parser = { subject: 'medicine', name: '', icon: '📚', text: '' };
+
+                    if (this.parser.chapter) {
+                        // Add to existing chapter
+                        const ch = this.data[this.parser.subject].find(c => c.id === this.parser.chapter);
+                        if (ch) {
+                            ch.lectures.push(...newLectures);
+                            alert('تم إضافة ' + newLectures.length + ' محاضرة إلى ' + ch.name);
+                        }
+                    } else {
+                        // Create new chapter
+                        if (!this.parser.newName) {
+                            alert('أدخل اسم الفصل الجديد');
+                            return;
+                        }
+                        const newChapter = {
+                            id: 'ch_' + Date.now(),
+                            name: this.parser.newName,
+                            icon: this.parser.newIcon || '📚',
+                            ignored: false,
+                            lectures: newLectures
+                        };
+                        this.data[this.parser.subject].push(newChapter);
+                        alert('تم إنشاء فصل جديد: ' + this.parser.newName + ' (' + newLectures.length + ' محاضرة)');
+                    }
+
+                    this.parser = { subject: this.parser.subject, chapter: '', newName: '', newIcon: '📚', text: '' };
                     this.save();
                     this.$nextTick(() => this.initSortable());
-                    alert('تم إضافة الفصل بنجاح! (' + lectures.length + ' محاضرة)');
                 }
             };
         }
