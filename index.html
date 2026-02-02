@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Last Term - لوحة الطبيب</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <!-- Firebase -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBpMhO7a6p4ktKjoEta1MOTSLF345eIsRQ",
+            authDomain: "the-last-turn.firebaseapp.com",
+            projectId: "the-last-turn",
+            storageBucket: "the-last-turn.firebasestorage.app",
+            messagingSenderId: "747668413856",
+            appId: "1:747668413856:web:6c67a8b56e7bdec53d58c5"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        // Make available globally
+        window.firebaseAuth = auth;
+        window.firebaseDb = db;
+        window.googleProvider = provider;
+        window.signInWithPopup = signInWithPopup;
+        window.onAuthStateChanged = onAuthStateChanged;
+        window.signOut = signOut;
+        window.doc = doc;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.onSnapshot = onSnapshot;
+
+        // Dispatch ready event
+        window.dispatchEvent(new Event('firebase-ready'));
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'tajawal': ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            900: '#0a0a0f',
+                            800: '#12121a',
+                            700: '#1a1a25',
+                            600: '#252535',
+                            500: '#35354a',
+                        },
+                        accent: {
+                            purple: '#8b5cf6',
+                            blue: '#3b82f6',
+                            cyan: '#06b6d4',
+                            pink: '#ec4899',
+                            orange: '#f97316',
+                            green: '#10b981',
+                            red: '#ef4444',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        * {
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0f 0%, #12121a 50%, #1a1a25 100%);
+            min-height: 100vh;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #8b5cf6, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-glow {
+            box-shadow: 0 0 40px rgba(139, 92, 246, 0.1);
+        }
+
+        .card-glow-red {
+            box-shadow: 0 0 40px rgba(239, 68, 68, 0.2);
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+        }
+
+        .progress-bar-green {
+            background: linear-gradient(90deg, #10b981, #06b6d4);
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #12121a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #35354a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6;
+        }
+
+        /* Accordion Animation */
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .accordion-content.open {
+            max-height: 2000px;
+        }
+
+        /* Tab indicator */
+        .tab-active {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(6, 182, 212, 0.2));
+            border-bottom: 2px solid #8b5cf6;
+        }
+
+        /* Floating orbs background */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: #8b5cf6;
+            top: -100px;
+            right: -100px;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: #06b6d4;
+            bottom: -50px;
+            left: -50px;
+        }
+
+        .orb-3 {
+            width: 200px;
+            height: 200px;
+            background: #ec4899;
+            top: 50%;
+            left: 50%;
+        }
+    </style>
+</head>
+<body class="text-white overflow-x-hidden" x-data="dashboard()" x-init="init()">
+
+    <!-- Background Orbs -->
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+
+    <!-- Loading Screen -->
+    <div x-show="loading" x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center bg-dark-900">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-accent-purple border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <p class="text-xl text-gray-400">جاري التحميل...</p>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div x-show="!user && !loading" x-transition class="fixed inset-0 z-40 flex items-center justify-center">
+        <div class="glass-strong rounded-3xl p-10 text-center max-w-md mx-4 card-glow">
+            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-accent-purple to-accent-cyan flex items-center justify-center">
+                <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                </svg>
+            </div>
+            <h1 class="text-4xl font-bold mb-2 gradient-text">The Last Term</h1>
+            <p class="text-gray-400 mb-8">لوحة التحكم الطبية المتقدمة</p>
+            <button @click="signInWithGoogle()" class="w-full py-4 px-6 bg-white text-gray-800 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-gray-100 transition-all btn-glow">
+                <svg class="w-6 h-6" viewBox="0 0 24 24">
+                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                </svg>
+                تسجيل الدخول بـ Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div x-show="user && !loading" x-transition class="relative z-10 min-h-screen">
+        
+        <!-- Header -->
+        <header class="glass-strong sticky top-0 z-30">
+            <div class="container mx-auto px-4 py-4">
+                <div class="flex items-center justify-between">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent-purple to-accent-cyan flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                        </div>
+                        <h1 class="text-xl font-bold gradient-text hidden sm:block">The Last Term</h1>
+                    </div>
+
+                    <!-- Tabs -->
+                    <nav class="flex gap-1 bg-dark-700 rounded-xl p-1">
+                        <button @click="activeTab = 'dashboard'" 
+                                :class="activeTab === 'dashboard' ? 'tab-active' : ''"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-dark-600">
+                            <span class="hidden sm:inline">📊 لوحة التحكم</span>
+                            <span class="sm:hidden">📊</span>
+                        </button>
+                        <button @click="activeTab = 'medicine'" 
+                                :class="activeTab === 'medicine' ? 'tab-active' : ''"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-dark-600">
+                            <span class="hidden sm:inline">🫀 الباطنة</span>
+                            <span class="sm:hidden">🫀</span>
+                        </button>
+                        <button @click="activeTab = 'pediatrics'" 
+                                :class="activeTab === 'pediatrics' ? 'tab-active' : ''"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-dark-600">
+                            <span class="hidden sm:inline">👶 الأطفال</span>
+                            <span class="sm:hidden">👶</span>
+                        </button>
+                        <button @click="activeTab = 'settings'" 
+                                :class="activeTab === 'settings' ? 'tab-active' : ''"
+                                class="px-4 py-2 rounded-lg text-sm font-medium transition-all hover:bg-dark-600">
+                            <span class="hidden sm:inline">⚙️ الإعدادات</span>
+                            <span class="sm:hidden">⚙️</span>
+                        </button>
+                    </nav>
+
+                    <!-- User Profile -->
+                    <div class="flex items-center gap-3">
+                        <img :src="user?.photoURL || 'https://ui-avatars.com/api/?name=User&background=8b5cf6&color=fff'" 
+                             class="w-10 h-10 rounded-full border-2 border-accent-purple" 
+                             alt="Profile">
+                        <button @click="logout()" class="hidden sm:block text-sm text-gray-400 hover:text-white transition-colors">
+                            خروج
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+
+            <!-- Dashboard Tab -->
+            <div x-show="activeTab === 'dashboard'" x-transition>
+                
+                <!-- Stats Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    
+                    <!-- Days Left -->
+                    <div class="glass rounded-2xl p-6 card-glow">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-gray-400">الأيام المتبقية</span>
+                            <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-purple/20 to-accent-cyan/20 flex items-center justify-center text-2xl">📅</span>
+                        </div>
+                        <p class="text-5xl font-bold gradient-text" x-text="daysLeft"></p>
+                        <p class="text-sm text-gray-500 mt-2">حتى نهاية الترم</p>
+                    </div>
+
+                    <!-- Total Progress -->
+                    <div class="glass rounded-2xl p-6 card-glow">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-gray-400">التقدم الكلي</span>
+                            <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-green/20 to-accent-cyan/20 flex items-center justify-center text-2xl">📈</span>
+                        </div>
+                        <p class="text-5xl font-bold text-accent-green" x-text="totalProgress + '%'"></p>
+                        <div class="h-2 bg-dark-600 rounded-full mt-4 overflow-hidden">
+                            <div class="h-full progress-bar-green rounded-full transition-all duration-500" :style="'width: ' + totalProgress + '%'"></div>
+                        </div>
+                    </div>
+
+                    <!-- Hours Done -->
+                    <div class="glass rounded-2xl p-6 card-glow">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-gray-400">الساعات المكتملة</span>
+                            <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-blue/20 to-accent-purple/20 flex items-center justify-center text-2xl">⏱️</span>
+                        </div>
+                        <p class="text-4xl font-bold">
+                            <span class="text-accent-blue" x-text="hoursDone"></span>
+                            <span class="text-gray-500 text-2xl"> / </span>
+                            <span class="text-gray-400 text-2xl" x-text="totalHours"></span>
+                        </p>
+                        <p class="text-sm text-gray-500 mt-2">ساعة</p>
+                    </div>
+                </div>
+
+                <!-- Crisis Alert -->
+                <div x-show="delayHours > 0" class="glass rounded-2xl p-6 mb-8 border border-red-500/30 card-glow-red animate-pulse-slow">
+                    <div class="flex items-start gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-red-500/20 flex items-center justify-center text-3xl flex-shrink-0">
+                            ⚠️
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-red-400 mb-2">تنبيه: أنت متأخر!</h3>
+                            <p class="text-gray-300 mb-4">
+                                أنت متأخر بـ <span class="text-red-400 font-bold" x-text="delayHours.toFixed(1)"></span> ساعة عن الجدول المتوقع.
+                            </p>
+                            <div class="bg-dark-700 rounded-xl p-4">
+                                <p class="text-gray-400 text-sm mb-2">للحاق بالجدول، يجب إضافة:</p>
+                                <p class="text-3xl font-bold text-accent-orange" x-text="extraDailyNeed.toFixed(1) + ' ساعة/يوم'"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- On Track Message -->
+                <div x-show="delayHours <= 0 && totalProgress > 0" class="glass rounded-2xl p-6 mb-8 border border-green-500/30">
+                    <div class="flex items-center gap-4">
+                        <div class="w-14 h-14 rounded-xl bg-green-500/20 flex items-center justify-center text-3xl">
+                            ✅
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-green-400">ممتاز! أنت على المسار الصحيح</h3>
+                            <p class="text-gray-400">استمر بنفس الوتيرة وستنتهي في الوقت المحدد</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Subject Progress -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="glass rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold">🫀 الباطنة</h3>
+                            <span class="text-accent-purple font-bold" x-text="getSubjectProgress('medicine') + '%'"></span>
+                        </div>
+                        <div class="h-3 bg-dark-600 rounded-full overflow-hidden">
+                            <div class="h-full progress-bar rounded-full transition-all duration-500" :style="'width: ' + getSubjectProgress('medicine') + '%'"></div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2" x-text="getSubjectHours('medicine') + ' ساعة من ' + getSubjectTotalHours('medicine') + ' ساعة'"></p>
+                    </div>
+
+                    <div class="glass rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold">👶 الأطفال</h3>
+                            <span class="text-accent-cyan font-bold" x-text="getSubjectProgress('pediatrics') + '%'"></span>
+                        </div>
+                        <div class="h-3 bg-dark-600 rounded-full overflow-hidden">
+                            <div class="h-full bg-gradient-to-r from-accent-cyan to-accent-blue rounded-full transition-all duration-500" :style="'width: ' + getSubjectProgress('pediatrics') + '%'"></div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2" x-text="getSubjectHours('pediatrics') + ' ساعة من ' + getSubjectTotalHours('pediatrics') + ' ساعة'"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medicine Tab -->
+            <div x-show="activeTab === 'medicine'" x-transition>
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-2">🫀 الباطنة</h2>
+                    <p class="text-gray-400">التقدم: <span class="text-accent-purple font-bold" x-text="getSubjectProgress('medicine') + '%'"></span></p>
+                </div>
+
+                <template x-for="(chapter, chapterIndex) in data.medicine" :key="chapterIndex">
+                    <div class="glass rounded-2xl mb-4 overflow-hidden">
+                        <!-- Chapter Header -->
+                        <button @click="toggleChapter('medicine', chapterIndex)" 
+                                class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <span class="text-2xl" x-text="chapter.icon"></span>
+                                <div class="text-right">
+                                    <h3 class="text-lg font-bold" x-text="chapter.name"></h3>
+                                    <p class="text-sm text-gray-400" x-text="getChapterProgress('medicine', chapterIndex) + '% مكتمل • ' + getChapterHours('medicine', chapterIndex) + ' ساعة'"></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-32 h-2 bg-dark-600 rounded-full overflow-hidden hidden sm:block">
+                                    <div class="h-full progress-bar rounded-full transition-all" :style="'width: ' + getChapterProgress('medicine', chapterIndex) + '%'"></div>
+                                </div>
+                                <svg class="w-5 h-5 transition-transform" :class="openChapters.medicine[chapterIndex] ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </button>
+
+                        <!-- Lectures -->
+                        <div class="accordion-content" :class="openChapters.medicine[chapterIndex] ? 'open' : ''">
+                            <div class="border-t border-white/5">
+                                <template x-for="(lecture, lectureIndex) in chapter.lectures" :key="lectureIndex">
+                                    <div class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                                        <div class="flex items-center gap-3">
+                                            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                                                  :class="lecture.status === 'done' ? 'bg-green-500/20 text-green-400' : 
+                                                          lecture.status === 'ignore' ? 'bg-gray-500/20 text-gray-400' :
+                                                          lecture.status === 'review' ? 'bg-yellow-500/20 text-yellow-400' : 
+                                                          'bg-dark-600 text-gray-500'"
+                                                  x-text="lectureIndex + 1"></span>
+                                            <div>
+                                                <p class="font-medium" :class="lecture.status === 'done' ? 'line-through text-gray-500' : lecture.status === 'ignore' ? 'text-gray-500' : ''" x-text="lecture.name"></p>
+                                                <p class="text-sm text-gray-500" x-text="lecture.duration + ' دقيقة'"></p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <button @click="updateLectureStatus('medicine', chapterIndex, lectureIndex, 'done')"
+                                                    class="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                                                    :class="lecture.status === 'done' ? 'bg-green-500 text-white' : 'bg-dark-600 hover:bg-green-500/30 text-gray-400'">
+                                                ✓
+                                            </button>
+                                            <button @click="updateLectureStatus('medicine', chapterIndex, lectureIndex, 'ignore')"
+                                                    class="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                                                    :class="lecture.status === 'ignore' ? 'bg-gray-500 text-white' : 'bg-dark-600 hover:bg-gray-500/30 text-gray-400'">
+                                                👁
+                                            </button>
+                                            <button @click="updateLectureStatus('medicine', chapterIndex, lectureIndex, 'review')"
+                                                    class="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                                                    :class="lecture.status === 'review' ? 'bg-yellow-500 text-white' : 'bg-dark-600 hover:bg-yellow-500/30 text-gray-400'">
+                                                ⭐
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Pediatrics Tab -->
+            <div x-show="activeTab === 'pediatrics'" x-transition>
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold mb-2">👶 الأطفال</h2>
+                    <p class="text-gray-400">التقدم: <span class="text-accent-cyan font-bold" x-text="getSubjectProgress('pediatrics') + '%'"></span></p>
+                </div>
+
+                <template x-for="(chapter, chapterIndex) in data.pediatrics" :key="chapterIndex">
+                    <div class="glass rounded-2xl mb-4 overflow-hidden">
+                        <!-- Chapter Header -->
+                        <button @click="toggleChapter('pediatrics', chapterIndex)" 
+                                class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition-colors">
+                            <div class="flex items-center gap-4">
+                                <span class="text-2xl" x-text="chapter.icon"></span>
+                                <div class="text-right">
+                                    <h3 class="text-lg font-bold" x-text="chapter.name"></h3>
+                                    <p class="text-sm text-gray-400" x-text="getChapterProgress('pediatrics', chapterIndex) + '% مكتمل • ' + getChapterHours('pediatrics', chapterIndex) + ' ساعة'"></p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <div class="w-32 h-2 bg-dark-600 rounded-full overflow-hidden hidden sm:block">
+                                    <div class="h-full bg-gradient-to-r from-accent-cyan to-accent-blue rounded-full transition-all" :style="'width: ' + getChapterProgress('pediatrics', chapterIndex) + '%'"></div>
+                                </div>
+                                <svg class="w-5 h-5 transition-transform" :class="openChapters.pediatrics[chapterIndex] ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </button>
+
+                        <!-- Lectures -->
+                        <div class="accordion-content" :class="openChapters.pediatrics[chapterIndex] ? 'open' : ''">
+                            <div class="border-t border-white/5">
+                                <template x-for="(lecture, lectureIndex) in chapter.lectures" :key="lectureIndex">
+                                    <div class="flex items-center justify-between p-4 hover:bg-white/5 transition-colors border-b border-white/5 last:border-0">
+                                        <div class="flex items-center gap-3">
+                                            <span class="w-8 h-8 rounded-lg flex items-center justify-center text-sm"
+                                                  :class="lecture.status === 'done' ? 'bg-green-500/20 text-green-400' : 
+                                                          lecture.status === 'ignore' ? 'bg-gray-500/20 text-gray-400' :
+                                                          lecture.status === 'review' ? 'bg-yellow-500/20 text-yellow-400' : 
+                                                          'bg-dark-600 text-gray-500'"
+                                                  x-text="lectureIndex + 1"></span>
+                                            <div>
+                                                <p class="font-medium" :class="lecture.status === 'done' ? 'line-through text-gray-500' : lecture.status === 'ignore' ? 'text-gray-500' : ''" x-text="lecture.name"></p>
+                                                <p class="text-sm text-gray-500" x-text="lecture.duration + ' دقيقة'"></p>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-2">
+                                            <button @click="updateLectureStatus('pediatrics', chapterIndex, lectureIndex, 'done')"
+                                                    class="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                                                    :class="lecture.status === 'done' ? 'bg-green-500 text-white' : 'bg-dark-600 hover:bg-green-500/30 text-gray-400'">
+                                                ✓
+                                            </button>
+                                            <button @click="updateLectureStatus('pediatrics', chapterIndex, lectureIndex, 'ignore')"
+                                                    class="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                                                    :class="lecture.status === 'ignore' ? 'bg-gray-500 text-white' : 'bg-dark-600 hover:bg-gray-500/30 text-gray-400'">
+                                                👁
+                                            </button>
+                                            <button @click="updateLectureStatus('pediatrics', chapterIndex, lectureIndex, 'review')"
+                                                    class="w-9 h-9 rounded-lg flex items-center justify-center transition-all"
+                                                    :class="lecture.status === 'review' ? 'bg-yellow-500 text-white' : 'bg-dark-600 hover:bg-yellow-500/30 text-gray-400'">
+                                                ⭐
+                                            </button>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Settings Tab -->
+            <div x-show="activeTab === 'settings'" x-transition>
+                <div class="max-w-2xl mx-auto">
+                    <h2 class="text-2xl font-bold mb-6">⚙️ الإعدادات</h2>
+
+                    <!-- End Date -->
+                    <div class="glass rounded-2xl p-6 mb-4">
+                        <label class="block text-gray-400 mb-2">تاريخ نهاية الترم</label>
+                        <input type="date" x-model="settings.endDate" @change="saveSettings()"
+                               class="w-full bg-dark-600 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-purple">
+                    </div>
+
+                    <!-- Daily Target -->
+                    <div class="glass rounded-2xl p-6 mb-4">
+                        <label class="block text-gray-400 mb-2">الهدف اليومي (ساعات)</label>
+                        <input type="number" x-model.number="settings.dailyTarget" @change="saveSettings()" min="1" max="12"
+                               class="w-full bg-dark-600 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-purple">
+                    </div>
+
+                    <!-- Start Date -->
+                    <div class="glass rounded-2xl p-6 mb-4">
+                        <label class="block text-gray-400 mb-2">تاريخ بداية الدراسة</label>
+                        <input type="date" x-model="settings.startDate" @change="saveSettings()"
+                               class="w-full bg-dark-600 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-accent-purple">
+                    </div>
+
+                    <!-- Reset Data -->
+                    <div class="glass rounded-2xl p-6 border border-red-500/30">
+                        <h3 class="text-lg font-bold text-red-400 mb-2">منطقة الخطر</h3>
+                        <p class="text-gray-400 mb-4">إعادة تعيين جميع البيانات والبدء من جديد</p>
+                        <button @click="resetData()" class="px-6 py-3 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-colors">
+                            🗑️ إعادة تعيين البيانات
+                        </button>
+                    </div>
+
+                    <!-- User Info -->
+                    <div class="glass rounded-2xl p-6 mt-8">
+                        <div class="flex items-center gap-4 mb-4">
+                            <img :src="user?.photoURL" class="w-16 h-16 rounded-full border-2 border-accent-purple">
+                            <div>
+                                <p class="font-bold text-lg" x-text="user?.displayName"></p>
+                                <p class="text-gray-400" x-text="user?.email"></p>
+                            </div>
+                        </div>
+                        <button @click="logout()" class="w-full py-3 bg-dark-600 rounded-xl hover:bg-dark-500 transition-colors">
+                            تسجيل الخروج
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        function dashboard() {
+            return {
+                loading: true,
+                user: null,
+                activeTab: 'dashboard',
+                unsubscribe: null,
+                openChapters: {
+                    medicine: {},
+                    pediatrics: {}
+                },
+                settings: {
+                    endDate: '2026-04-15',
+                    startDate: '2026-02-01',
+                    dailyTarget: 3
+                },
+                data: {
+                    medicine: [],
+                    pediatrics: []
+                },
+
+                // Default data structure
+                defaultData: {
+                    medicine: [
+                        {
+                            name: 'Neurology',
+                            icon: '🧠',
+                            lectures: [
+                                { name: 'Neurology Intro', duration: 30, status: null },
+                                { name: 'Stroke Part 1', duration: 45, status: null },
+                                { name: 'Stroke Part 2', duration: 40, status: null },
+                                { name: 'Epilepsy', duration: 50, status: null },
+                                { name: 'Headache', duration: 35, status: null },
+                                { name: 'Multiple Sclerosis', duration: 40, status: null },
+                                { name: 'CNS Infections', duration: 55, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Cardiology',
+                            icon: '❤️',
+                            lectures: [
+                                { name: 'Cardiology Basics', duration: 30, status: null },
+                                { name: 'Ischemic Heart Disease', duration: 60, status: null },
+                                { name: 'Heart Failure', duration: 55, status: null },
+                                { name: 'Arrhythmia', duration: 45, status: null },
+                                { name: 'Valvular Heart Disease', duration: 50, status: null },
+                                { name: 'Hypertension', duration: 40, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Nephrology',
+                            icon: '🫘',
+                            lectures: [
+                                { name: 'Nephrology Intro', duration: 30, status: null },
+                                { name: 'Acute Kidney Injury', duration: 45, status: null },
+                                { name: 'Chronic Kidney Disease', duration: 50, status: null },
+                                { name: 'Glomerulonephritis', duration: 60, status: null },
+                                { name: 'Acid Base Balance', duration: 40, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Endocrinology',
+                            icon: '🦋',
+                            lectures: [
+                                { name: 'Diabetes Part 1', duration: 45, status: null },
+                                { name: 'Diabetes Part 2', duration: 45, status: null },
+                                { name: 'Thyroid Disorders', duration: 50, status: null },
+                                { name: 'Adrenal Gland', duration: 40, status: null },
+                                { name: 'Pituitary Disorders', duration: 35, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Hematology',
+                            icon: '🩸',
+                            lectures: [
+                                { name: 'Anemia Approach', duration: 30, status: null },
+                                { name: 'Iron Deficiency', duration: 25, status: null },
+                                { name: 'Hemolytic Anemia', duration: 40, status: null },
+                                { name: 'Leukemia', duration: 50, status: null },
+                                { name: 'Lymphoma', duration: 45, status: null },
+                                { name: 'Bleeding Disorders', duration: 40, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Pulmonology',
+                            icon: '🫁',
+                            lectures: [
+                                { name: 'Pneumonia', duration: 45, status: null },
+                                { name: 'Asthma', duration: 40, status: null },
+                                { name: 'COPD', duration: 35, status: null },
+                                { name: 'TB', duration: 40, status: null },
+                                { name: 'Pleural Effusion', duration: 30, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Gastroenterology',
+                            icon: '🫃',
+                            lectures: [
+                                { name: 'Liver Cirrhosis', duration: 50, status: null },
+                                { name: 'Hepatitis', duration: 45, status: null },
+                                { name: 'IBD', duration: 40, status: null },
+                                { name: 'Peptic Ulcer', duration: 30, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Rheumatology',
+                            icon: '🦴',
+                            lectures: [
+                                { name: 'SLE', duration: 45, status: null },
+                                { name: 'Rheumatoid Arthritis', duration: 40, status: null },
+                                { name: 'Vasculitis', duration: 35, status: null }
+                            ]
+                        }
+                    ],
+                    pediatrics: [
+                        {
+                            name: 'Endocrinology',
+                            icon: '🦋',
+                            lectures: [
+                                { name: 'Rickets', duration: 31, status: null },
+                                { name: 'Hypoglycemia', duration: 20, status: null },
+                                { name: 'Growth', duration: 21, status: null },
+                                { name: 'Hypopituitarism', duration: 22, status: null },
+                                { name: 'Hypothyroidism', duration: 22, status: null },
+                                { name: 'Thyroid Disorders', duration: 56, status: null },
+                                { name: 'Diabetes Part 1', duration: 39, status: null },
+                                { name: 'Diabetes Part 2', duration: 41, status: null },
+                                { name: 'DKA', duration: 42, status: null },
+                                { name: 'Puberty Disorders', duration: 60, status: null },
+                                { name: 'Adrenal Hyperplasia', duration: 33, status: null },
+                                { name: 'Short Stature', duration: 17, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Neurology',
+                            icon: '🧠',
+                            lectures: [
+                                { name: 'Meningitis Part 1', duration: 28, status: null },
+                                { name: 'Guillain Barre', duration: 26, status: null },
+                                { name: 'Cerebral Palsy', duration: 36, status: null },
+                                { name: 'Seizures Part 1', duration: 30, status: null },
+                                { name: 'Seizures Part 2', duration: 25, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Hematology',
+                            icon: '🩸',
+                            lectures: [
+                                { name: 'Anemia Approach', duration: 25, status: null },
+                                { name: 'Iron Deficiency', duration: 25, status: null },
+                                { name: 'Thalassemia', duration: 30, status: null },
+                                { name: 'Sickle Cell', duration: 23, status: null },
+                                { name: 'Leukemia', duration: 28, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Neonatology',
+                            icon: '👶',
+                            lectures: [
+                                { name: 'Neonatal Sepsis', duration: 42, status: null },
+                                { name: 'Respiratory Distress', duration: 32, status: null },
+                                { name: 'Prematurity', duration: 32, status: null },
+                                { name: 'Neonatal Seizures', duration: 31, status: null },
+                                { name: 'HIE', duration: 40, status: null },
+                                { name: 'Neonatal Exam', duration: 97, status: null }
+                            ]
+                        },
+                        {
+                            name: 'Emergency',
+                            icon: '🚨',
+                            lectures: [
+                                { name: 'Pediatric PLS', duration: 22, status: null },
+                                { name: 'PALS', duration: 10, status: null },
+                                { name: 'Anaphylaxis', duration: 9, status: null },
+                                { name: 'Poisoning', duration: 20, status: null },
+                                { name: 'Dehydration', duration: 40, status: null },
+                                { name: 'Gastroenteritis', duration: 30, status: null }
+                            ]
+                        }
+                    ]
+                },
+
+                async init() {
+                    window.addEventListener('firebase-ready', () => {
+                        window.onAuthStateChanged(window.firebaseAuth, async (user) => {
+                            this.user = user;
+                            if (user) {
+                                await this.loadData();
+                            }
+                            this.loading = false;
+                        });
+                    });
+
+                    // Check if Firebase is already loaded
+                    if (window.firebaseAuth) {
+                        window.onAuthStateChanged(window.firebaseAuth, async (user) => {
+                            this.user = user;
+                            if (user) {
+                                await this.loadData();
+                            }
+                            this.loading = false;
+                        });
+                    }
+                },
+
+                async signInWithGoogle() {
+                    try {
+                        await window.signInWithPopup(window.firebaseAuth, window.googleProvider);
+                    } catch (error) {
+                        console.error('Sign in error:', error);
+                        alert('خطأ في تسجيل الدخول: ' + error.message);
+                    }
+                },
+
+                async logout() {
+                    if (this.unsubscribe) this.unsubscribe();
+                    await window.signOut(window.firebaseAuth);
+                    this.user = null;
+                },
+
+                async loadData() {
+                    const docRef = window.doc(window.firebaseDb, 'users', this.user.uid);
+                    
+                    // Real-time listener
+                    this.unsubscribe = window.onSnapshot(docRef, (doc) => {
+                        if (doc.exists()) {
+                            const userData = doc.data();
+                            this.data = userData.data || this.defaultData;
+                            this.settings = userData.settings || this.settings;
+                        } else {
+                            // Initialize with default data
+                            this.data = JSON.parse(JSON.stringify(this.defaultData));
+                            this.saveData();
+                        }
+                    });
+                },
+
+                async saveData() {
+                    if (!this.user) return;
+                    const docRef = window.doc(window.firebaseDb, 'users', this.user.uid);
+                    await window.setDoc(docRef, {
+                        data: this.data,
+                        settings: this.settings,
+                        updatedAt: new Date().toISOString()
+                    }, { merge: true });
+                },
+
+                async saveSettings() {
+                    await this.saveData();
+                },
+
+                toggleChapter(subject, index) {
+                    this.openChapters[subject][index] = !this.openChapters[subject][index];
+                },
+
+                updateLectureStatus(subject, chapterIndex, lectureIndex, status) {
+                    const currentStatus = this.data[subject][chapterIndex].lectures[lectureIndex].status;
+                    this.data[subject][chapterIndex].lectures[lectureIndex].status = 
+                        currentStatus === status ? null : status;
+                    this.saveData();
+                },
+
+                getChapterProgress(subject, chapterIndex) {
+                    const lectures = this.data[subject][chapterIndex].lectures;
+                    const done = lectures.filter(l => l.status === 'done' || l.status === 'ignore').length;
+                    return Math.round((done / lectures.length) * 100);
+                },
+
+                getChapterHours(subject, chapterIndex) {
+                    const lectures = this.data[subject][chapterIndex].lectures;
+                    const total = lectures.reduce((sum, l) => sum + l.duration, 0);
+                    return (total / 60).toFixed(1);
+                },
+
+                getSubjectProgress(subject) {
+                    let total = 0;
+                    let done = 0;
+                    this.data[subject].forEach(chapter => {
+                        chapter.lectures.forEach(lecture => {
+                            total++;
+                            if (lecture.status === 'done' || lecture.status === 'ignore') done++;
+                        });
+                    });
+                    return total > 0 ? Math.round((done / total) * 100) : 0;
+                },
+
+                getSubjectHours(subject) {
+                    let total = 0;
+                    this.data[subject].forEach(chapter => {
+                        chapter.lectures.forEach(lecture => {
+                            if (lecture.status === 'done') {
+                                total += lecture.duration;
+                            }
+                        });
+                    });
+                    return (total / 60).toFixed(1);
+                },
+
+                getSubjectTotalHours(subject) {
+                    let total = 0;
+                    this.data[subject].forEach(chapter => {
+                        chapter.lectures.forEach(lecture => {
+                            total += lecture.duration;
+                        });
+                    });
+                    return (total / 60).toFixed(1);
+                },
+
+                get totalProgress() {
+                    let total = 0;
+                    let done = 0;
+                    ['medicine', 'pediatrics'].forEach(subject => {
+                        this.data[subject].forEach(chapter => {
+                            chapter.lectures.forEach(lecture => {
+                                total++;
+                                if (lecture.status === 'done' || lecture.status === 'ignore') done++;
+                            });
+                        });
+                    });
+                    return total > 0 ? Math.round((done / total) * 100) : 0;
+                },
+
+                get totalHours() {
+                    let total = 0;
+                    ['medicine', 'pediatrics'].forEach(subject => {
+                        this.data[subject].forEach(chapter => {
+                            chapter.lectures.forEach(lecture => {
+                                total += lecture.duration;
+                            });
+                        });
+                    });
+                    return (total / 60).toFixed(1);
+                },
+
+                get hoursDone() {
+                    let total = 0;
+                    ['medicine', 'pediatrics'].forEach(subject => {
+                        this.data[subject].forEach(chapter => {
+                            chapter.lectures.forEach(lecture => {
+                                if (lecture.status === 'done') {
+                                    total += lecture.duration;
+                                }
+                            });
+                        });
+                    });
+                    return (total / 60).toFixed(1);
+                },
+
+                get daysLeft() {
+                    const end = new Date(this.settings.endDate);
+                    const now = new Date();
+                    const diff = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+                    return Math.max(0, diff);
+                },
+
+                get daysPassed() {
+                    const start = new Date(this.settings.startDate);
+                    const now = new Date();
+                    const diff = Math.ceil((now - start) / (1000 * 60 * 60 * 24));
+                    return Math.max(0, diff);
+                },
+
+                get expectedHours() {
+                    const totalDays = this.daysPassed + this.daysLeft;
+                    if (totalDays === 0) return 0;
+                    const hoursPerDay = parseFloat(this.totalHours) / totalDays;
+                    return hoursPerDay * this.daysPassed;
+                },
+
+                get delayHours() {
+                    return Math.max(0, this.expectedHours - parseFloat(this.hoursDone));
+                },
+
+                get extraDailyNeed() {
+                    if (this.daysLeft === 0) return this.delayHours;
+                    return this.delayHours / this.daysLeft;
+                },
+
+                async resetData() {
+                    if (confirm('هل أنت متأكد؟ سيتم حذف جميع البيانات!')) {
+                        this.data = JSON.parse(JSON.stringify(this.defaultData));
+                        await this.saveData();
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
