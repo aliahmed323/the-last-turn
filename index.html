@@ -92,13 +92,13 @@
                 <span class="font-bold gradient-text text-xl">📚 The Last Turn</span>
                 <nav class="flex gap-1 bg-[#1a1a25] rounded-lg p-1">
                     <button @click="tab='dashboard'" :class="tab==='dashboard'?'bg-purple-500/20':''"
-                        class="px-3 py-2 rounded text-sm">📊</button>
+                        class="px-3 py-2 rounded text-sm">📊 <span class="hidden sm:inline">لوحة التحكم</span></button>
                     <button @click="tab='medicine'" :class="tab==='medicine'?'bg-purple-500/20':''"
-                        class="px-3 py-2 rounded text-sm">🫀</button>
+                        class="px-3 py-2 rounded text-sm">🫀 <span class="hidden sm:inline">الباطنة</span></button>
                     <button @click="tab='pediatrics'" :class="tab==='pediatrics'?'bg-purple-500/20':''"
-                        class="px-3 py-2 rounded text-sm">👶</button>
+                        class="px-3 py-2 rounded text-sm">👶 <span class="hidden sm:inline">الأطفال</span></button>
                     <button @click="tab='settings'" :class="tab==='settings'?'bg-purple-500/20':''"
-                        class="px-3 py-2 rounded text-sm">⚙️</button>
+                        class="px-3 py-2 rounded text-sm">⚙️ <span class="hidden sm:inline">الإعدادات</span></button>
                 </nav>
                 <div class="flex items-center gap-2">
                     <img :src="user?.photoURL" class="w-8 h-8 rounded-full">
@@ -329,8 +329,31 @@
                     <input type="number" x-model.number="settings.dailyTarget" @change="save()"
                         class="w-full bg-gray-800 rounded-lg px-4 py-2 mt-1">
                 </div>
+                <!-- Smart Parser -->
+                <div class="glass rounded-xl p-4">
+                    <h3 class="font-bold text-purple-400 mb-3">📥 إضافة محاضرات (Smart Parser)</h3>
+                    <p class="text-xs text-gray-400 mb-2">أدخل كل محاضرة في سطر: اسم المحاضرة - المدة</p>
+                    <select x-model="parser.subject" class="w-full bg-gray-800 rounded-lg px-4 py-2 mb-2">
+                        <option value="medicine">الباطنة</option>
+                        <option value="pediatrics">الأطفال</option>
+                    </select>
+                    <input type="text" x-model="parser.chapterName" placeholder="اسم الفصل (مثل: Cardiology)"
+                        class="w-full bg-gray-800 rounded-lg px-4 py-2 mb-2">
+                    <input type="text" x-model="parser.chapterIcon" placeholder="الأيقونة (مثل: ❤️)"
+                        class="w-full bg-gray-800 rounded-lg px-4 py-2 mb-2">
+                    <textarea x-model="parser.text" rows="4" placeholder="Lecture 1 - 30&#10;Lecture 2 - 45"
+                        class="w-full bg-gray-800 rounded-lg px-4 py-2 mb-2"></textarea>
+                    <button @click="parseAndAdd()"
+                        class="w-full py-3 bg-purple-500 rounded-xl font-bold hover:bg-purple-600">➕ إضافة
+                        الفصل</button>
+                </div>
+                <!-- Force Reload -->
+                <div class="glass rounded-xl p-4 border border-yellow-500/30">
+                    <button @click="forceReload()" class="text-yellow-400">🔄 تحميل البيانات الأصلية</button>
+                    <p class="text-xs text-gray-500 mt-1">إذا كانت المحاضرات فارغة، اضغط هنا</p>
+                </div>
                 <div class="glass rounded-xl p-4 border border-red-500/30">
-                    <button @click="resetAll()" class="text-red-400">🗑️ إعادة تعيين</button>
+                    <button @click="resetAll()" class="text-red-400">🗑️ إعادة تعيين كل شيء</button>
                 </div>
             </div>
 
@@ -459,6 +482,7 @@
             return {
                 loading: true, user: null, tab: 'dashboard', unsub: null, openCh: {},
                 settings: { examDate: '2026-04-15', startDate: '2026-02-01', dailyTarget: 3 },
+                parser: { subject: 'medicine', chapterName: '', chapterIcon: '📚', text: '' },
                 data: { medicine: [], pediatrics: [] },
 
                 async init() {
@@ -538,7 +562,21 @@
                         }
                     }
                 },
-                resetAll() { if (confirm('حذف كل البيانات؟')) { this.data = JSON.parse(JSON.stringify(DEFAULT_DATA)); this.save() } }
+                resetAll() { if (confirm('حذف كل البيانات؟')) { this.data = JSON.parse(JSON.stringify(DEFAULT_DATA)); this.save() } },
+                forceReload() { this.data = JSON.parse(JSON.stringify(DEFAULT_DATA)); this.save(); alert('تم تحميل البيانات!'); },
+                parseAndAdd() {
+                    if (!this.parser.chapterName || !this.parser.text) { alert('أدخل اسم الفصل والمحاضرات'); return; }
+                    const lines = this.parser.text.trim().split('\n');
+                    const lectures = lines.map((line, i) => {
+                        const parts = line.split('-');
+                        return { id: Date.now() + '_' + i, title: parts[0].trim(), duration: parseInt(parts[1]) || 30, done: false, ignored: false, review: false };
+                    });
+                    const newChapter = { id: Date.now() + '', name: this.parser.chapterName, icon: this.parser.chapterIcon || '📚', ignored: false, lectures };
+                    this.data[this.parser.subject].push(newChapter);
+                    this.parser = { subject: 'medicine', chapterName: '', chapterIcon: '📚', text: '' };
+                    this.save();
+                    alert('تم إضافة الفصل بنجاح!');
+                }
             }
         }
     </script>
