@@ -4,9 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Last Term</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap"
-        rel="stylesheet">
+    <title>The Last Turn</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
@@ -18,26 +17,19 @@
         window.fb = { auth: getAuth(app), db: getFirestore(app), provider: new GoogleAuthProvider(), signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, onSnapshot };
         window.dispatchEvent(new Event('fb-ready'));
     </script>
-    <script>tailwind.config = { theme: { extend: { fontFamily: { tajawal: ['Tajawal', 'sans-serif'] } } } }</script>
     <style>
         * {
             font-family: 'Tajawal', sans-serif
         }
 
         body {
-            background: linear-gradient(135deg, #0a0a0f, #12121a, #1a1a25);
+            background: linear-gradient(135deg, #0a0a0f, #12121a);
             min-height: 100vh
         }
 
         .glass {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08)
-        }
-
-        .glass-strong {
-            background: rgba(255, 255, 255, 0.06);
-            backdrop-filter: blur(30px);
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1)
         }
 
@@ -47,33 +39,12 @@
             -webkit-text-fill-color: transparent
         }
 
-        .progress-bar {
-            background: linear-gradient(90deg, #8b5cf6, #06b6d4)
+        .progress-purple {
+            background: linear-gradient(90deg, #8b5cf6, #a855f7)
         }
 
-        .orb {
-            position: fixed;
-            border-radius: 50%;
-            filter: blur(80px);
-            opacity: 0.3;
-            pointer-events: none;
-            z-index: 0
-        }
-
-        .orb-1 {
-            width: 400px;
-            height: 400px;
-            background: #8b5cf6;
-            top: -100px;
-            right: -100px
-        }
-
-        .orb-2 {
-            width: 300px;
-            height: 300px;
-            background: #06b6d4;
-            bottom: -50px;
-            left: -50px
+        .progress-cyan {
+            background: linear-gradient(90deg, #06b6d4, #22d3ee)
         }
 
         .acc-content {
@@ -83,37 +54,7 @@
         }
 
         .acc-content.open {
-            max-height: 3000px
-        }
-
-        .tag-menu {
-            display: none;
-            position: absolute;
-            left: 0;
-            top: 100%;
-            z-index: 50
-        }
-
-        .tag-menu.show {
-            display: block
-        }
-
-        .sortable-ghost {
-            opacity: 0.4;
-            background: #8b5cf6 !important
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #12121a
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #35354a;
-            border-radius: 3px
+            max-height: 5000px
         }
 
         .dimmed {
@@ -123,8 +64,6 @@
 </head>
 
 <body class="text-white" x-data="app()" x-init="init()">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
 
     <!-- Loading -->
     <div x-show="loading" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0a0f]">
@@ -133,137 +72,169 @@
 
     <!-- Login -->
     <div x-show="!user&&!loading" class="fixed inset-0 z-40 flex items-center justify-center p-4">
-        <div class="glass-strong rounded-3xl p-10 text-center max-w-md">
+        <div class="glass rounded-3xl p-10 text-center max-w-md">
             <div
                 class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-500 to-cyan-500 flex items-center justify-center text-3xl">
                 📚</div>
-            <h1 class="text-3xl font-bold mb-2 gradient-text">The Last Term</h1>
-            <p class="text-gray-400 mb-8">نظام الدراسة الطبية المتقدم</p>
+            <h1 class="text-3xl font-bold mb-2 gradient-text">The Last Turn</h1>
+            <p class="text-gray-400 mb-8">نظام الدراسة الطبية</p>
             <button @click="login()"
-                class="w-full py-4 bg-white text-gray-800 rounded-xl font-bold hover:bg-gray-100 transition">تسجيل
-                الدخول بـ Google</button>
+                class="w-full py-4 bg-white text-gray-800 rounded-xl font-bold hover:bg-gray-100">تسجيل الدخول بـ
+                Google</button>
         </div>
     </div>
 
-    <!-- Main App -->
-    <div x-show="user&&!loading" class="relative z-10 min-h-screen">
-
+    <!-- Main -->
+    <div x-show="user&&!loading" class="min-h-screen">
         <!-- Header -->
-        <header class="glass-strong sticky top-0 z-30">
+        <header class="glass sticky top-0 z-30">
             <div class="container mx-auto px-4 py-3 flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl">📚</span>
-                    <span class="font-bold gradient-text hidden sm:block">The Last Term</span>
-                </div>
+                <span class="font-bold gradient-text text-xl">📚 The Last Turn</span>
                 <nav class="flex gap-1 bg-[#1a1a25] rounded-lg p-1">
-                    <template
-                        x-for="t in [{id:'dashboard',icon:'📊',name:'لوحة التحكم'},{id:'medicine',icon:'🫀',name:'الباطنة'},{id:'pediatrics',icon:'👶',name:'الأطفال'},{id:'tags',icon:'🏷️',name:'العلامات'},{id:'settings',icon:'⚙️',name:'الإعدادات'}]">
-                        <button @click="tab=t.id" :class="tab===t.id?'bg-purple-500/20 border-b-2 border-purple-500':''"
-                            class="px-3 py-2 rounded-lg text-sm transition">
-                            <span x-text="t.icon"></span><span class="hidden md:inline mr-1" x-text="t.name"></span>
-                        </button>
-                    </template>
+                    <button @click="tab='dashboard'" :class="tab==='dashboard'?'bg-purple-500/20':''"
+                        class="px-3 py-2 rounded text-sm">📊</button>
+                    <button @click="tab='medicine'" :class="tab==='medicine'?'bg-purple-500/20':''"
+                        class="px-3 py-2 rounded text-sm">🫀</button>
+                    <button @click="tab='pediatrics'" :class="tab==='pediatrics'?'bg-purple-500/20':''"
+                        class="px-3 py-2 rounded text-sm">👶</button>
+                    <button @click="tab='settings'" :class="tab==='settings'?'bg-purple-500/20':''"
+                        class="px-3 py-2 rounded text-sm">⚙️</button>
                 </nav>
                 <div class="flex items-center gap-2">
-                    <img :src="user?.photoURL" class="w-9 h-9 rounded-full border-2 border-purple-500">
-                    <button @click="logout()"
-                        class="text-xs text-gray-400 hover:text-white hidden sm:block">خروج</button>
+                    <img :src="user?.photoURL" class="w-8 h-8 rounded-full">
+                    <button @click="logout()" class="text-xs text-gray-400">خروج</button>
                 </div>
             </div>
         </header>
 
         <main class="container mx-auto px-4 py-6">
 
-            <!-- Dashboard Tab -->
+            <!-- Dashboard -->
             <div x-show="tab==='dashboard'">
-                <!-- Stats -->
+                <!-- Stats Row 1 -->
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div class="glass rounded-2xl p-5">
-                        <p class="text-gray-400 text-sm mb-1">الأيام المتبقية</p>
-                        <p class="text-4xl font-bold gradient-text" x-text="daysLeft"></p>
+                        <p class="text-gray-400 text-sm">أيام للامتحان</p>
+                        <p class="text-4xl font-bold text-purple-400" x-text="daysToExam"></p>
                     </div>
                     <div class="glass rounded-2xl p-5">
-                        <p class="text-gray-400 text-sm mb-1">التقدم الكلي</p>
-                        <p class="text-4xl font-bold text-green-400" x-text="totalProgress+'%'"></p>
-                        <div class="h-2 bg-gray-700 rounded-full mt-2">
-                            <div class="h-full progress-bar rounded-full" :style="'width:'+totalProgress+'%'"></div>
-                        </div>
+                        <p class="text-gray-400 text-sm">أيام الخطة المتبقية</p>
+                        <p class="text-4xl font-bold text-cyan-400" x-text="daysInPlan"></p>
                     </div>
                     <div class="glass rounded-2xl p-5">
-                        <p class="text-gray-400 text-sm mb-1">ساعات مكتملة</p>
-                        <p class="text-3xl font-bold"><span class="text-cyan-400" x-text="hoursDone"></span><span
-                                class="text-gray-500 text-lg"> / </span><span class="text-gray-400 text-lg"
-                                x-text="totalNetHours"></span></p>
+                        <p class="text-gray-400 text-sm">الساعات</p>
+                        <p class="text-2xl font-bold"><span class="text-green-400" x-text="hoursDone"></span> / <span
+                                class="text-gray-400" x-text="totalHours"></span></p>
                     </div>
                     <div class="glass rounded-2xl p-5"
-                        :class="status==='behind'?'border border-red-500/50':status==='ahead'?'border border-blue-500/50':'border border-green-500/50'">
-                        <p class="text-gray-400 text-sm mb-1">الحالة</p>
-                        <p class="text-2xl font-bold"
-                            :class="status==='behind'?'text-red-400':status==='ahead'?'text-blue-400':'text-green-400'"
-                            x-text="status==='behind'?'متأخر ❌':status==='ahead'?'متقدم 🚀':'على المسار ✅'"></p>
+                        :class="status==='behind'?'border border-red-500':'border border-green-500'">
+                        <p class="text-gray-400 text-sm">الحالة</p>
+                        <p class="text-xl font-bold" :class="status==='behind'?'text-red-400':'text-green-400'"
+                            x-text="status==='behind'?'متأخر ❌':'على المسار ✅'"></p>
                     </div>
                 </div>
 
-                <!-- Subject Progress -->
-                <div class="grid md:grid-cols-2 gap-4 mb-6">
-                    <div class="glass rounded-2xl p-5">
-                        <div class="flex justify-between mb-2"><span>🫀 الباطنة</span><span class="text-purple-400"
-                                x-text="getSubjectProgress('medicine')+'%'"></span></div>
-                        <div class="h-3 bg-gray-700 rounded-full">
-                            <div class="h-full progress-bar rounded-full"
-                                :style="'width:'+getSubjectProgress('medicine')+'%'"></div>
-                        </div>
+                <!-- Progress Card -->
+                <div class="glass rounded-2xl p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="font-bold text-lg">التقدم الكلي</span>
+                        <span class="text-2xl font-bold gradient-text" x-text="totalProgress+'%'"></span>
                     </div>
-                    <div class="glass rounded-2xl p-5">
-                        <div class="flex justify-between mb-2"><span>👶 الأطفال</span><span class="text-cyan-400"
-                                x-text="getSubjectProgress('pediatrics')+'%'"></span></div>
-                        <div class="h-3 bg-gray-700 rounded-full">
-                            <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full"
-                                :style="'width:'+getSubjectProgress('pediatrics')+'%'"></div>
-                        </div>
+                    <div class="h-4 bg-gray-700 rounded-full mb-4">
+                        <div class="h-full progress-purple rounded-full" :style="'width:'+totalProgress+'%'"></div>
                     </div>
-                </div>
-
-                <!-- Catch-Up Alert -->
-                <div x-show="delayHours>0" class="glass rounded-2xl p-6 mb-6 border border-red-500/50 animate-pulse">
-                    <div class="flex items-start gap-4">
-                        <span class="text-4xl">⚠️</span>
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <h3 class="text-xl font-bold text-red-400 mb-2">تنبيه: أنت متأخر!</h3>
-                            <p class="text-gray-300 mb-3">متأخر بـ <span class="text-red-400 font-bold"
-                                    x-text="delayHours.toFixed(1)"></span> ساعة</p>
-                            <div class="bg-[#1a1a25] rounded-xl p-4">
-                                <p class="text-sm text-gray-400 mb-1">للحاق، أضف يومياً:</p>
-                                <p class="text-2xl font-bold text-orange-400" x-text="extraDaily.toFixed(0)+' دقيقة'">
-                                </p>
+                            <div class="flex justify-between text-sm mb-1"><span>🫀 الباطنة</span><span
+                                    class="text-purple-400" x-text="getMedProgress()+'%'"></span></div>
+                            <div class="h-2 bg-gray-700 rounded-full">
+                                <div class="h-full progress-purple rounded-full" :style="'width:'+getMedProgress()+'%'">
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1"><span>👶 الأطفال</span><span
+                                    class="text-cyan-400" x-text="getPedProgress()+'%'"></span></div>
+                            <div class="h-2 bg-gray-700 rounded-full">
+                                <div class="h-full progress-cyan rounded-full" :style="'width:'+getPedProgress()+'%'">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Today's Tasks -->
-                <div class="glass rounded-2xl p-6">
-                    <h3 class="text-xl font-bold mb-4">📋 مهام اليوم <span class="text-sm text-gray-400">(الهدف: <span
-                                x-text="settings.dailyTarget"></span> ساعات)</span></h3>
-                    <div class="space-y-3">
-                        <template x-for="task in todayTasks" :key="task.id">
-                            <div class="flex items-center justify-between bg-[#1a1a25] rounded-xl p-4">
-                                <div class="flex items-center gap-3">
-                                    <span
-                                        class="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center text-sm"
-                                        x-text="task.chapterIcon"></span>
+                <!-- Catch-up Alert -->
+                <div x-show="delayHours>0" class="glass rounded-2xl p-6 mb-6 border border-red-500 bg-red-500/10">
+                    <div class="flex gap-4">
+                        <span class="text-4xl">⚠️</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-red-400 mb-2">أنت متأخر!</h3>
+                            <p class="mb-2">متأخر بـ <span class="font-bold text-red-400"
+                                    x-text="delayHours.toFixed(1)"></span> ساعة</p>
+                            <div class="bg-gray-800 rounded-xl p-4">
+                                <p class="text-sm text-gray-400">للتعويض، أضف يومياً:</p>
+                                <p class="text-3xl font-bold text-orange-400" x-text="extraMinutes+' دقيقة'"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today Tasks Split -->
+                <div class="grid md:grid-cols-2 gap-6 mb-6">
+                    <!-- Medicine Tasks -->
+                    <div class="glass rounded-2xl p-5">
+                        <h3 class="font-bold text-purple-400 mb-4">🫀 مهام الباطنة اليوم</h3>
+                        <div class="space-y-2">
+                            <template x-for="t in getTodayTasks('medicine')" :key="t.id">
+                                <div class="flex items-center justify-between bg-gray-800 rounded-lg p-3">
                                     <div>
-                                        <p class="font-medium" x-text="task.title"></p>
-                                        <p class="text-sm text-gray-500"
-                                            x-text="task.duration+' دقيقة • '+task.chapterName"></p>
+                                        <p class="font-medium text-sm" x-text="t.title"></p>
+                                        <p class="text-xs text-gray-500" x-text="t.duration+' د • '+t.chapter"></p>
                                     </div>
+                                    <button @click="markDone(t)"
+                                        class="w-8 h-8 rounded bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white">✓</button>
                                 </div>
-                                <button @click="markDone(task)"
-                                    class="w-10 h-10 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition">✓</button>
+                            </template>
+                            <p x-show="getTodayTasks('medicine').length===0" class="text-gray-500 text-center py-4">✅ لا
+                                توجد مهام</p>
+                        </div>
+                    </div>
+                    <!-- Pediatrics Tasks -->
+                    <div class="glass rounded-2xl p-5">
+                        <h3 class="font-bold text-cyan-400 mb-4">👶 مهام الأطفال اليوم</h3>
+                        <div class="space-y-2">
+                            <template x-for="t in getTodayTasks('pediatrics')" :key="t.id">
+                                <div class="flex items-center justify-between bg-gray-800 rounded-lg p-3">
+                                    <div>
+                                        <p class="font-medium text-sm" x-text="t.title"></p>
+                                        <p class="text-xs text-gray-500" x-text="t.duration+' د • '+t.chapter"></p>
+                                    </div>
+                                    <button @click="markDone(t)"
+                                        class="w-8 h-8 rounded bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white">✓</button>
+                                </div>
+                            </template>
+                            <p x-show="getTodayTasks('pediatrics').length===0" class="text-gray-500 text-center py-4">✅
+                                لا توجد مهام</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Catch-up Tasks -->
+                <div x-show="delayHours>0" class="glass rounded-2xl p-5 border border-orange-500/50">
+                    <h3 class="font-bold text-orange-400 mb-4">🔥 مهام التعويض الإضافية</h3>
+                    <div class="space-y-2">
+                        <template x-for="t in catchupTasks" :key="t.id">
+                            <div class="flex items-center justify-between bg-orange-500/10 rounded-lg p-3">
+                                <div>
+                                    <p class="font-medium text-sm" x-text="t.title"></p>
+                                    <p class="text-xs text-gray-500"
+                                        x-text="t.duration+' د • '+t.chapter+' • '+(t.subject==='medicine'?'باطنة':'أطفال')">
+                                    </p>
+                                </div>
+                                <button @click="markDone(t)"
+                                    class="w-8 h-8 rounded bg-green-500/20 text-green-400">✓</button>
                             </div>
                         </template>
-                        <p x-show="todayTasks.length===0" class="text-center text-gray-500 py-8">🎉 أنجزت مهام اليوم!
-                        </p>
                     </div>
                 </div>
             </div>
@@ -271,93 +242,68 @@
             <!-- Subject Tabs -->
             <template x-for="subj in ['medicine','pediatrics']" :key="subj">
                 <div x-show="tab===subj">
-                    <div class="flex items-center justify-between mb-6">
+                    <div class="flex justify-between items-center mb-6">
                         <div>
                             <h2 class="text-2xl font-bold" x-text="subj==='medicine'?'🫀 الباطنة':'👶 الأطفال'"></h2>
-                            <p class="text-gray-400 text-sm">المحاضرات: <span
-                                    x-text="getSubjectStats(subj).done"></span>/<span
-                                    x-text="getSubjectStats(subj).total"></span> • الساعات: <span
-                                    x-text="getSubjectStats(subj).hoursDone"></span>/<span
-                                    x-text="getSubjectStats(subj).totalHours"></span></p>
+                            <p class="text-gray-400 text-sm"
+                                x-text="'المحاضرات: '+getStats(subj).done+'/'+getStats(subj).total+' • الساعات: '+getStats(subj).hDone+'/'+getStats(subj).hTotal">
+                            </p>
                         </div>
                         <span class="text-2xl font-bold" :class="subj==='medicine'?'text-purple-400':'text-cyan-400'"
-                            x-text="getSubjectProgress(subj)+'%'"></span>
+                            x-text="getProgress(subj)+'%'"></span>
                     </div>
-                    <div :id="subj+'-chapters'" class="space-y-4">
+                    <div class="space-y-4">
                         <template x-for="(ch,ci) in data[subj]" :key="ch.id">
-                            <div class="glass rounded-2xl overflow-hidden" :class="ch.isIgnored?'dimmed':''">
-                                <button @click="toggleCh(subj,ci)"
-                                    class="w-full p-5 flex items-center justify-between hover:bg-white/5 transition">
-                                    <div class="flex items-center gap-4">
-                                        <span class="text-2xl cursor-move handle" x-text="ch.icon"></span>
-                                        <div class="text-right">
+                            <div class="glass rounded-2xl overflow-hidden" :class="ch.ignored?'dimmed':''">
+                                <button @click="openCh[subj+ci]=!openCh[subj+ci]"
+                                    class="w-full p-4 flex items-center justify-between hover:bg-white/5">
+                                    <div class="flex items-center gap-3">
+                                        <span class="text-2xl" x-text="ch.icon"></span>
+                                        <div>
                                             <h3 class="font-bold" x-text="ch.name"></h3>
-                                            <p class="text-sm text-gray-400"
-                                                x-text="getChProgress(subj,ci)+'% • '+getChHours(subj,ci)+' ساعة'"></p>
+                                            <p class="text-xs text-gray-400"
+                                                x-text="getChProg(subj,ci)+'% • '+getChHrs(subj,ci)+' ساعة'"></p>
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-3">
-                                        <button @click.stop="toggleChIgnore(subj,ci)"
-                                            class="w-8 h-8 rounded-lg transition"
-                                            :class="ch.isIgnored?'bg-gray-500 text-white':'bg-gray-700 text-gray-400 hover:bg-gray-600'">👁</button>
-                                        <div class="w-24 h-2 bg-gray-700 rounded-full hidden sm:block">
-                                            <div class="h-full progress-bar rounded-full"
-                                                :style="'width:'+getChProgress(subj,ci)+'%'"></div>
+                                    <div class="flex items-center gap-2">
+                                        <button @click.stop="ch.ignored=!ch.ignored;save()"
+                                            class="w-7 h-7 rounded text-sm"
+                                            :class="ch.ignored?'bg-gray-500 text-white':'bg-gray-700 text-gray-400'">👁</button>
+                                        <div class="w-20 h-2 bg-gray-700 rounded-full hidden sm:block">
+                                            <div class="h-full rounded-full"
+                                                :class="subj==='medicine'?'progress-purple':'progress-cyan'"
+                                                :style="'width:'+getChProg(subj,ci)+'%'"></div>
                                         </div>
-                                        <svg class="w-5 h-5 transition-transform"
-                                            :class="openCh[subj][ci]?'rotate-180':''" fill="none" stroke="currentColor"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M19 9l-7 7-7-7" />
-                                        </svg>
+                                        <span x-text="openCh[subj+ci]?'▲':'▼'" class="text-xs"></span>
                                     </div>
                                 </button>
-                                <div class="acc-content" :class="openCh[subj][ci]?'open':''">
-                                    <div class="border-t border-white/5">
-                                        <template x-for="(lec,li) in ch.lectures" :key="lec.id">
-                                            <div class="flex items-center justify-between p-4 hover:bg-white/5 border-b border-white/5 last:border-0"
-                                                :class="lec.isIgnored?'dimmed':''">
-                                                <div class="flex items-center gap-3">
-                                                    <span
-                                                        class="w-7 h-7 rounded flex items-center justify-center text-xs"
-                                                        :class="lec.isDone?'bg-green-500/20 text-green-400':lec.tag==='review'?'bg-red-500/20 text-red-400':lec.tag==='mastered'?'bg-green-500/20 text-green-400':'bg-gray-700 text-gray-500'"
-                                                        x-text="li+1"></span>
-                                                    <div>
-                                                        <p class="font-medium"
-                                                            :class="lec.isDone?'line-through text-gray-500':''"
-                                                            x-text="lec.title"></p>
-                                                        <p class="text-xs text-gray-500" x-text="lec.duration+' دقيقة'">
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                <div class="flex items-center gap-2">
-                                                    <button @click="toggleDone(subj,ci,li)"
-                                                        class="w-8 h-8 rounded-lg transition"
-                                                        :class="lec.isDone?'bg-green-500 text-white':'bg-gray-700 text-gray-400 hover:bg-green-500/30'">✓</button>
-                                                    <button @click="toggleIgnore(subj,ci,li)"
-                                                        class="w-8 h-8 rounded-lg transition"
-                                                        :class="lec.isIgnored?'bg-gray-500 text-white':'bg-gray-700 text-gray-400 hover:bg-gray-500/30'">👁</button>
-                                                    <div class="relative">
-                                                        <button @click="toggleTagMenu(subj,ci,li)"
-                                                            class="w-8 h-8 rounded-lg transition"
-                                                            :class="lec.tag==='review'?'bg-red-500 text-white':lec.tag==='mastered'?'bg-green-500 text-white':'bg-gray-700 text-gray-400 hover:bg-yellow-500/30'">⭐</button>
-                                                        <div x-show="tagMenu===subj+ci+li" @click.away="tagMenu=null"
-                                                            class="absolute left-0 top-10 bg-gray-800 rounded-lg shadow-xl p-2 z-50 min-w-[140px]">
-                                                            <button @click="setTag(subj,ci,li,'review')"
-                                                                class="w-full text-right px-3 py-2 rounded hover:bg-red-500/20 text-red-400 text-sm">🟥
-                                                                للمراجعة</button>
-                                                            <button @click="setTag(subj,ci,li,'mastered')"
-                                                                class="w-full text-right px-3 py-2 rounded hover:bg-green-500/20 text-green-400 text-sm">🟩
-                                                                متقن</button>
-                                                            <button @click="setTag(subj,ci,li,'none')"
-                                                                class="w-full text-right px-3 py-2 rounded hover:bg-gray-500/20 text-gray-400 text-sm">⬜
-                                                                مسح</button>
-                                                        </div>
-                                                    </div>
+                                <div class="acc-content border-t border-white/5" :class="openCh[subj+ci]?'open':''">
+                                    <template x-for="(lec,li) in ch.lectures" :key="lec.id">
+                                        <div class="flex items-center justify-between p-3 hover:bg-white/5 border-b border-white/10"
+                                            :class="lec.ignored?'dimmed':''">
+                                            <div class="flex items-center gap-2">
+                                                <span class="w-6 h-6 rounded text-xs flex items-center justify-center"
+                                                    :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-400'"
+                                                    x-text="li+1"></span>
+                                                <div>
+                                                    <p class="text-sm" :class="lec.done?'line-through text-gray-500':''"
+                                                        x-text="lec.title"></p>
+                                                    <p class="text-xs text-gray-500" x-text="lec.duration+' دقيقة'"></p>
                                                 </div>
                                             </div>
-                                        </template>
-                                    </div>
+                                            <div class="flex gap-1">
+                                                <button @click="lec.done=!lec.done;save()"
+                                                    class="w-7 h-7 rounded text-sm"
+                                                    :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-400'">✓</button>
+                                                <button @click="lec.ignored=!lec.ignored;save()"
+                                                    class="w-7 h-7 rounded text-sm"
+                                                    :class="lec.ignored?'bg-gray-500 text-white':'bg-gray-700 text-gray-400'">👁</button>
+                                                <button @click="lec.review=!lec.review;save()"
+                                                    class="w-7 h-7 rounded text-sm"
+                                                    :class="lec.review?'bg-red-500 text-white':'bg-gray-700 text-gray-400'">⭐</button>
+                                            </div>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
                         </template>
@@ -365,87 +311,26 @@
                 </div>
             </template>
 
-            <!-- Tags Tab -->
-            <div x-show="tab==='tags'">
-                <h2 class="text-2xl font-bold mb-6">🏷️ العلامات والمتجاهل</h2>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="glass rounded-2xl p-6">
-                        <h3 class="font-bold text-red-400 mb-4">🟥 للمراجعة (<span x-text="reviewItems.length"></span>)
-                        </h3>
-                        <div class="space-y-2 max-h-96 overflow-y-auto">
-                            <template x-for="item in reviewItems" :key="item.id">
-                                <div class="flex items-center justify-between bg-red-500/10 rounded-lg p-3">
-                                    <div>
-                                        <p class="font-medium" x-text="item.title"></p>
-                                        <p class="text-xs text-gray-500" x-text="item.chapter+' • '+item.subject"></p>
-                                    </div>
-                                    <button @click="clearItemTag(item)"
-                                        class="text-gray-400 hover:text-white">✕</button>
-                                </div>
-                            </template>
-                            <p x-show="reviewItems.length===0" class="text-gray-500 text-center py-4">لا توجد عناصر</p>
-                        </div>
-                    </div>
-                    <div class="glass rounded-2xl p-6">
-                        <h3 class="font-bold text-gray-400 mb-4">👁 المتجاهل (<span
-                                x-text="ignoredItems.length"></span>)</h3>
-                        <div class="space-y-2 max-h-96 overflow-y-auto">
-                            <template x-for="item in ignoredItems" :key="item.id">
-                                <div class="flex items-center justify-between bg-gray-500/10 rounded-lg p-3">
-                                    <div>
-                                        <p class="font-medium" x-text="item.title"></p>
-                                        <p class="text-xs text-gray-500" x-text="item.chapter+' • '+item.subject"></p>
-                                    </div>
-                                    <button @click="restoreItem(item)"
-                                        class="text-green-400 hover:text-green-300">↩</button>
-                                </div>
-                            </template>
-                            <p x-show="ignoredItems.length===0" class="text-gray-500 text-center py-4">لا توجد عناصر</p>
-                        </div>
-                    </div>
+            <!-- Settings -->
+            <div x-show="tab==='settings'" class="max-w-xl mx-auto space-y-4">
+                <h2 class="text-2xl font-bold mb-4">⚙️ الإعدادات</h2>
+                <div class="glass rounded-xl p-4">
+                    <label class="text-gray-400 text-sm">تاريخ الامتحان</label>
+                    <input type="date" x-model="settings.examDate" @change="save()"
+                        class="w-full bg-gray-800 rounded-lg px-4 py-2 mt-1">
                 </div>
-            </div>
-
-            <!-- Settings Tab -->
-            <div x-show="tab==='settings'">
-                <div class="max-w-2xl mx-auto space-y-4">
-                    <h2 class="text-2xl font-bold mb-6">⚙️ الإعدادات</h2>
-                    <div class="glass rounded-2xl p-6">
-                        <label class="block text-gray-400 mb-2">تاريخ الامتحان</label>
-                        <input type="date" x-model="settings.examDate" @change="save()"
-                            class="w-full bg-gray-800 border border-white/10 rounded-xl px-4 py-3 text-white">
-                    </div>
-                    <div class="glass rounded-2xl p-6">
-                        <label class="block text-gray-400 mb-2">تاريخ بداية الدراسة</label>
-                        <input type="date" x-model="settings.startDate" @change="save()"
-                            class="w-full bg-gray-800 border border-white/10 rounded-xl px-4 py-3 text-white">
-                    </div>
-                    <div class="glass rounded-2xl p-6">
-                        <label class="block text-gray-400 mb-2">الهدف اليومي (ساعات)</label>
-                        <input type="number" x-model.number="settings.dailyTarget" @change="save()" min="1" max="12"
-                            class="w-full bg-gray-800 border border-white/10 rounded-xl px-4 py-3 text-white">
-                    </div>
-                    <div class="glass rounded-2xl p-6">
-                        <h3 class="font-bold mb-4">📥 إضافة محاضرات (Smart Parser)</h3>
-                        <p class="text-sm text-gray-400 mb-2">أدخل كل محاضرة في سطر بالشكل: اسم المحاضرة - المدة</p>
-                        <select x-model="parser.subject"
-                            class="w-full bg-gray-800 border border-white/10 rounded-xl px-4 py-3 text-white mb-2">
-                            <option value="medicine">الباطنة</option>
-                            <option value="pediatrics">الأطفال</option>
-                        </select>
-                        <input type="text" x-model="parser.chapterName" placeholder="اسم الفصل"
-                            class="w-full bg-gray-800 border border-white/10 rounded-xl px-4 py-3 text-white mb-2">
-                        <textarea x-model="parser.text" rows="4" placeholder="Lecture 1 - 30&#10;Lecture 2 - 45"
-                            class="w-full bg-gray-800 border border-white/10 rounded-xl px-4 py-3 text-white mb-2"></textarea>
-                        <button @click="parseAndAdd()"
-                            class="w-full py-3 bg-purple-500 rounded-xl font-bold hover:bg-purple-600 transition">إضافة</button>
-                    </div>
-                    <div class="glass rounded-2xl p-6 border border-red-500/30">
-                        <h3 class="font-bold text-red-400 mb-2">منطقة الخطر</h3>
-                        <button @click="resetAll()"
-                            class="px-6 py-3 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition">🗑️
-                            إعادة تعيين كل شيء</button>
-                    </div>
+                <div class="glass rounded-xl p-4">
+                    <label class="text-gray-400 text-sm">بداية الدراسة</label>
+                    <input type="date" x-model="settings.startDate" @change="save()"
+                        class="w-full bg-gray-800 rounded-lg px-4 py-2 mt-1">
+                </div>
+                <div class="glass rounded-xl p-4">
+                    <label class="text-gray-400 text-sm">الهدف اليومي (ساعات)</label>
+                    <input type="number" x-model.number="settings.dailyTarget" @change="save()"
+                        class="w-full bg-gray-800 rounded-lg px-4 py-2 mt-1">
+                </div>
+                <div class="glass rounded-xl p-4 border border-red-500/30">
+                    <button @click="resetAll()" class="text-red-400">🗑️ إعادة تعيين</button>
                 </div>
             </div>
 
@@ -453,70 +338,207 @@
     </div>
 
     <script>
+        const DEFAULT_DATA = {
+            medicine: [
+                {
+                    id: 'm1', name: 'Neurology', icon: '🧠', ignored: false, lectures: [
+                        { id: 'm1a', title: 'Neurology Intro', duration: 30, done: false, ignored: false, review: false },
+                        { id: 'm1b', title: 'Stroke Part 1', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm1c', title: 'Stroke Part 2', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'm1d', title: 'Epilepsy', duration: 50, done: false, ignored: false, review: false },
+                        { id: 'm1e', title: 'Headache', duration: 35, done: false, ignored: false, review: false },
+                        { id: 'm1f', title: 'Multiple Sclerosis', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'm1g', title: 'CNS Infections', duration: 55, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'm2', name: 'Cardiology', icon: '❤️', ignored: false, lectures: [
+                        { id: 'm2a', title: 'Cardiology Basics', duration: 30, done: false, ignored: false, review: false },
+                        { id: 'm2b', title: 'Ischemic Heart Disease', duration: 60, done: false, ignored: false, review: false },
+                        { id: 'm2c', title: 'Heart Failure', duration: 55, done: false, ignored: false, review: false },
+                        { id: 'm2d', title: 'Arrhythmia', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm2e', title: 'Valvular Heart Disease', duration: 50, done: false, ignored: false, review: false },
+                        { id: 'm2f', title: 'Hypertension', duration: 40, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'm3', name: 'Nephrology', icon: '🫘', ignored: false, lectures: [
+                        { id: 'm3a', title: 'Nephrology Intro', duration: 30, done: false, ignored: false, review: false },
+                        { id: 'm3b', title: 'Acute Kidney Injury', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm3c', title: 'Chronic Kidney Disease', duration: 50, done: false, ignored: false, review: false },
+                        { id: 'm3d', title: 'Glomerulonephritis', duration: 60, done: false, ignored: false, review: false },
+                        { id: 'm3e', title: 'Acid Base Balance', duration: 40, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'm4', name: 'Endocrinology', icon: '🦋', ignored: false, lectures: [
+                        { id: 'm4a', title: 'Diabetes Part 1', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm4b', title: 'Diabetes Part 2', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm4c', title: 'Thyroid Disorders', duration: 50, done: false, ignored: false, review: false },
+                        { id: 'm4d', title: 'Adrenal Gland', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'm4e', title: 'Pituitary Disorders', duration: 35, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'm5', name: 'Hematology', icon: '🩸', ignored: false, lectures: [
+                        { id: 'm5a', title: 'Anemia Approach', duration: 30, done: false, ignored: false, review: false },
+                        { id: 'm5b', title: 'Iron Deficiency', duration: 25, done: false, ignored: false, review: false },
+                        { id: 'm5c', title: 'Hemolytic Anemia', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'm5d', title: 'Leukemia', duration: 50, done: false, ignored: false, review: false },
+                        { id: 'm5e', title: 'Lymphoma', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm5f', title: 'Bleeding Disorders', duration: 40, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'm6', name: 'Pulmonology', icon: '🫁', ignored: false, lectures: [
+                        { id: 'm6a', title: 'Pneumonia', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm6b', title: 'Asthma', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'm6c', title: 'COPD', duration: 35, done: false, ignored: false, review: false },
+                        { id: 'm6d', title: 'TB', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'm6e', title: 'Pleural Effusion', duration: 30, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'm7', name: 'Gastroenterology', icon: '🫃', ignored: false, lectures: [
+                        { id: 'm7a', title: 'Liver Cirrhosis', duration: 50, done: false, ignored: false, review: false },
+                        { id: 'm7b', title: 'Hepatitis', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm7c', title: 'IBD', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'm7d', title: 'Peptic Ulcer', duration: 30, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'm8', name: 'Rheumatology', icon: '🦴', ignored: false, lectures: [
+                        { id: 'm8a', title: 'SLE', duration: 45, done: false, ignored: false, review: false },
+                        { id: 'm8b', title: 'Rheumatoid Arthritis', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'm8c', title: 'Vasculitis', duration: 35, done: false, ignored: false, review: false }]
+                }
+            ],
+            pediatrics: [
+                {
+                    id: 'p1', name: 'Endocrinology', icon: '🦋', ignored: false, lectures: [
+                        { id: 'p1a', title: 'Rickets', duration: 31, done: false, ignored: false, review: false },
+                        { id: 'p1b', title: 'Hypoglycemia', duration: 20, done: false, ignored: false, review: false },
+                        { id: 'p1c', title: 'Growth', duration: 21, done: false, ignored: false, review: false },
+                        { id: 'p1d', title: 'Diabetes Part 1', duration: 39, done: false, ignored: false, review: false },
+                        { id: 'p1e', title: 'Diabetes Part 2', duration: 41, done: false, ignored: false, review: false },
+                        { id: 'p1f', title: 'DKA', duration: 42, done: false, ignored: false, review: false },
+                        { id: 'p1g', title: 'Thyroid Disorders', duration: 56, done: false, ignored: false, review: false },
+                        { id: 'p1h', title: 'Short Stature', duration: 17, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'p2', name: 'Neurology', icon: '🧠', ignored: false, lectures: [
+                        { id: 'p2a', title: 'Meningitis Part 1', duration: 28, done: false, ignored: false, review: false },
+                        { id: 'p2b', title: 'Guillain Barre', duration: 26, done: false, ignored: false, review: false },
+                        { id: 'p2c', title: 'Cerebral Palsy', duration: 36, done: false, ignored: false, review: false },
+                        { id: 'p2d', title: 'Seizures Part 1', duration: 30, done: false, ignored: false, review: false },
+                        { id: 'p2e', title: 'Seizures Part 2', duration: 25, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'p3', name: 'Hematology', icon: '🩸', ignored: false, lectures: [
+                        { id: 'p3a', title: 'Anemia Approach', duration: 25, done: false, ignored: false, review: false },
+                        { id: 'p3b', title: 'Iron Deficiency', duration: 25, done: false, ignored: false, review: false },
+                        { id: 'p3c', title: 'Thalassemia', duration: 30, done: false, ignored: false, review: false },
+                        { id: 'p3d', title: 'Sickle Cell', duration: 23, done: false, ignored: false, review: false },
+                        { id: 'p3e', title: 'Leukemia', duration: 28, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'p4', name: 'Neonatology', icon: '👶', ignored: false, lectures: [
+                        { id: 'p4a', title: 'Neonatal Sepsis', duration: 42, done: false, ignored: false, review: false },
+                        { id: 'p4b', title: 'Respiratory Distress', duration: 32, done: false, ignored: false, review: false },
+                        { id: 'p4c', title: 'Prematurity', duration: 32, done: false, ignored: false, review: false },
+                        { id: 'p4d', title: 'Neonatal Seizures', duration: 31, done: false, ignored: false, review: false },
+                        { id: 'p4e', title: 'HIE', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'p4f', title: 'Neonatal Exam', duration: 97, done: false, ignored: false, review: false }]
+                },
+                {
+                    id: 'p5', name: 'Emergency', icon: '🚨', ignored: false, lectures: [
+                        { id: 'p5a', title: 'Pediatric PLS', duration: 22, done: false, ignored: false, review: false },
+                        { id: 'p5b', title: 'PALS', duration: 10, done: false, ignored: false, review: false },
+                        { id: 'p5c', title: 'Anaphylaxis', duration: 9, done: false, ignored: false, review: false },
+                        { id: 'p5d', title: 'Poisoning', duration: 20, done: false, ignored: false, review: false },
+                        { id: 'p5e', title: 'Dehydration', duration: 40, done: false, ignored: false, review: false },
+                        { id: 'p5f', title: 'Gastroenteritis', duration: 30, done: false, ignored: false, review: false }]
+                }
+            ]
+        };
+
         function app() {
             return {
-                loading: true, user: null, tab: 'dashboard', unsub: null, openCh: { medicine: {}, pediatrics: {} }, tagMenu: null,
+                loading: true, user: null, tab: 'dashboard', unsub: null, openCh: {},
                 settings: { examDate: '2026-04-15', startDate: '2026-02-01', dailyTarget: 3 },
-                parser: { subject: 'medicine', chapterName: '', text: '' },
                 data: { medicine: [], pediatrics: [] },
-                defaultData: {
-                    medicine: [
-                        { id: 'neuro', name: 'Neurology', icon: '🧠', isIgnored: false, lectures: [{ id: 'n1', title: 'Neurology Intro', duration: 30, isDone: false, isIgnored: false, tag: 'none' }, { id: 'n2', title: 'Stroke Part 1', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'n3', title: 'Stroke Part 2', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'n4', title: 'Epilepsy', duration: 50, isDone: false, isIgnored: false, tag: 'none' }, { id: 'n5', title: 'Headache', duration: 35, isDone: false, isIgnored: false, tag: 'none' }, { id: 'n6', title: 'Multiple Sclerosis', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'n7', title: 'CNS Infections', duration: 55, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'cardio', name: 'Cardiology', icon: '❤️', isIgnored: false, lectures: [{ id: 'c1', title: 'Cardiology Basics', duration: 30, isDone: false, isIgnored: false, tag: 'none' }, { id: 'c2', title: 'Ischemic Heart Disease', duration: 60, isDone: false, isIgnored: false, tag: 'none' }, { id: 'c3', title: 'Heart Failure', duration: 55, isDone: false, isIgnored: false, tag: 'none' }, { id: 'c4', title: 'Arrhythmia', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'c5', title: 'Valvular Heart Disease', duration: 50, isDone: false, isIgnored: false, tag: 'none' }, { id: 'c6', title: 'Hypertension', duration: 40, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'nephro', name: 'Nephrology', icon: '🫘', isIgnored: false, lectures: [{ id: 'np1', title: 'Nephrology Intro', duration: 30, isDone: false, isIgnored: false, tag: 'none' }, { id: 'np2', title: 'Acute Kidney Injury', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'np3', title: 'Chronic Kidney Disease', duration: 50, isDone: false, isIgnored: false, tag: 'none' }, { id: 'np4', title: 'Glomerulonephritis', duration: 60, isDone: false, isIgnored: false, tag: 'none' }, { id: 'np5', title: 'Acid Base Balance', duration: 40, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'endo', name: 'Endocrinology', icon: '🦋', isIgnored: false, lectures: [{ id: 'e1', title: 'Diabetes Part 1', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'e2', title: 'Diabetes Part 2', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'e3', title: 'Thyroid Disorders', duration: 50, isDone: false, isIgnored: false, tag: 'none' }, { id: 'e4', title: 'Adrenal Gland', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'e5', title: 'Pituitary Disorders', duration: 35, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'hema', name: 'Hematology', icon: '🩸', isIgnored: false, lectures: [{ id: 'h1', title: 'Anemia Approach', duration: 30, isDone: false, isIgnored: false, tag: 'none' }, { id: 'h2', title: 'Iron Deficiency', duration: 25, isDone: false, isIgnored: false, tag: 'none' }, { id: 'h3', title: 'Hemolytic Anemia', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'h4', title: 'Leukemia', duration: 50, isDone: false, isIgnored: false, tag: 'none' }, { id: 'h5', title: 'Lymphoma', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'h6', title: 'Bleeding Disorders', duration: 40, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'pulmo', name: 'Pulmonology', icon: '🫁', isIgnored: false, lectures: [{ id: 'p1', title: 'Pneumonia', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'p2', title: 'Asthma', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'p3', title: 'COPD', duration: 35, isDone: false, isIgnored: false, tag: 'none' }, { id: 'p4', title: 'TB', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'p5', title: 'Pleural Effusion', duration: 30, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'gi', name: 'Gastroenterology', icon: '🫃', isIgnored: false, lectures: [{ id: 'g1', title: 'Liver Cirrhosis', duration: 50, isDone: false, isIgnored: false, tag: 'none' }, { id: 'g2', title: 'Hepatitis', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'g3', title: 'IBD', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'g4', title: 'Peptic Ulcer', duration: 30, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'rheum', name: 'Rheumatology', icon: '🦴', isIgnored: false, lectures: [{ id: 'r1', title: 'SLE', duration: 45, isDone: false, isIgnored: false, tag: 'none' }, { id: 'r2', title: 'Rheumatoid Arthritis', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'r3', title: 'Vasculitis', duration: 35, isDone: false, isIgnored: false, tag: 'none' }] }
-                    ], pediatrics: [
-                        { id: 'pendo', name: 'Endocrinology', icon: '🦋', isIgnored: false, lectures: [{ id: 'pe1', title: 'Rickets', duration: 31, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe2', title: 'Hypoglycemia', duration: 20, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe3', title: 'Growth', duration: 21, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe4', title: 'Hypopituitarism', duration: 22, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe5', title: 'Hypothyroidism', duration: 22, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe6', title: 'Thyroid Disorders', duration: 56, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe7', title: 'Diabetes Part 1', duration: 39, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe8', title: 'Diabetes Part 2', duration: 41, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe9', title: 'DKA', duration: 42, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe10', title: 'Puberty Disorders', duration: 60, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe11', title: 'Adrenal Hyperplasia', duration: 33, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pe12', title: 'Short Stature', duration: 17, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'pneuro', name: 'Neurology', icon: '🧠', isIgnored: false, lectures: [{ id: 'pn1', title: 'Meningitis Part 1', duration: 28, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pn2', title: 'Guillain Barre', duration: 26, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pn3', title: 'Cerebral Palsy', duration: 36, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pn4', title: 'Seizures Part 1', duration: 30, isDone: false, isIgnored: false, tag: 'none' }, { id: 'pn5', title: 'Seizures Part 2', duration: 25, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'phema', name: 'Hematology', icon: '🩸', isIgnored: false, lectures: [{ id: 'ph1', title: 'Anemia Approach', duration: 25, isDone: false, isIgnored: false, tag: 'none' }, { id: 'ph2', title: 'Iron Deficiency', duration: 25, isDone: false, isIgnored: false, tag: 'none' }, { id: 'ph3', title: 'Thalassemia', duration: 30, isDone: false, isIgnored: false, tag: 'none' }, { id: 'ph4', title: 'Sickle Cell', duration: 23, isDone: false, isIgnored: false, tag: 'none' }, { id: 'ph5', title: 'Leukemia', duration: 28, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'neo', name: 'Neonatology', icon: '👶', isIgnored: false, lectures: [{ id: 'neo1', title: 'Neonatal Sepsis', duration: 42, isDone: false, isIgnored: false, tag: 'none' }, { id: 'neo2', title: 'Respiratory Distress', duration: 32, isDone: false, isIgnored: false, tag: 'none' }, { id: 'neo3', title: 'Prematurity', duration: 32, isDone: false, isIgnored: false, tag: 'none' }, { id: 'neo4', title: 'Neonatal Seizures', duration: 31, isDone: false, isIgnored: false, tag: 'none' }, { id: 'neo5', title: 'HIE', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'neo6', title: 'Neonatal Exam', duration: 97, isDone: false, isIgnored: false, tag: 'none' }] },
-                        { id: 'emerg', name: 'Emergency', icon: '🚨', isIgnored: false, lectures: [{ id: 'em1', title: 'Pediatric PLS', duration: 22, isDone: false, isIgnored: false, tag: 'none' }, { id: 'em2', title: 'PALS', duration: 10, isDone: false, isIgnored: false, tag: 'none' }, { id: 'em3', title: 'Anaphylaxis', duration: 9, isDone: false, isIgnored: false, tag: 'none' }, { id: 'em4', title: 'Poisoning', duration: 20, isDone: false, isIgnored: false, tag: 'none' }, { id: 'em5', title: 'Dehydration', duration: 40, isDone: false, isIgnored: false, tag: 'none' }, { id: 'em6', title: 'Gastroenteritis', duration: 30, isDone: false, isIgnored: false, tag: 'none' }] }
-                    ]
-                },
 
                 async init() {
-                    const ready = () => { window.fb.onAuthStateChanged(window.fb.auth, async u => { this.user = u; if (u) await this.load(); this.loading = false; this.$nextTick(() => this.initSortable()) }) };
+                    this.data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                    const ready = () => { window.fb.onAuthStateChanged(window.fb.auth, async u => { this.user = u; if (u) await this.load(); this.loading = false }) };
                     if (window.fb) ready(); else window.addEventListener('fb-ready', ready);
                 },
-                async login() { try { await window.fb.signInWithPopup(window.fb.auth, window.fb.provider) } catch (e) { alert('خطأ: ' + e.message) } },
+                async login() { try { await window.fb.signInWithPopup(window.fb.auth, window.fb.provider) } catch (e) { alert(e.message) } },
                 async logout() { if (this.unsub) this.unsub(); await window.fb.signOut(window.fb.auth); this.user = null },
                 async load() {
                     const ref = window.fb.doc(window.fb.db, 'users', this.user.uid);
-                    this.unsub = window.fb.onSnapshot(ref, d => { if (d.exists()) { const u = d.data(); this.data = u.data || JSON.parse(JSON.stringify(this.defaultData)); this.settings = u.settings || this.settings } else { this.data = JSON.parse(JSON.stringify(this.defaultData)); this.save() } });
+                    this.unsub = window.fb.onSnapshot(ref, d => {
+                        if (d.exists()) {
+                            const u = d.data();
+                            if (u.data && u.data.medicine && u.data.medicine.length > 0) { this.data = u.data }
+                            if (u.settings) this.settings = u.settings;
+                        } else { this.save() }
+                    });
                 },
-                async save() { if (!this.user) return; await window.fb.setDoc(window.fb.doc(window.fb.db, 'users', this.user.uid), { data: this.data, settings: this.settings, updated: new Date().toISOString() }, { merge: true }) },
-                initSortable() { ['medicine', 'pediatrics'].forEach(s => { const el = document.getElementById(s + '-chapters'); if (el) new Sortable(el, { handle: '.handle', animation: 150, ghostClass: 'sortable-ghost', onEnd: () => { const items = [...el.children].map(c => c.__x_for_key); this.data[s] = items.map(id => this.data[s].find(ch => ch.id === id)); this.save() } }) }) },
-                toggleCh(s, i) { this.openCh[s][i] = !this.openCh[s][i] },
-                toggleChIgnore(s, i) { this.data[s][i].isIgnored = !this.data[s][i].isIgnored; this.save() },
-                toggleDone(s, ci, li) { this.data[s][ci].lectures[li].isDone = !this.data[s][ci].lectures[li].isDone; this.save() },
-                toggleIgnore(s, ci, li) { this.data[s][ci].lectures[li].isIgnored = !this.data[s][ci].lectures[li].isIgnored; this.save() },
-                toggleTagMenu(s, ci, li) { const k = s + ci + li; this.tagMenu = this.tagMenu === k ? null : k },
-                setTag(s, ci, li, t) { this.data[s][ci].lectures[li].tag = t; this.tagMenu = null; this.save() },
-                getChProgress(s, i) { const lecs = this.data[s][i].lectures.filter(l => !l.isIgnored); if (!lecs.length) return 0; const done = lecs.filter(l => l.isDone).length; return Math.round(done / lecs.length * 100) },
-                getChHours(s, i) { return (this.data[s][i].lectures.reduce((a, l) => a + l.duration, 0) / 60).toFixed(1) },
-                getSubjectProgress(s) { let t = 0, d = 0; this.data[s].forEach(ch => { if (!ch.isIgnored) ch.lectures.forEach(l => { if (!l.isIgnored) { t++; if (l.isDone) d++ } }) }); return t ? Math.round(d / t * 100) : 0 },
-                getSubjectStats(s) { let total = 0, done = 0, hrs = 0, hrsD = 0; this.data[s].forEach(ch => { ch.lectures.forEach(l => { total++; hrs += l.duration; if (l.isDone) { done++; hrsD += l.duration } }) }); return { total, done, totalHours: (hrs / 60).toFixed(1), hoursDone: (hrsD / 60).toFixed(1) } },
-                get totalProgress() { let t = 0, d = 0;['medicine', 'pediatrics'].forEach(s => this.data[s].forEach(ch => { if (!ch.isIgnored) ch.lectures.forEach(l => { if (!l.isIgnored) { t++; if (l.isDone) d++ } }) })); return t ? Math.round(d / t * 100) : 0 },
-                get totalNetHours() { let t = 0;['medicine', 'pediatrics'].forEach(s => this.data[s].forEach(ch => { if (!ch.isIgnored) ch.lectures.forEach(l => { if (!l.isIgnored) t += l.duration }) })); return (t / 60).toFixed(1) },
-                get hoursDone() { let t = 0;['medicine', 'pediatrics'].forEach(s => this.data[s].forEach(ch => ch.lectures.forEach(l => { if (l.isDone) t += l.duration }))); return (t / 60).toFixed(1) },
-                get daysLeft() { const d = Math.ceil((new Date(this.settings.examDate) - new Date()) / (1000 * 60 * 60 * 24)); return Math.max(0, d) },
-                get daysPassed() { const d = Math.ceil((new Date() - new Date(this.settings.startDate)) / (1000 * 60 * 60 * 24)); return Math.max(0, d) },
-                get expectedHours() { const total = this.daysPassed + this.daysLeft; if (!total) return 0; return (parseFloat(this.totalNetHours) / total) * this.daysPassed },
+                async save() { if (!this.user) return; await window.fb.setDoc(window.fb.doc(window.fb.db, 'users', this.user.uid), { data: this.data, settings: this.settings }, { merge: true }) },
+
+                get daysToExam() { return Math.max(0, Math.ceil((new Date(this.settings.examDate) - new Date()) / (86400000))) },
+                get daysInPlan() { const total = Math.ceil((new Date(this.settings.examDate) - new Date(this.settings.startDate)) / (86400000)); return Math.max(0, total) },
+                get daysPassed() { return Math.max(0, Math.ceil((new Date() - new Date(this.settings.startDate)) / (86400000))) },
+
+                get totalHours() { let t = 0;['medicine', 'pediatrics'].forEach(s => this.data[s].forEach(c => c.lectures.forEach(l => { if (!l.ignored && !c.ignored) t += l.duration }))); return (t / 60).toFixed(1) },
+                get hoursDone() { let t = 0;['medicine', 'pediatrics'].forEach(s => this.data[s].forEach(c => c.lectures.forEach(l => { if (l.done) t += l.duration }))); return (t / 60).toFixed(1) },
+                get totalProgress() { const t = parseFloat(this.totalHours), d = parseFloat(this.hoursDone); return t > 0 ? Math.round(d / t * 100) : 0 },
+
+                getMedProgress() { return this.getProgress('medicine') },
+                getPedProgress() { return this.getProgress('pediatrics') },
+                getProgress(s) { let t = 0, d = 0; this.data[s].forEach(c => { if (!c.ignored) c.lectures.forEach(l => { if (!l.ignored) { t++; if (l.done) d++ } }) }); return t ? Math.round(d / t * 100) : 0 },
+                getStats(s) { let t = 0, d = 0, ht = 0, hd = 0; this.data[s].forEach(c => c.lectures.forEach(l => { t++; ht += l.duration; if (l.done) { d++; hd += l.duration } })); return { total: t, done: d, hTotal: (ht / 60).toFixed(1), hDone: (hd / 60).toFixed(1) } },
+                getChProg(s, i) { const lecs = this.data[s][i].lectures.filter(l => !l.ignored); if (!lecs.length) return 0; return Math.round(lecs.filter(l => l.done).length / lecs.length * 100) },
+                getChHrs(s, i) { return (this.data[s][i].lectures.reduce((a, l) => a + l.duration, 0) / 60).toFixed(1) },
+
+                get expectedHours() { const total = this.daysPassed + this.daysToExam; if (!total) return 0; return (parseFloat(this.totalHours) / total) * this.daysPassed },
                 get delayHours() { return Math.max(0, this.expectedHours - parseFloat(this.hoursDone)) },
-                get extraDaily() { return this.daysLeft ? this.delayHours / this.daysLeft * 60 : this.delayHours * 60 },
-                get status() { if (this.delayHours > 0) return 'behind'; if (parseFloat(this.hoursDone) > this.expectedHours + 1) return 'ahead'; return 'ontrack' },
-                get todayTasks() { const tasks = []; let mins = 0; const target = this.settings.dailyTarget * 60; for (const s of ['medicine', 'pediatrics']) { for (const ch of this.data[s]) { if (ch.isIgnored) continue; for (const l of ch.lectures) { if (!l.isDone && !l.isIgnored && mins < target) { tasks.push({ ...l, subject: s, chapterName: ch.name, chapterIcon: ch.icon, chapterId: ch.id }); mins += l.duration } } } } return tasks },
-                markDone(task) { for (const s of ['medicine', 'pediatrics']) { for (let ci = 0; ci < this.data[s].length; ci++) { for (let li = 0; li < this.data[s][ci].lectures.length; li++) { if (this.data[s][ci].lectures[li].id === task.id) { this.data[s][ci].lectures[li].isDone = true; this.save(); return } } } } },
-                get reviewItems() { const items = [];['medicine', 'pediatrics'].forEach(s => this.data[s].forEach(ch => ch.lectures.forEach(l => { if (l.tag === 'review') items.push({ ...l, chapter: ch.name, subject: s === 'medicine' ? 'الباطنة' : 'الأطفال', subjectKey: s, chapterId: ch.id }) }))); return items },
-                get ignoredItems() { const items = [];['medicine', 'pediatrics'].forEach(s => this.data[s].forEach(ch => ch.lectures.forEach(l => { if (l.isIgnored) items.push({ ...l, chapter: ch.name, subject: s === 'medicine' ? 'الباطنة' : 'الأطفال', subjectKey: s, chapterId: ch.id }) }))); return items },
-                clearItemTag(item) { for (const ch of this.data[item.subjectKey]) { for (const l of ch.lectures) { if (l.id === item.id) { l.tag = 'none'; this.save(); return } } } },
-                restoreItem(item) { for (const ch of this.data[item.subjectKey]) { for (const l of ch.lectures) { if (l.id === item.id) { l.isIgnored = false; this.save(); return } } } },
-                parseAndAdd() { if (!this.parser.chapterName || !this.parser.text) return; const lines = this.parser.text.trim().split('\n'); const lecs = lines.map((l, i) => { const p = l.split('-'); return { id: Date.now() + '_' + i, title: p[0].trim(), duration: parseInt(p[1]) || 30, isDone: false, isIgnored: false, tag: 'none' } }); this.data[this.parser.subject].push({ id: Date.now() + '', name: this.parser.chapterName, icon: '📚', isIgnored: false, lectures: lecs }); this.parser = { subject: 'medicine', chapterName: '', text: '' }; this.save() },
-                resetAll() { if (confirm('سيتم حذف كل البيانات!')) { this.data = JSON.parse(JSON.stringify(this.defaultData)); this.save() } }
+                get extraMinutes() { return this.daysToExam > 0 ? Math.round(this.delayHours * 60 / this.daysToExam) : 0 },
+                get status() { return this.delayHours > 0 ? 'behind' : 'ontrack' },
+
+                getTodayTasks(subj) {
+                    const tasks = []; let mins = 0; const target = this.settings.dailyTarget * 60 / 2;
+                    for (const ch of this.data[subj]) {
+                        if (ch.ignored) continue;
+                        for (const l of ch.lectures) {
+                            if (!l.done && !l.ignored && mins < target) {
+                                tasks.push({ ...l, subject: subj, chapter: ch.name, chapterId: ch.id });
+                                mins += l.duration;
+                            }
+                        }
+                    }
+                    return tasks;
+                },
+                get catchupTasks() {
+                    if (this.delayHours <= 0) return [];
+                    const tasks = []; let mins = 0; const target = this.extraMinutes;
+                    for (const s of ['medicine', 'pediatrics']) {
+                        for (const ch of this.data[s]) {
+                            if (ch.ignored) continue;
+                            for (const l of ch.lectures) {
+                                if (!l.done && !l.ignored && mins < target) {
+                                    const already = [...this.getTodayTasks('medicine'), ...this.getTodayTasks('pediatrics')].find(t => t.id === l.id);
+                                    if (!already) { tasks.push({ ...l, subject: s, chapter: ch.name }); mins += l.duration }
+                                }
+                            }
+                        }
+                    }
+                    return tasks;
+                },
+                markDone(task) {
+                    for (const s of ['medicine', 'pediatrics']) {
+                        for (const ch of this.data[s]) {
+                            for (const l of ch.lectures) {
+                                if (l.id === task.id) { l.done = true; this.save(); return }
+                            }
+                        }
+                    }
+                },
+                resetAll() { if (confirm('حذف كل البيانات؟')) { this.data = JSON.parse(JSON.stringify(DEFAULT_DATA)); this.save() } }
             }
         }
     </script>
