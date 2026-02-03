@@ -277,7 +277,7 @@
         </div>
     </div>
     <!-- Enrollment Modal -->
-    <div x-show="user && (enrolledCourses.length === 0 || showEnrollModal)" x-transition
+    <div x-show="user && showEnrollModal" x-transition
         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass p-8 max-w-md w-full text-center">
             <h2 class="text-3xl font-bold mb-4">👋 مرحباً بك!</h2>
@@ -767,41 +767,61 @@
                                             :style="`left: ${Math.min(student.progress, 98)}%; z-index: ${100-index}`">
 
                                             <!-- Tooltip -->
-                                            <div
-                                                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-black/90 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                                <span x-text="student.name"></span> • <span
-                                                    x-text="student.progress + '%'"></span>
-                                            </div>
+                                            <!-- Racer Avatar -->
+                                            <div class="absolute top-1/2 -translate-y-1/2 transition-all duration-700 ease-out group flex flex-col items-center"
+                                                :style="`left: ${Math.min(student.progress, 98)}%; z-index: ${leaderboardData[subj].length + 100 - index}`">
 
-                                            <!-- Image Ring -->
-                                            <div class="relative transition-transform duration-300 hover:scale-125 hover:z-50"
-                                                :class="{'z-40': student.uid === user.uid}">
+                                                <!-- Rank Badge (Funny Titles) -->
+                                                <div x-show="index === 0"
+                                                    class="absolute -top-10 text-2xl animate-bounce z-50 filter drop-shadow-lg"
+                                                    title="الأول - وحش">🦁</div>
+                                                <div x-show="index > 0 && index === leaderboardData[subj].length - 1"
+                                                    class="absolute -top-8 text-2xl animate-pulse z-50 filter drop-shadow-lg"
+                                                    title="الأخير - كسول">🗑️</div>
 
-                                                <!-- Glowing Effect for 'Ahead' -->
-                                                <div x-show="student.status === 'ahead'"
-                                                    class="absolute inset-0 bg-green-500 rounded-full blur-md opacity-50 animate-pulse">
-                                                </div>
-                                                <!-- Warning Effect for 'Behind' -->
-                                                <div x-show="student.status === 'behind'"
-                                                    class="absolute inset-0 bg-red-500 rounded-full blur-md opacity-30">
-                                                </div>
+                                                <!-- Image Ring -->
+                                                <div class="relative transition-transform duration-300 hover:scale-125 hover:z-50"
+                                                    :class="{'z-40': student.uid === user.uid}">
 
-                                                <img :src="student.photo || 'https://ui-avatars.com/api/?name='+student.name"
-                                                    class="w-12 h-12 rounded-full border-2 object-cover relative z-10 bg-[#0f0f15]"
-                                                    :class="{
-                                                            'border-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]': student.status === 'ahead',
+                                                    <!-- Glowing Effect for First Place -->
+                                                    <div x-show="index === 0"
+                                                        class="absolute inset-0 bg-yellow-500 rounded-full blur-md opacity-60 animate-pulse">
+                                                    </div>
+
+                                                    <!-- Status Glow/Border -->
+                                                    <div x-show="student.status === 'ahead'"
+                                                        class="absolute inset-0 bg-green-500 rounded-full blur-md opacity-40">
+                                                    </div>
+                                                    <div x-show="student.status === 'behind'"
+                                                        class="absolute inset-0 bg-red-500 rounded-full blur-md opacity-20">
+                                                    </div>
+
+                                                    <img :src="student.photo || 'https://ui-avatars.com/api/?name='+student.name"
+                                                        class="w-12 h-12 rounded-full border-2 object-cover relative z-10 bg-[#0f0f15]"
+                                                        :class="{
+                                                            'border-yellow-400 w-14 h-14 ring-4 ring-yellow-500/30': index === 0,
+                                                            'border-green-400': student.status === 'ahead' && index !== 0,
                                                             'border-red-400': student.status === 'behind',
-                                                            'border-blue-400': student.status === 'on-track',
-                                                            'border-yellow-400 w-14 h-14 -mt-1 ring-4 ring-yellow-400/20': student.uid === user.uid
+                                                            'border-blue-400': student.status === 'on-track' && index !== 0 && student.status !== 'behind',
+                                                            'grayscale opacity-80': index === leaderboardData[subj].length - 1 && index > 0
                                                         }">
 
-                                                <!-- You Indicator -->
-                                                <div x-show="student.uid === user.uid"
-                                                    class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-yellow-400 animate-bounce">
-                                                    أنت
+                                                    <!-- 'You' Indicator -->
+                                                    <div x-show="student.uid === user.uid"
+                                                        class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap z-50 shadow-lg">
+                                                        أنت
+                                                    </div>
+                                                </div>
+
+                                                <!-- Visible Stats (Name + %) -->
+                                                <div class="mt-2 text-center pointer-events-none">
+                                                    <p class="text-[10px] font-bold text-white whitespace-nowrap bg-black/50 px-1.5 rounded mb-0.5"
+                                                        x-text="student.name.split(' ')[0]"></p>
+                                                    <p class="text-[10px] font-bold"
+                                                        :class="student.status === 'ahead' ? 'text-green-400' : (student.status === 'behind' ? 'text-red-400' : 'text-blue-400')"
+                                                        x-text="student.progress + '%'"></p>
                                                 </div>
                                             </div>
-                                        </div>
                                     </template>
                                 </div>
 
@@ -1037,13 +1057,17 @@ Lecture 3 - 60"></textarea>
 
                                 // Load Enrollment
                                 this.enrolledCourses = userData.enrolledCourses || [];
-                                // Auto-enroll in everything if fresh user (can be changed later)
-                                // Actually user requested a selection modal. We'll handle that next.
+                                // Load Enrollment
+                                this.enrolledCourses = userData.enrolledCourses || [];
+                                if (this.enrolledCourses.length === 0) {
+                                    this.showEnrollModal = true;
+                                }
 
                             } else {
                                 // New User: Use courses data directly
                                 this.data = JSON.parse(JSON.stringify(coursesData));
-                                this.enrolledCourses = []; // Will trigger modal
+                                this.enrolledCourses = [];
+                                this.showEnrollModal = true;
                                 this.save();
                             }
 
