@@ -394,6 +394,22 @@
                     </div>
                 </div>
 
+                <!-- Delay Alert (placed prominently here) -->
+                <div x-show="delayHours>0" class="stat-card border-red-500/50 bg-red-500/5 mb-8">
+                    <div class="flex items-start gap-4">
+                        <span class="text-5xl">⚠️</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-red-400 mb-2">أنت متأخر عن الخطة!</h3>
+                            <p class="text-gray-300 mb-3">متأخر بـ <span class="text-red-400 font-bold text-xl"
+                                    x-text="formatHours(delayHours)"></span></p>
+                            <div class="bg-black/30 rounded-xl p-4">
+                                <p class="text-gray-400 text-sm">للتعويض، يجب إضافة يومياً:</p>
+                                <p class="text-3xl font-bold text-orange-400" x-text="extraMinutes+' دقيقة'"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Today's Tasks -->
                 <div class="grid md:grid-cols-2 gap-6 mb-8">
                     <!-- Medicine Tasks -->
@@ -444,22 +460,6 @@
                                     class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
                             </div>
                         </template>
-                    </div>
-                </div>
-
-                <!-- Delay Alert -->
-                <div x-show="delayHours>0" class="stat-card border-red-500/50 bg-red-500/5">
-                    <div class="flex items-start gap-4">
-                        <span class="text-5xl">⚠️</span>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-bold text-red-400 mb-2">أنت متأخر عن الخطة!</h3>
-                            <p class="text-gray-300 mb-3">متأخر بـ <span class="text-red-400 font-bold text-xl"
-                                    x-text="formatHours(delayHours)"></span></p>
-                            <div class="bg-black/30 rounded-xl p-4">
-                                <p class="text-gray-400 text-sm">للتعويض، يجب إضافة يومياً:</p>
-                                <p class="text-3xl font-bold text-orange-400" x-text="extraMinutes+' دقيقة'"></p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -645,9 +645,14 @@
                         <input type="date" x-model="settings.examDate" @change="save()">
                     </div>
                     <div class="stat-card">
-                        <label class="block text-gray-400 mb-2">📅 تاريخ انتهاء الخطة</label>
+                        <label class="block text-gray-400 mb-2">� تاريخ بداية الخطة</label>
+                        <input type="date" x-model="settings.planStartDate" @change="save()">
+                        <p class="text-xs text-gray-500 mt-2">يُستخدم لحساب التأخير</p>
+                    </div>
+                    <div class="stat-card">
+                        <label class="block text-gray-400 mb-2">🏁 تاريخ انتهاء الخطة</label>
                         <input type="date" x-model="settings.planEndDate" @change="save()">
-                        <p class="text-xs text-gray-500 mt-2">هذا التاريخ يُستخدم لحساب المعدل اليومي المطلوب</p>
+                        <p class="text-xs text-gray-500 mt-2">يُستخدم لحساب المعدل اليومي المطلوب</p>
                     </div>
 
                     <!-- Smart Parser -->
@@ -722,7 +727,7 @@ Lecture 3 - 60"></textarea>
                 tab: 'dashboard',
                 unsub: null,
                 openCh: {},
-                settings: { examDate: '2026-04-15', planEndDate: '2026-04-01' },
+                settings: { examDate: '2026-04-15', planEndDate: '2026-04-01', planStartDate: '2026-02-03' },
                 parser: { subject: 'medicine', chapter: '', newName: '', newIcon: '📚', text: '' },
                 data: { medicine: [], pediatrics: [] },
                 todayCache: { date: '', medicine: [], pediatrics: [] },
@@ -887,6 +892,17 @@ Lecture 3 - 60"></textarea>
                 // Calculations
                 get daysToExam() { return Math.max(0, Math.ceil((new Date(this.settings.examDate) - new Date()) / 86400000)); },
                 get planDaysRemaining() { return Math.max(1, Math.ceil((new Date(this.settings.planEndDate) - new Date()) / 86400000)); },
+                get planDaysPassed() {
+                    const start = new Date(this.settings.planStartDate);
+                    const now = new Date();
+                    const passed = Math.floor((now - start) / 86400000);
+                    return Math.max(0, passed);
+                },
+                get totalPlanDays() {
+                    const start = new Date(this.settings.planStartDate);
+                    const end = new Date(this.settings.planEndDate);
+                    return Math.max(1, Math.ceil((end - start) / 86400000));
+                },
 
                 getTotalHours(subj) {
                     let t = 0;
@@ -944,10 +960,9 @@ Lecture 3 - 60"></textarea>
                 },
 
                 get expectedHours() {
-                    const totalDays = this.planDaysRemaining + Math.ceil((new Date() - new Date(this.settings.planEndDate)) / 86400000 * -1);
-                    const passed = Math.max(0, totalDays - this.planDaysRemaining);
-                    if (totalDays <= 0) return 0;
-                    return (this.totalHoursNum / totalDays) * passed;
+                    // Expected = (total hours / total plan days) * days passed since start
+                    if (this.totalPlanDays <= 0 || this.planDaysPassed <= 0) return 0;
+                    return (this.totalHoursNum / this.totalPlanDays) * this.planDaysPassed;
                 },
                 get delayHours() {
                     const done = this.totalHoursNum - this.remainingHoursNum;
