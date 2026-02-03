@@ -234,6 +234,19 @@
         .chapter-header:hover {
             background: rgba(255, 255, 255, 0.03)
         }
+
+        .mini-card {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            text-align: center;
+        }
+
+        .hours-display {
+            display: flex;
+            gap: 8px;
+            align-items: baseline;
+        }
     </style>
 </head>
 
@@ -299,7 +312,7 @@
             <!-- Dashboard -->
             <div x-show="tab==='dashboard'" x-transition>
                 <!-- Stats Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">⏰ أيام للامتحان</p>
                         <p class="text-4xl font-bold text-purple-400" x-text="daysToExam"></p>
@@ -310,7 +323,7 @@
                     </div>
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">🎯 المعدل اليومي المطلوب</p>
-                        <p class="text-3xl font-bold text-orange-400" x-text="dailyRequired.toFixed(1)+' ساعة'"></p>
+                        <p class="text-3xl font-bold text-orange-400" x-text="formatHours(dailyRequired)"></p>
                     </div>
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">📈 التقدم الكلي</p>
@@ -319,10 +332,17 @@
                             <div class="progress-fill progress-green" :style="'width:'+totalProgress+'%'"></div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Hours Cards -->
+                <div class="grid grid-cols-2 gap-4 mb-8">
                     <div class="stat-card">
-                        <p class="text-gray-400 text-sm mb-2">⏱️ الساعات</p>
-                        <p class="text-2xl font-bold"><span class="text-cyan-400" x-text="hoursDone"></span> / <span
-                                class="text-gray-500" x-text="totalHours"></span></p>
+                        <p class="text-gray-400 text-sm mb-2">📚 الساعات الكلية</p>
+                        <p class="text-3xl font-bold text-cyan-400" x-text="formatHours(totalHoursNum)"></p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-gray-400 text-sm mb-2">⏳ الساعات المتبقية</p>
+                        <p class="text-3xl font-bold text-yellow-400" x-text="formatHours(remainingHoursNum)"></p>
                     </div>
                 </div>
 
@@ -337,8 +357,18 @@
                             <div class="progress-fill progress-purple" :style="'width:'+getProgress('medicine')+'%'">
                             </div>
                         </div>
-                        <p class="text-sm text-gray-500 mt-2"
-                            x-text="'المعدل اليومي: '+getDailyRequired('medicine').toFixed(1)+' ساعة'"></p>
+                        <div class="flex justify-between mt-3 text-sm">
+                            <div class="mini-card flex-1 ml-2">
+                                <p class="text-gray-500 text-xs">الكلية</p>
+                                <p class="text-purple-300 font-bold" x-text="formatHours(getTotalHours('medicine'))">
+                                </p>
+                            </div>
+                            <div class="mini-card flex-1">
+                                <p class="text-gray-500 text-xs">المتبقية</p>
+                                <p class="text-purple-300 font-bold"
+                                    x-text="formatHours(getRemainingHours('medicine'))"></p>
+                            </div>
+                        </div>
                     </div>
                     <div class="stat-card">
                         <div class="flex justify-between items-center mb-3">
@@ -349,8 +379,18 @@
                             <div class="progress-fill progress-cyan" :style="'width:'+getProgress('pediatrics')+'%'">
                             </div>
                         </div>
-                        <p class="text-sm text-gray-500 mt-2"
-                            x-text="'المعدل اليومي: '+getDailyRequired('pediatrics').toFixed(1)+' ساعة'"></p>
+                        <div class="flex justify-between mt-3 text-sm">
+                            <div class="mini-card flex-1 ml-2">
+                                <p class="text-gray-500 text-xs">الكلية</p>
+                                <p class="text-cyan-300 font-bold" x-text="formatHours(getTotalHours('pediatrics'))">
+                                </p>
+                            </div>
+                            <div class="mini-card flex-1">
+                                <p class="text-gray-500 text-xs">المتبقية</p>
+                                <p class="text-cyan-300 font-bold"
+                                    x-text="formatHours(getRemainingHours('pediatrics'))"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -360,14 +400,16 @@
                     <div class="stat-card">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-purple-400 text-lg">🫀 مهام الباطنة اليوم</h3>
-                            <span class="text-sm text-gray-500" x-text="getTodayTasksTime('medicine')+' دقيقة'"></span>
+                            <span class="text-sm bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full"
+                                x-text="formatMins(getTodayTasksTime('medicine'))"></span>
                         </div>
-                        <div x-show="getTodayTasks('medicine').length===0" class="text-center py-8 text-gray-500">
-                            <span class="text-4xl">✅</span>
-                            <p class="mt-2">أنجزت جميع المهام!</p>
+                        <div x-show="todayTasksComplete('medicine')" class="text-center py-8 text-gray-500">
+                            <span class="text-5xl">✅</span>
+                            <p class="mt-3 text-lg font-bold text-green-400">أنجزت مهام اليوم!</p>
+                            <p class="text-sm text-gray-500 mt-1">عد غداً للمزيد</p>
                         </div>
-                        <template x-for="task in getTodayTasks('medicine')" :key="task.id">
-                            <div class="task-card flex items-center justify-between">
+                        <template x-for="task in getFixedTodayTasks('medicine')" :key="task.id">
+                            <div class="task-card flex items-center justify-between" x-show="!task.done">
                                 <div class="flex-1">
                                     <p class="font-medium text-base" x-text="task.title"></p>
                                     <p class="text-sm text-gray-400" x-text="task.duration+' دقيقة • '+task.chapter">
@@ -382,15 +424,16 @@
                     <div class="stat-card">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-cyan-400 text-lg">👶 مهام الأطفال اليوم</h3>
-                            <span class="text-sm text-gray-500"
-                                x-text="getTodayTasksTime('pediatrics')+' دقيقة'"></span>
+                            <span class="text-sm bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full"
+                                x-text="formatMins(getTodayTasksTime('pediatrics'))"></span>
                         </div>
-                        <div x-show="getTodayTasks('pediatrics').length===0" class="text-center py-8 text-gray-500">
-                            <span class="text-4xl">✅</span>
-                            <p class="mt-2">أنجزت جميع المهام!</p>
+                        <div x-show="todayTasksComplete('pediatrics')" class="text-center py-8 text-gray-500">
+                            <span class="text-5xl">✅</span>
+                            <p class="mt-3 text-lg font-bold text-green-400">أنجزت مهام اليوم!</p>
+                            <p class="text-sm text-gray-500 mt-1">عد غداً للمزيد</p>
                         </div>
-                        <template x-for="task in getTodayTasks('pediatrics')" :key="task.id">
-                            <div class="task-card flex items-center justify-between"
+                        <template x-for="task in getFixedTodayTasks('pediatrics')" :key="task.id">
+                            <div class="task-card flex items-center justify-between" x-show="!task.done"
                                 style="border-color:rgba(6,182,212,0.2);background:linear-gradient(135deg,rgba(6,182,212,0.1),rgba(6,182,212,0.05))">
                                 <div class="flex-1">
                                     <p class="font-medium text-base" x-text="task.title"></p>
@@ -411,7 +454,7 @@
                         <div class="flex-1">
                             <h3 class="text-xl font-bold text-red-400 mb-2">أنت متأخر عن الخطة!</h3>
                             <p class="text-gray-300 mb-3">متأخر بـ <span class="text-red-400 font-bold text-xl"
-                                    x-text="delayHours.toFixed(1)"></span> ساعة</p>
+                                    x-text="formatHours(delayHours)"></span></p>
                             <div class="bg-black/30 rounded-xl p-4">
                                 <p class="text-gray-400 text-sm">للتعويض، يجب إضافة يومياً:</p>
                                 <p class="text-3xl font-bold text-orange-400" x-text="extraMinutes+' دقيقة'"></p>
@@ -428,9 +471,21 @@
                     <div class="flex items-center justify-between mb-6">
                         <div>
                             <h2 class="text-3xl font-bold" x-text="subj==='medicine'?'🫀 الباطنة':'👶 الأطفال'"></h2>
-                            <p class="text-gray-400 mt-1"
-                                x-text="'المحاضرات: '+getStats(subj).done+'/'+getStats(subj).total+' • الساعات: '+getStats(subj).hDone+'/'+getStats(subj).hTotal">
-                            </p>
+                            <div class="flex gap-4 mt-2">
+                                <div class="mini-card">
+                                    <span class="text-gray-500 text-sm">المحاضرات: </span>
+                                    <span class="font-bold"
+                                        x-text="getStats(subj).done+'/'+getStats(subj).total"></span>
+                                </div>
+                                <div class="mini-card">
+                                    <span class="text-gray-500 text-sm">الساعات: </span>
+                                    <span class="font-bold" x-text="formatHours(getTotalHours(subj))"></span>
+                                </div>
+                                <div class="mini-card">
+                                    <span class="text-gray-500 text-sm">المتبقي: </span>
+                                    <span class="font-bold" x-text="formatHours(getRemainingHours(subj))"></span>
+                                </div>
+                            </div>
                         </div>
                         <div class="text-left">
                             <p class="text-4xl font-bold" :class="subj==='medicine'?'text-purple-400':'text-cyan-400'"
@@ -453,9 +508,14 @@
                                         <span class="text-3xl" x-text="ch.icon">📚</span>
                                         <div>
                                             <h3 class="font-bold text-xl" x-text="ch.name"></h3>
-                                            <p class="text-sm text-gray-400"
-                                                x-text="getChProg(subj,ci)+'% مكتمل • '+ch.lectures.length+' محاضرة • '+getChHrs(subj,ci)+' ساعة'">
-                                            </p>
+                                            <div class="flex gap-2 mt-1">
+                                                <span class="text-xs bg-gray-700 px-2 py-1 rounded"
+                                                    x-text="getChProg(subj,ci)+'% مكتمل'"></span>
+                                                <span class="text-xs bg-gray-700 px-2 py-1 rounded"
+                                                    x-text="ch.lectures.length+' محاضرة'"></span>
+                                                <span class="text-xs bg-gray-700 px-2 py-1 rounded"
+                                                    x-text="formatHours(getChHrsNum(subj,ci))"></span>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-3">
@@ -651,133 +711,8 @@ Lecture 3 - 60"></textarea>
 
     <script>
         const DEFAULT_DATA = {
-            medicine: [
-                {
-                    id: 'm1', name: 'Neurology', icon: '🧠', ignored: false, lectures: [
-                        { id: 'm1a', title: 'Neurology Intro', duration: 30, done: false, tag: 'none' },
-                        { id: 'm1b', title: 'Stroke Part 1', duration: 45, done: false, tag: 'none' },
-                        { id: 'm1c', title: 'Stroke Part 2', duration: 40, done: false, tag: 'none' },
-                        { id: 'm1d', title: 'Epilepsy', duration: 50, done: false, tag: 'none' },
-                        { id: 'm1e', title: 'Headache', duration: 35, done: false, tag: 'none' },
-                        { id: 'm1f', title: 'Multiple Sclerosis', duration: 40, done: false, tag: 'none' },
-                        { id: 'm1g', title: 'CNS Infections', duration: 55, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'm2', name: 'Cardiology', icon: '❤️', ignored: false, lectures: [
-                        { id: 'm2a', title: 'Cardiology Basics', duration: 30, done: false, tag: 'none' },
-                        { id: 'm2b', title: 'Ischemic Heart Disease', duration: 60, done: false, tag: 'none' },
-                        { id: 'm2c', title: 'Heart Failure', duration: 55, done: false, tag: 'none' },
-                        { id: 'm2d', title: 'Arrhythmia', duration: 45, done: false, tag: 'none' },
-                        { id: 'm2e', title: 'Valvular Heart Disease', duration: 50, done: false, tag: 'none' },
-                        { id: 'm2f', title: 'Hypertension', duration: 40, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'm3', name: 'Nephrology', icon: '🫘', ignored: false, lectures: [
-                        { id: 'm3a', title: 'Nephrology Intro', duration: 30, done: false, tag: 'none' },
-                        { id: 'm3b', title: 'Acute Kidney Injury', duration: 45, done: false, tag: 'none' },
-                        { id: 'm3c', title: 'Chronic Kidney Disease', duration: 50, done: false, tag: 'none' },
-                        { id: 'm3d', title: 'Glomerulonephritis', duration: 60, done: false, tag: 'none' },
-                        { id: 'm3e', title: 'Acid Base Balance', duration: 40, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'm4', name: 'Endocrinology', icon: '🦋', ignored: false, lectures: [
-                        { id: 'm4a', title: 'Diabetes Part 1', duration: 45, done: false, tag: 'none' },
-                        { id: 'm4b', title: 'Diabetes Part 2', duration: 45, done: false, tag: 'none' },
-                        { id: 'm4c', title: 'Thyroid Disorders', duration: 50, done: false, tag: 'none' },
-                        { id: 'm4d', title: 'Adrenal Gland', duration: 40, done: false, tag: 'none' },
-                        { id: 'm4e', title: 'Pituitary Disorders', duration: 35, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'm5', name: 'Hematology', icon: '🩸', ignored: false, lectures: [
-                        { id: 'm5a', title: 'Anemia Approach', duration: 30, done: false, tag: 'none' },
-                        { id: 'm5b', title: 'Iron Deficiency', duration: 25, done: false, tag: 'none' },
-                        { id: 'm5c', title: 'Hemolytic Anemia', duration: 40, done: false, tag: 'none' },
-                        { id: 'm5d', title: 'Leukemia', duration: 50, done: false, tag: 'none' },
-                        { id: 'm5e', title: 'Lymphoma', duration: 45, done: false, tag: 'none' },
-                        { id: 'm5f', title: 'Bleeding Disorders', duration: 40, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'm6', name: 'Pulmonology', icon: '🫁', ignored: false, lectures: [
-                        { id: 'm6a', title: 'Pneumonia', duration: 45, done: false, tag: 'none' },
-                        { id: 'm6b', title: 'Asthma', duration: 40, done: false, tag: 'none' },
-                        { id: 'm6c', title: 'COPD', duration: 35, done: false, tag: 'none' },
-                        { id: 'm6d', title: 'TB', duration: 40, done: false, tag: 'none' },
-                        { id: 'm6e', title: 'Pleural Effusion', duration: 30, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'm7', name: 'Gastroenterology', icon: '🫃', ignored: false, lectures: [
-                        { id: 'm7a', title: 'Liver Cirrhosis', duration: 50, done: false, tag: 'none' },
-                        { id: 'm7b', title: 'Hepatitis', duration: 45, done: false, tag: 'none' },
-                        { id: 'm7c', title: 'IBD', duration: 40, done: false, tag: 'none' },
-                        { id: 'm7d', title: 'Peptic Ulcer', duration: 30, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'm8', name: 'Rheumatology', icon: '🦴', ignored: false, lectures: [
-                        { id: 'm8a', title: 'SLE', duration: 45, done: false, tag: 'none' },
-                        { id: 'm8b', title: 'Rheumatoid Arthritis', duration: 40, done: false, tag: 'none' },
-                        { id: 'm8c', title: 'Vasculitis', duration: 35, done: false, tag: 'none' }
-                    ]
-                }
-            ],
-            pediatrics: [
-                {
-                    id: 'p1', name: 'Endocrinology', icon: '🦋', ignored: false, lectures: [
-                        { id: 'p1a', title: 'Rickets', duration: 31, done: false, tag: 'none' },
-                        { id: 'p1b', title: 'Hypoglycemia', duration: 20, done: false, tag: 'none' },
-                        { id: 'p1c', title: 'Growth', duration: 21, done: false, tag: 'none' },
-                        { id: 'p1d', title: 'Diabetes Part 1', duration: 39, done: false, tag: 'none' },
-                        { id: 'p1e', title: 'Diabetes Part 2', duration: 41, done: false, tag: 'none' },
-                        { id: 'p1f', title: 'DKA', duration: 42, done: false, tag: 'none' },
-                        { id: 'p1g', title: 'Thyroid Disorders', duration: 56, done: false, tag: 'none' },
-                        { id: 'p1h', title: 'Short Stature', duration: 17, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'p2', name: 'Neurology', icon: '🧠', ignored: false, lectures: [
-                        { id: 'p2a', title: 'Meningitis Part 1', duration: 28, done: false, tag: 'none' },
-                        { id: 'p2b', title: 'Guillain Barre', duration: 26, done: false, tag: 'none' },
-                        { id: 'p2c', title: 'Cerebral Palsy', duration: 36, done: false, tag: 'none' },
-                        { id: 'p2d', title: 'Seizures Part 1', duration: 30, done: false, tag: 'none' },
-                        { id: 'p2e', title: 'Seizures Part 2', duration: 25, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'p3', name: 'Hematology', icon: '🩸', ignored: false, lectures: [
-                        { id: 'p3a', title: 'Anemia Approach', duration: 25, done: false, tag: 'none' },
-                        { id: 'p3b', title: 'Iron Deficiency', duration: 25, done: false, tag: 'none' },
-                        { id: 'p3c', title: 'Thalassemia', duration: 30, done: false, tag: 'none' },
-                        { id: 'p3d', title: 'Sickle Cell', duration: 23, done: false, tag: 'none' },
-                        { id: 'p3e', title: 'Leukemia', duration: 28, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'p4', name: 'Neonatology', icon: '👶', ignored: false, lectures: [
-                        { id: 'p4a', title: 'Neonatal Sepsis', duration: 42, done: false, tag: 'none' },
-                        { id: 'p4b', title: 'Respiratory Distress', duration: 32, done: false, tag: 'none' },
-                        { id: 'p4c', title: 'Prematurity', duration: 32, done: false, tag: 'none' },
-                        { id: 'p4d', title: 'Neonatal Seizures', duration: 31, done: false, tag: 'none' },
-                        { id: 'p4e', title: 'HIE', duration: 40, done: false, tag: 'none' },
-                        { id: 'p4f', title: 'Neonatal Exam', duration: 97, done: false, tag: 'none' }
-                    ]
-                },
-                {
-                    id: 'p5', name: 'Emergency', icon: '🚨', ignored: false, lectures: [
-                        { id: 'p5a', title: 'Pediatric PLS', duration: 22, done: false, tag: 'none' },
-                        { id: 'p5b', title: 'PALS', duration: 10, done: false, tag: 'none' },
-                        { id: 'p5c', title: 'Anaphylaxis', duration: 9, done: false, tag: 'none' },
-                        { id: 'p5d', title: 'Poisoning', duration: 20, done: false, tag: 'none' },
-                        { id: 'p5e', title: 'Dehydration', duration: 40, done: false, tag: 'none' },
-                        { id: 'p5f', title: 'Gastroenteritis', duration: 30, done: false, tag: 'none' }
-                    ]
-                }
-            ]
+            medicine: [],
+            pediatrics: []
         };
 
         function app() {
@@ -790,9 +725,9 @@ Lecture 3 - 60"></textarea>
                 settings: { examDate: '2026-04-15', planEndDate: '2026-04-01' },
                 parser: { subject: 'medicine', chapter: '', newName: '', newIcon: '📚', text: '' },
                 data: { medicine: [], pediatrics: [] },
+                todayCache: { date: '', medicine: [], pediatrics: [] },
 
                 async init() {
-                    this.data = JSON.parse(JSON.stringify(DEFAULT_DATA));
                     const setup = () => {
                         window.fb.onAuthStateChanged(window.fb.auth, async (u) => {
                             this.user = u;
@@ -821,13 +756,15 @@ Lecture 3 - 60"></textarea>
                     this.unsub = window.fb.onSnapshot(ref, (doc) => {
                         if (doc.exists()) {
                             const d = doc.data();
-                            if (d.data && d.data.medicine && d.data.medicine.length > 0) {
+                            if (d.data && (d.data.medicine?.length > 0 || d.data.pediatrics?.length > 0)) {
                                 this.data = d.data;
                             }
                             if (d.settings) this.settings = { ...this.settings, ...d.settings };
+                            if (d.todayCache) this.todayCache = d.todayCache;
                         } else {
                             this.save();
                         }
+                        this.refreshTodayTasks();
                         this.$nextTick(() => this.initSortable());
                     });
                 },
@@ -836,8 +773,26 @@ Lecture 3 - 60"></textarea>
                     if (!this.user) return;
                     await window.fb.setDoc(window.fb.doc(window.fb.db, 'users', this.user.uid), {
                         data: JSON.parse(JSON.stringify(this.data)),
-                        settings: this.settings
+                        settings: this.settings,
+                        todayCache: this.todayCache
                     }, { merge: true });
+                },
+
+                // Format helpers
+                formatHours(hrs) {
+                    const h = Math.floor(hrs);
+                    const m = Math.round((hrs - h) * 60);
+                    if (h === 0) return m + ' دقيقة';
+                    if (m === 0) return h + ' ساعة';
+                    return h + ' ساعة و ' + m + ' دقيقة';
+                },
+
+                formatMins(mins) {
+                    const h = Math.floor(mins / 60);
+                    const m = mins % 60;
+                    if (h === 0) return m + ' دقيقة';
+                    if (m === 0) return h + ' ساعة';
+                    return h + ' ساعة و ' + m + ' دقيقة';
                 },
 
                 initSortable() {
@@ -859,7 +814,7 @@ Lecture 3 - 60"></textarea>
                         }
                     });
                     ['medicine', 'pediatrics'].forEach(subj => {
-                        this.data[subj].forEach((ch) => {
+                        this.data[subj]?.forEach((ch) => {
                             const el = document.getElementById('lec-' + ch.id);
                             if (el && !el._sortable) {
                                 el._sortable = new Sortable(el, {
@@ -907,8 +862,8 @@ Lecture 3 - 60"></textarea>
 
                 setTag(item, tag) {
                     for (const s of ['medicine', 'pediatrics']) {
-                        for (const ch of this.data[s]) {
-                            for (const l of ch.lectures) {
+                        for (const ch of this.data[s] || []) {
+                            for (const l of ch.lectures || []) {
                                 if (l.id === item.id) { l.tag = tag; this.save(); return; }
                             }
                         }
@@ -932,7 +887,12 @@ Lecture 3 - 60"></textarea>
                 // Calculations
                 get daysToExam() { return Math.max(0, Math.ceil((new Date(this.settings.examDate) - new Date()) / 86400000)); },
                 get planDaysRemaining() { return Math.max(1, Math.ceil((new Date(this.settings.planEndDate) - new Date()) / 86400000)); },
-                get daysPassed() { return Math.max(0, Math.ceil((new Date() - new Date(this.settings.startDate || '2026-02-01')) / 86400000)); },
+
+                getTotalHours(subj) {
+                    let t = 0;
+                    this.data[subj]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => t += l.duration); });
+                    return t / 60;
+                },
 
                 getRemainingHours(subj) {
                     let t = 0;
@@ -949,18 +909,16 @@ Lecture 3 - 60"></textarea>
                     return this.getDailyRequired('medicine') + this.getDailyRequired('pediatrics');
                 },
 
-                get totalHours() {
-                    let t = 0;
-                    ['medicine', 'pediatrics'].forEach(s => this.data[s]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => t += l.duration); }));
-                    return (t / 60).toFixed(1);
+                get totalHoursNum() {
+                    return this.getTotalHours('medicine') + this.getTotalHours('pediatrics');
                 },
-                get hoursDone() {
-                    let t = 0;
-                    ['medicine', 'pediatrics'].forEach(s => this.data[s]?.forEach(c => c.lectures?.forEach(l => { if (l.done) t += l.duration; })));
-                    return (t / 60).toFixed(1);
+
+                get remainingHoursNum() {
+                    return this.getRemainingHours('medicine') + this.getRemainingHours('pediatrics');
                 },
+
                 get totalProgress() {
-                    const t = parseFloat(this.totalHours), d = parseFloat(this.hoursDone);
+                    const t = this.totalHoursNum, d = t - this.remainingHoursNum;
                     return t > 0 ? Math.round(d / t * 100) : 0;
                 },
 
@@ -970,66 +928,109 @@ Lecture 3 - 60"></textarea>
                     return t > 0 ? Math.round(d / t * 100) : 0;
                 },
                 getStats(subj) {
-                    let t = 0, d = 0, ht = 0, hd = 0;
-                    this.data[subj]?.forEach(c => c.lectures?.forEach(l => { t++; ht += l.duration; if (l.done) { d++; hd += l.duration; } }));
-                    return { total: t, done: d, hTotal: (ht / 60).toFixed(1), hDone: (hd / 60).toFixed(1) };
+                    let t = 0, d = 0;
+                    this.data[subj]?.forEach(c => c.lectures?.forEach(l => { t++; if (l.done) d++; }));
+                    return { total: t, done: d };
                 },
                 getChProg(subj, i) {
                     const ch = this.data[subj]?.[i];
                     if (!ch || !ch.lectures?.length) return 0;
                     return Math.round(ch.lectures.filter(l => l.done).length / ch.lectures.length * 100);
                 },
-                getChHrs(subj, i) {
+                getChHrsNum(subj, i) {
                     const ch = this.data[subj]?.[i];
-                    if (!ch) return '0';
-                    return (ch.lectures?.reduce((a, l) => a + l.duration, 0) / 60).toFixed(1);
+                    if (!ch) return 0;
+                    return ch.lectures?.reduce((a, l) => a + l.duration, 0) / 60;
                 },
 
                 get expectedHours() {
-                    const total = this.daysPassed + this.daysToExam;
-                    if (!total) return 0;
-                    return (parseFloat(this.totalHours) / total) * this.daysPassed;
+                    const totalDays = this.planDaysRemaining + Math.ceil((new Date() - new Date(this.settings.planEndDate)) / 86400000 * -1);
+                    const passed = Math.max(0, totalDays - this.planDaysRemaining);
+                    if (totalDays <= 0) return 0;
+                    return (this.totalHoursNum / totalDays) * passed;
                 },
-                get delayHours() { return Math.max(0, this.expectedHours - parseFloat(this.hoursDone)); },
-                get extraMinutes() { return this.daysToExam > 0 ? Math.round(this.delayHours * 60 / this.daysToExam) : 0; },
+                get delayHours() {
+                    const done = this.totalHoursNum - this.remainingHoursNum;
+                    return Math.max(0, this.expectedHours - done);
+                },
+                get extraMinutes() { return this.planDaysRemaining > 0 ? Math.round(this.delayHours * 60 / this.planDaysRemaining) : 0; },
 
-                // Daily Tasks - New Algorithm
-                getTodayTasks(subj) {
-                    const tasks = [];
+                // Daily Tasks - Fixed per day
+                getToday() {
+                    return new Date().toISOString().split('T')[0];
+                },
+
+                refreshTodayTasks() {
+                    const today = this.getToday();
+                    if (this.todayCache.date !== today) {
+                        // New day - recalculate tasks
+                        this.todayCache = {
+                            date: today,
+                            medicine: this.calculateTodayTasks('medicine'),
+                            pediatrics: this.calculateTodayTasks('pediatrics')
+                        };
+                        this.save();
+                    }
+                },
+
+                calculateTodayTasks(subj) {
+                    const taskIds = [];
                     let totalMins = 0;
                     const targetMins = this.getDailyRequired(subj) * 60;
 
-                    // Go through chapters in order (first = top priority)
                     for (const ch of (this.data[subj] || [])) {
                         if (ch.ignored) continue;
-
-                        // Go through lectures in order
                         for (const l of (ch.lectures || [])) {
                             if (l.done) continue;
 
-                            // Check if adding this would exceed target significantly
-                            if (totalMins >= targetMins) {
-                                // Already have enough, but check if we should add one more
-                                // (lean towards more rather than less)
-                                const diff = totalMins - targetMins;
-                                if (diff > 30) break; // Already have 30+ extra minutes, stop
+                            // Always add at least one if we have none
+                            if (taskIds.length === 0) {
+                                taskIds.push(l.id);
+                                totalMins += l.duration;
+                                continue;
                             }
 
-                            tasks.push({ ...l, subject: subj, chapter: ch.name, chapterId: ch.id });
-                            totalMins += l.duration;
-
-                            // If we've gone way over (more than 60 mins over target), stop
-                            if (totalMins > targetMins + 60) break;
+                            // If adding this gets us closer to target, add it
+                            if (totalMins < targetMins) {
+                                taskIds.push(l.id);
+                                totalMins += l.duration;
+                            } else {
+                                // We're at or over target - check if we should add one more
+                                const withoutThis = Math.abs(totalMins - targetMins);
+                                const withThis = Math.abs(totalMins + l.duration - targetMins);
+                                if (withThis < withoutThis) {
+                                    // Adding this gets us closer - add it (lean towards more)
+                                    taskIds.push(l.id);
+                                    totalMins += l.duration;
+                                }
+                                break;
+                            }
                         }
-
-                        if (totalMins > targetMins + 60) break;
+                        if (totalMins >= targetMins) break;
                     }
+                    return taskIds;
+                },
 
+                getFixedTodayTasks(subj) {
+                    const ids = this.todayCache[subj] || [];
+                    const tasks = [];
+                    for (const ch of (this.data[subj] || [])) {
+                        for (const l of (ch.lectures || [])) {
+                            if (ids.includes(l.id)) {
+                                tasks.push({ ...l, chapter: ch.name });
+                            }
+                        }
+                    }
                     return tasks;
                 },
 
                 getTodayTasksTime(subj) {
-                    return this.getTodayTasks(subj).reduce((a, t) => a + t.duration, 0);
+                    return this.getFixedTodayTasks(subj).reduce((a, t) => a + t.duration, 0);
+                },
+
+                todayTasksComplete(subj) {
+                    const tasks = this.getFixedTodayTasks(subj);
+                    return tasks.length > 0 && tasks.every(t => t.done);
                 },
 
                 markDone(task) {
@@ -1043,15 +1044,13 @@ Lecture 3 - 60"></textarea>
                 },
 
                 forceReload() {
-                    this.data = JSON.parse(JSON.stringify(DEFAULT_DATA));
-                    this.save();
-                    this.$nextTick(() => this.initSortable());
-                    alert('تم تحميل البيانات الأصلية!');
+                    alert('لا توجد بيانات افتراضية. أضف محاضراتك من الإعدادات.');
                 },
 
                 resetAll() {
                     if (confirm('هل أنت متأكد من حذف جميع البيانات؟')) {
-                        this.data = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                        this.data = { medicine: [], pediatrics: [] };
+                        this.todayCache = { date: '', medicine: [], pediatrics: [] };
                         this.save();
                     }
                 },
@@ -1097,6 +1096,7 @@ Lecture 3 - 60"></textarea>
                     }
 
                     this.parser = { subject: this.parser.subject, chapter: '', newName: '', newIcon: '📚', text: '' };
+                    this.refreshTodayTasks();
                     this.save();
                     this.$nextTick(() => this.initSortable());
                 }
