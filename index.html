@@ -807,24 +807,33 @@ Lecture 3 - 60"></textarea>
                             if (userDoc.exists()) {
                                 const userData = userDoc.data();
 
-                                // 3. Merge courses with user progress
-                                for (const subject of ['medicine', 'pediatrics']) {
-                                    this.data[subject] = JSON.parse(JSON.stringify(coursesData[subject]));
-                                    const userProgress = userData.progress?.[subject] || {};
+                                // EMERGENCY FALLBACK: Check if old data exists
+                                const hasOldData = userData.data && (userData.data.medicine?.length > 0 || userData.data.pediatrics?.length > 0);
+                                const coursesEmpty = coursesData.medicine.length === 0 && coursesData.pediatrics.length === 0;
 
-                                    // Apply user's progress (done, tags, etc.)
-                                    this.data[subject].forEach(chapter => {
-                                        if (chapter.ignored !== undefined) {
-                                            // Keep chapter-level settings from courses
-                                        }
-                                        chapter.lectures?.forEach(lecture => {
-                                            const lectureProgress = userProgress[lecture.id];
-                                            if (lectureProgress) {
-                                                lecture.done = lectureProgress.done || false;
-                                                lecture.tag = lectureProgress.tag || 'none';
+                                if (coursesEmpty && hasOldData) {
+                                    // Use OLD structure - user's lectures are still there!
+                                    this.data = userData.data;
+                                } else {
+                                    // 3. Merge courses with user progress
+                                    for (const subject of ['medicine', 'pediatrics']) {
+                                        this.data[subject] = JSON.parse(JSON.stringify(coursesData[subject]));
+                                        const userProgress = userData.progress?.[subject] || {};
+
+                                        // Apply user's progress (done, tags, etc.)
+                                        this.data[subject].forEach(chapter => {
+                                            if (chapter.ignored !== undefined) {
+                                                // Keep chapter-level settings from courses
                                             }
+                                            chapter.lectures?.forEach(lecture => {
+                                                const lectureProgress = userProgress[lecture.id];
+                                                if (lectureProgress) {
+                                                    lecture.done = lectureProgress.done || false;
+                                                    lecture.tag = lectureProgress.tag || 'none';
+                                                }
+                                            });
                                         });
-                                    });
+                                    }
                                 }
 
                                 // Load settings and cache
