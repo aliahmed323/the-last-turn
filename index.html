@@ -276,48 +276,6 @@
             <button @click="login()" class="btn btn-primary w-full py-4 text-lg">🔐 تسجيل الدخول بـ Google</button>
         </div>
     </div>
-    <!-- Enrollment Modal -->
-    <div x-show="user && showEnrollModal" x-transition
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-        <div class="glass p-8 max-w-md w-full text-center">
-            <h2 class="text-3xl font-bold mb-4">👋 مرحباً بك!</h2>
-            <p class="text-gray-400 mb-8">اختر المواد التي تدرسها حالياً لتظهر لك في القائمة</p>
-
-            <div class="space-y-4 mb-8">
-                <button @click="toggleEnrollment('medicine')"
-                    class="w-full p-4 rounded-xl border flex items-center justify-between transition group"
-                    :class="isEnrolled('medicine') ? 'bg-purple-500/20 border-purple-500 text-white' : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-400'">
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">🫀</span>
-                        <span class="font-bold text-lg">الباطنة (Internal Medicine)</span>
-                    </div>
-                    <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
-                        :class="isEnrolled('medicine') ? 'border-purple-500 bg-purple-500' : 'border-gray-500'">
-                        <span x-show="isEnrolled('medicine')" class="text-xs">✓</span>
-                    </div>
-                </button>
-
-                <button @click="toggleEnrollment('pediatrics')"
-                    class="w-full p-4 rounded-xl border flex items-center justify-between transition group"
-                    :class="isEnrolled('pediatrics') ? 'bg-cyan-500/20 border-cyan-500 text-white' : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-400'">
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">👶</span>
-                        <span class="font-bold text-lg">الأطفال (Pediatrics)</span>
-                    </div>
-                    <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
-                        :class="isEnrolled('pediatrics') ? 'border-cyan-500 bg-cyan-500' : 'border-gray-500'">
-                        <span x-show="isEnrolled('pediatrics')" class="text-xs">✓</span>
-                    </div>
-                </button>
-            </div>
-
-            <button @click="showEnrollModal=false" :disabled="enrolledCourses.length===0"
-                class="btn btn-primary w-full py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed">
-                ✅ تأكيد الاختيار
-            </button>
-        </div>
-    </div>
-
     <!-- Main App -->
     <div x-show="user&&!loading" x-transition class="min-h-screen">
 
@@ -769,59 +727,49 @@
                                             <!-- Tooltip -->
                                             <!-- Racer Avatar -->
                                             <div class="absolute top-1/2 -translate-y-1/2 transition-all duration-700 ease-out group flex flex-col items-center"
-                                                :style="`left: ${Math.min(student.progress, 98)}%; z-index: ${leaderboardData[subj].length + 100 - index}`">
+                                                <template x-for="(student, index) in leaderboardData[subj]"
+                                                :key="student.uid">
+                                                <!-- Racer Avatar -->
+                                                <div class="absolute top-1/2 -translate-y-1/2 transition-all duration-700 ease-out group flex flex-col items-center"
+                                                    :style="`left: ${Math.min(student.progress, 98)}%; z-index: ${leaderboardData[subj].length + 100 - index}`">
 
-                                                <!-- Rank Badge (Funny Titles) -->
-                                                <div x-show="index === 0"
-                                                    class="absolute -top-10 text-2xl animate-bounce z-50 filter drop-shadow-lg"
-                                                    title="الأول - وحش">🦁</div>
-                                                <div x-show="index > 0 && index === leaderboardData[subj].length - 1"
-                                                    class="absolute -top-8 text-2xl animate-pulse z-50 filter drop-shadow-lg"
-                                                    title="الأخير - كسول">🗑️</div>
+                                                    <!-- Image Ring -->
+                                                    <div class="relative transition-transform duration-300 hover:scale-125 hover:z-50"
+                                                        :class="{'z-40': student.uid === user.uid}">
 
-                                                <!-- Image Ring -->
-                                                <div class="relative transition-transform duration-300 hover:scale-125 hover:z-50"
-                                                    :class="{'z-40': student.uid === user.uid}">
+                                                        <!-- Status Glow/Border -->
+                                                        <div x-show="student.status === 'ahead'"
+                                                            class="absolute inset-0 bg-green-500 rounded-full blur-md opacity-40">
+                                                        </div>
+                                                        <div x-show="student.status === 'behind'"
+                                                            class="absolute inset-0 bg-red-500 rounded-full blur-md opacity-20">
+                                                        </div>
 
-                                                    <!-- Glowing Effect for First Place -->
-                                                    <div x-show="index === 0"
-                                                        class="absolute inset-0 bg-yellow-500 rounded-full blur-md opacity-60 animate-pulse">
-                                                    </div>
-
-                                                    <!-- Status Glow/Border -->
-                                                    <div x-show="student.status === 'ahead'"
-                                                        class="absolute inset-0 bg-green-500 rounded-full blur-md opacity-40">
-                                                    </div>
-                                                    <div x-show="student.status === 'behind'"
-                                                        class="absolute inset-0 bg-red-500 rounded-full blur-md opacity-20">
-                                                    </div>
-
-                                                    <img :src="student.photo || 'https://ui-avatars.com/api/?name='+student.name"
-                                                        class="w-12 h-12 rounded-full border-2 object-cover relative z-10 bg-[#0f0f15]"
-                                                        :class="{
-                                                            'border-yellow-400 w-14 h-14 ring-4 ring-yellow-500/30': index === 0,
-                                                            'border-green-400': student.status === 'ahead' && index !== 0,
+                                                        <img :src="student.photo || 'https://ui-avatars.com/api/?name='+student.name"
+                                                            class="w-12 h-12 rounded-full border-2 object-cover relative z-10 bg-[#0f0f15]"
+                                                            :class="{
+                                                            'border-green-400': student.status === 'ahead',
                                                             'border-red-400': student.status === 'behind',
-                                                            'border-blue-400': student.status === 'on-track' && index !== 0 && student.status !== 'behind',
-                                                            'grayscale opacity-80': index === leaderboardData[subj].length - 1 && index > 0
+                                                            'border-blue-400': student.status === 'on-track' && student.status !== 'behind',
+                                                            'border-yellow-400 w-14 h-14 ring-4 ring-yellow-500/30': student.uid === user.uid
                                                         }">
 
-                                                    <!-- 'You' Indicator -->
-                                                    <div x-show="student.uid === user.uid"
-                                                        class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap z-50 shadow-lg">
-                                                        أنت
+                                                        <!-- 'You' Indicator -->
+                                                        <div x-show="student.uid === user.uid"
+                                                            class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap z-50 shadow-lg">
+                                                            أنت
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Visible Stats (Name + %) -->
+                                                    <div class="mt-2 text-center pointer-events-none">
+                                                        <p class="text-[10px] font-bold text-white whitespace-nowrap bg-black/50 px-1.5 rounded mb-0.5"
+                                                            x-text="student.name.split(' ')[0]"></p>
+                                                        <p class="text-[10px] font-bold"
+                                                            :class="student.status === 'ahead' ? 'text-green-400' : (student.status === 'behind' ? 'text-red-400' : 'text-blue-400')"
+                                                            x-text="student.progress + '%'"></p>
                                                     </div>
                                                 </div>
-
-                                                <!-- Visible Stats (Name + %) -->
-                                                <div class="mt-2 text-center pointer-events-none">
-                                                    <p class="text-[10px] font-bold text-white whitespace-nowrap bg-black/50 px-1.5 rounded mb-0.5"
-                                                        x-text="student.name.split(' ')[0]"></p>
-                                                    <p class="text-[10px] font-bold"
-                                                        :class="student.status === 'ahead' ? 'text-green-400' : (student.status === 'behind' ? 'text-red-400' : 'text-blue-400')"
-                                                        x-text="student.progress + '%'"></p>
-                                                </div>
-                                            </div>
                                     </template>
                                 </div>
 
@@ -836,6 +784,24 @@
                 <h2 class="text-3xl font-bold mb-6">⚙️ الإعدادات</h2>
 
                 <div class="space-y-4">
+                    <div class="stat-card">
+                        <label class="block text-gray-400 mb-2">📚 موادي الدراسية</label>
+                        <div class="space-y-2">
+                            <button @click="toggleEnrollment('medicine')"
+                                class="w-full p-3 rounded-lg border flex items-center justify-between transition"
+                                :class="isEnrolled('medicine') ? 'bg-purple-500/20 border-purple-500 text-white' : 'bg-white/5 border-white/10 text-gray-500'">
+                                <span>🫀 الباطنة (Medicine)</span>
+                                <span x-text="isEnrolled('medicine') ? '✅ مفعل' : '❌ مخفي'"></span>
+                            </button>
+                            <button @click="toggleEnrollment('pediatrics')"
+                                class="w-full p-3 rounded-lg border flex items-center justify-between transition"
+                                :class="isEnrolled('pediatrics') ? 'bg-cyan-500/20 border-cyan-500 text-white' : 'bg-white/5 border-white/10 text-gray-500'">
+                                <span>👶 الأطفال (Pediatrics)</span>
+                                <span x-text="isEnrolled('pediatrics') ? '✅ مفعل' : '❌ مخفي'"></span>
+                            </button>
+                        </div>
+                    </div>
+
                     <div class="stat-card">
                         <label class="block text-gray-400 mb-2">📅 تاريخ الامتحان</label>
                         <input type="date" x-model="settings.examDate" @change="save()">
@@ -1056,18 +1022,12 @@ Lecture 3 - 60"></textarea>
                                 if (userData.todayCache) this.todayCache = userData.todayCache;
 
                                 // Load Enrollment
-                                this.enrolledCourses = userData.enrolledCourses || [];
-                                // Load Enrollment
-                                this.enrolledCourses = userData.enrolledCourses || [];
-                                if (this.enrolledCourses.length === 0) {
-                                    this.showEnrollModal = true;
-                                }
+                                this.enrolledCourses = userData.enrolledCourses || ['medicine', 'pediatrics'];
 
                             } else {
                                 // New User: Use courses data directly
                                 this.data = JSON.parse(JSON.stringify(coursesData));
-                                this.enrolledCourses = [];
-                                this.showEnrollModal = true;
+                                this.enrolledCourses = ['medicine', 'pediatrics'];
                                 this.save();
                             }
 
