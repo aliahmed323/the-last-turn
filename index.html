@@ -12,9 +12,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, getDocs, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
         const app = initializeApp({ apiKey: "AIzaSyBpMhO7a6p4ktKjoEta1MOTSLF345eIsRQ", authDomain: "the-last-turn.firebaseapp.com", projectId: "the-last-turn", storageBucket: "the-last-turn.firebasestorage.app", messagingSenderId: "747668413856", appId: "1:747668413856:web:6c67a8b56e7bdec53d58c5" });
-        window.fb = { auth: getAuth(app), db: getFirestore(app), provider: new GoogleAuthProvider(), signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, onSnapshot };
+        window.fb = { auth: getAuth(app), db: getFirestore(app), provider: new GoogleAuthProvider(), signInWithPopup, onAuthStateChanged, signOut, doc, setDoc, onSnapshot, collection, getDocs, getDoc };
         window.dispatchEvent(new Event('fb-ready'));
     </script>
     <style>
@@ -720,6 +720,16 @@ Lecture 3 - 60"></textarea>
                         </div>
                     </div>
 
+                    <!-- Admin Only: Publish Courses -->
+                    <div x-show="isAdmin" class="stat-card border-purple-500/30 bg-purple-500/10">
+                        <h3 class="font-bold text-purple-400 mb-3 text-lg">👑 لوحة الأدمن</h3>
+                        <button @click="publishCourses()"
+                            class="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl transition">
+                            📤 نشر المحاضرات لجميع الطلبة
+                        </button>
+                        <p class="text-sm text-gray-400 mt-2">انقر لنشر المحاضرات الحالية في قاعدة البيانات المشتركة</p>
+                    </div>
+
                     <!-- Actions -->
                     <div class="stat-card border-yellow-500/30">
                         <button @click="forceReload()" class="text-yellow-400 font-bold">🔄 إعادة تحميل البيانات
@@ -778,29 +788,92 @@ Lecture 3 - 60"></textarea>
                 },
 
                 async load() {
-                    const ref = window.fb.doc(window.fb.db, 'users', this.user.uid);
-                    this.unsub = window.fb.onSnapshot(ref, (doc) => {
-                        if (doc.exists()) {
-                            const d = doc.data();
-                            if (d.data && (d.data.medicine?.length > 0 || d.data.pediatrics?.length > 0)) {
-                                this.data = d.data;
+                    try {
+                        // 1. Load shared courses
+                        const coursesData = { medicine: [], pediatrics: [] };
+
+                        for (const subject of ['medicine', 'pediatrics']) {
+                            const courseRef = window.fb.doc(window.fb.db, 'courses', subject);
+                            const courseDoc = await window.fb.getDoc(courseRef);
+
+                            if (courseDoc.exists()) {
+                                coursesData[subject] = courseDoc.data().chapters || [];
                             }
-                            if (d.settings) this.settings = { ...this.settings, ...d.settings };
-                            if (d.todayCache) this.todayCache = d.todayCache;
-                        } else {
-                            this.save();
                         }
-                        this.refreshTodayTasks();
-                        this.$nextTick(() => this.initSortable());
-                    });
+
+                        // 2. Load user data
+                        const userRef = window.fb.doc(window.fb.db, 'users', this.user.uid);
+                        this.unsub = window.fb.onSnapshot(userRef, (userDoc) => {
+                            if (userDoc.exists()) {
+                                const userData = userDoc.data();
+
+                                // 3. Merge courses with user progress
+                                for (const subject of ['medicine', 'pediatrics']) {
+                                    this.data[subject] = JSON.parse(JSON.stringify(coursesData[subject]));
+                                    const userProgress = userData.progress?.[subject] || {};
+
+                                    // Apply user's progress (done, tags, etc.)
+                                    this.data[subject].forEach(chapter => {
+                                        if (chapter.ignored !== undefined) {
+                                            // Keep chapter-level settings from courses
+                                        }
+                                        chapter.lectures?.forEach(lecture => {
+                                            const lectureProgress = userProgress[lecture.id];
+                                            if (lectureProgress) {
+                                                lecture.done = lectureProgress.done || false;
+                                                lecture.tag = lectureProgress.tag || 'none';
+                                            }
+                                        });
+                                    });
+                                }
+
+                                // Load settings and cache
+                                if (userData.settings) this.settings = { ...this.settings, ...userData.settings };
+                                if (userData.todayCache) this.todayCache = userData.todayCache;
+                            } else {
+                                // First time login: use courses data as-is
+                                this.data = JSON.parse(JSON.stringify(coursesData));
+                                this.save();
+                            }
+
+                            this.refreshTodayTasks();
+                            this.$nextTick(() => this.initSortable());
+                        });
+
+                    } catch (e) {
+                        console.error('Error loading data:', e);
+                        alert('خطأ في تحميل البيانات: ' + e.message);
+                    }
                 },
 
                 async save() {
                     if (!this.user) return;
+
+                    // Extract only user-specific progress
+                    const progress = { medicine: {}, pediatrics: {} };
+
+                    for (const subject of ['medicine', 'pediatrics']) {
+                        this.data[subject]?.forEach(chapter => {
+                            chapter.lectures?.forEach(lecture => {
+                                if (lecture.done || lecture.tag !== 'none') {
+                                    progress[subject][lecture.id] = {
+                                        done: lecture.done || false,
+                                        tag: lecture.tag || 'none'
+                                    };
+                                }
+                            });
+                        });
+                    }
+
                     await window.fb.setDoc(window.fb.doc(window.fb.db, 'users', this.user.uid), {
-                        data: JSON.parse(JSON.stringify(this.data)),
+                        progress: progress,
                         settings: this.settings,
-                        todayCache: this.todayCache
+                        todayCache: this.todayCache,
+                        profile: {
+                            name: this.user.displayName,
+                            photo: this.user.photoURL,
+                            email: this.user.email
+                        }
                     }, { merge: true });
                 },
 
@@ -1116,6 +1189,47 @@ Lecture 3 - 60"></textarea>
                             }
                         }
                     }
+                },
+
+                // Admin Functions
+                get isAdmin() {
+                    return this.user?.email === 'aliahmed323se@gmail.com';
+                },
+
+                async migrateDataToCourses() {
+                    if (!this.isAdmin) {
+                        alert('هذه الميزة متاحة للأدمن فقط');
+                        return;
+                    }
+
+                    if (!confirm('هل تريد نقل البيانات الحالية إلى المحاضرات المشتركة؟\nسيراها جميع الطلبة')) return;
+
+                    try {
+                        for (const subject of ['medicine', 'pediatrics']) {
+                            // Clean data: remove user-specific fields
+                            const cleanChapters = JSON.parse(JSON.stringify(this.data[subject]));
+                            cleanChapters.forEach(ch => {
+                                ch.lectures?.forEach(l => {
+                                    delete l.done;
+                                    l.tag = 'none';
+                                });
+                            });
+
+                            await window.fb.setDoc(
+                                window.fb.doc(window.fb.db, 'courses', subject),
+                                { chapters: cleanChapters },
+                                { merge: true }
+                            );
+                        }
+                        alert('✅ تم نشر المحاضرات بنجاح!\nالآن سيراها جميع الطلبة.');
+                    } catch (e) {
+                        alert('خطأ: ' + e.message);
+                    }
+                },
+
+                async publishCourses() {
+                    if (!this.isAdmin) return;
+                    await this.migrateDataToCourses();
                 },
 
                 forceReload() {
