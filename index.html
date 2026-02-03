@@ -394,17 +394,38 @@
                     </div>
                 </div>
 
-                <!-- Delay Alert (placed prominently here) -->
-                <div x-show="delayHours>0" class="stat-card border-red-500/50 bg-red-500/5 mb-8">
+                <!-- Motivational Card -->
+                <!-- On Track / Ahead -->
+                <div x-show="delayHours<=0" class="stat-card border-green-500/50 bg-green-500/5 mb-8">
                     <div class="flex items-start gap-4">
-                        <span class="text-5xl">⚠️</span>
+                        <span class="text-5xl" x-text="getRandomEmoji('good')">👏</span>
                         <div class="flex-1">
-                            <h3 class="text-xl font-bold text-red-400 mb-2">أنت متأخر عن الخطة!</h3>
-                            <p class="text-gray-300 mb-3">متأخر بـ <span class="text-red-400 font-bold text-xl"
-                                    x-text="formatHours(delayHours)"></span></p>
+                            <h3 class="text-xl font-bold text-green-400 mb-2" x-text="getMotivationalTitle('good')">
+                                أحسنت!</h3>
+                            <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('good')"></p>
                             <div class="bg-black/30 rounded-xl p-4">
-                                <p class="text-gray-400 text-sm">للتعويض، يجب إضافة يومياً:</p>
-                                <p class="text-3xl font-bold text-orange-400" x-text="extraMinutes+' دقيقة'"></p>
+                                <p class="text-gray-400 text-sm">تقدمك:</p>
+                                <p class="text-2xl font-bold text-green-400" x-text="totalProgress+'% مكتمل'"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Behind Schedule -->
+                <div x-show="delayHours>0" class="stat-card border-orange-500/50 bg-orange-500/5 mb-8">
+                    <div class="flex items-start gap-4">
+                        <span class="text-5xl" x-text="getRandomEmoji('encourage')">💪</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-orange-400 mb-2"
+                                x-text="getMotivationalTitle('encourage')">لا تستسلم!</h3>
+                            <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('encourage')"></p>
+                            <div class="bg-black/30 rounded-xl p-4 mb-3">
+                                <p class="text-gray-400 text-sm">متأخر بـ</p>
+                                <p class="text-2xl font-bold text-orange-400" x-text="formatHours(delayHours)"></p>
+                            </div>
+                            <div class="bg-black/30 rounded-xl p-4">
+                                <p class="text-gray-400 text-sm">للتعويض، أضف يومياً:</p>
+                                <p class="text-2xl font-bold text-yellow-400" x-text="extraMinutes+' دقيقة'"></p>
                             </div>
                         </div>
                     </div>
@@ -969,6 +990,45 @@ Lecture 3 - 60"></textarea>
                     return Math.max(0, this.expectedHours - done);
                 },
                 get extraMinutes() { return this.planDaysRemaining > 0 ? Math.round(this.delayHours * 60 / this.planDaysRemaining) : 0; },
+
+                // Motivational Messages
+                getRandomEmoji(type) {
+                    const emojis = type === 'good'
+                        ? ['👏', '🎉', '⭐', '🏆', '🔥', '💯', '🚀', '✨', '👑', '💪']
+                        : ['💪', '🌟', '🎯', '⚡', '🦁', '🔱', '💎', '🌈', '🎓', '⏰'];
+                    return emojis[Math.floor(Math.random() * emojis.length)];
+                },
+
+                getMotivationalTitle(type) {
+                    const titles = type === 'good'
+                        ? ['أحسنت! أنت ملتزم بالخطة', 'رائع! استمر هكذا', 'ممتاز! أنت على الطريق الصحيح', 'بطل! تقدمك مذهل', 'مبدع! خطتك ناجحة']
+                        : ['لا تستسلم!', 'أنت قادر على التعويض', 'كل تأخير يُعوَّض', 'النجاح يحتاج صبراً', 'ابدأ الآن!'];
+                    return titles[Math.floor(Math.random() * titles.length)];
+                },
+
+                getMotivationalQuote(type) {
+                    const quotes = type === 'good'
+                        ? [
+                            'الالتزام هو سر النجاح. استمر!',
+                            'كل محاضرة تُنهيها هي خطوة نحو حلمك.',
+                            'أنت تصنع مستقبلك بكل لحظة تقضيها في الدراسة.',
+                            'التميز ليس صدفة، بل نتيجة جهد متواصل.',
+                            'الطبيب الناجح يبدأ بطالب ملتزم.',
+                            'كل ساعة تستثمرها اليوم ستُكافأ غداً.',
+                            'أنت في الطريق الصحيح، لا تتوقف!'
+                        ]
+                        : [
+                            'ليس المهم أن تسقط، بل أن تنهض.',
+                            'كل يوم فرصة جديدة للبدء من جديد.',
+                            'التأخير ليس نهاية العالم، التوقف هو.',
+                            'الطريق إلى الألف ميل يبدأ بخطوة.',
+                            'لا تقارن نفسك بالآخرين، قارنها بنفسك أمس.',
+                            'النجاح ليس نهائياً والفشل ليس قاتلاً.',
+                            'ابدأ من حيث أنت، استخدم ما لديك.',
+                            'العظماء لا يستسلمون عند أول عقبة.'
+                        ];
+                    return quotes[Math.floor(Math.random() * quotes.length)];
+                },
 
                 // Daily Tasks - Fixed per day
                 getToday() {
