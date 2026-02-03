@@ -762,12 +762,15 @@
                                                     </div>
 
                                                     <!-- Visible Stats (Name + %) -->
-                                                    <div class="mt-2 text-center pointer-events-none">
-                                                        <p class="text-[10px] font-bold text-white whitespace-nowrap bg-black/50 px-1.5 rounded mb-0.5"
-                                                            x-text="student.name.split(' ')[0]"></p>
-                                                        <p class="text-[10px] font-bold"
+                                                    <div
+                                                        class="mt-10 flex flex-col items-center pointer-events-none transform translate-y-1 w-28">
+                                                        <span
+                                                            class="text-[9px] font-bold text-white bg-black/70 px-2 py-0.5 rounded-full mb-1 truncate max-w-full shadow-sm border border-white/10"
+                                                            x-text="student.name.split(' ')[0]"></span>
+                                                        <span
+                                                            class="text-[9px] font-bold bg-black/40 px-1.5 py-0.5 rounded-md backdrop-blur-sm shadow-sm"
                                                             :class="student.status === 'ahead' ? 'text-green-400' : (student.status === 'behind' ? 'text-red-400' : 'text-blue-400')"
-                                                            x-text="student.progress + '%'"></p>
+                                                            x-text="student.progress + '%'"></span>
                                                     </div>
                                                 </div>
                                     </template>
@@ -923,31 +926,29 @@ Lecture 3 - 60"></textarea>
                     this.save();
                 },
 
-                async fetchLeaderboard() {
-                    this.leaderboardLoading = true;
-                    try {
-                        for (const subj of ['medicine', 'pediatrics']) {
-                            const ref = window.fb.collection(window.fb.db, 'leaderboard', subj, 'students');
-                            const snap = await window.fb.getDocs(ref);
+                subscribeToLeaderboard() {
+                    const self = this;
+                    ['medicine', 'pediatrics'].forEach(subj => {
+                        const ref = window.fb.collection(window.fb.db, 'leaderboard', subj, 'students');
+                        window.fb.onSnapshot(ref, (snap) => {
                             const students = [];
-                            snap.forEach(doc => {
-                                students.push(doc.data());
-                            });
+                            snap.forEach(doc => students.push(doc.data()));
                             // Sort by progress descending
-                            this.leaderboardData[subj] = students.sort((a, b) => b.progress - a.progress);
-                        }
-                    } catch (e) {
-                        console.error('Error fetching leaderboard:', e);
-                    } finally {
-                        this.leaderboardLoading = false;
-                    }
+                            self.leaderboardData[subj] = students.sort((a, b) => b.progress - a.progress);
+                        }, (error) => {
+                            console.error("Error listening to leaderboard:", error);
+                        });
+                    });
                 },
 
                 async init() {
                     const setup = () => {
                         window.fb.onAuthStateChanged(window.fb.auth, async (u) => {
                             this.user = u;
-                            if (u) await this.load();
+                            if (u) {
+                                this.subscribeToLeaderboard();
+                                await this.load();
+                            }
                             this.loading = false;
                             this.$nextTick(() => this.initSortable());
                         });
@@ -1408,7 +1409,7 @@ Lecture 3 - 60"></textarea>
 
                 // Admin Functions
                 get isAdmin() {
-                    return true; // this.user?.email === 'aliahmed323se@gmail.com';
+                    return this.user?.email === 'dr.aliahmed089@gmail.com';
                 },
 
                 async migrateDataToCourses() {
