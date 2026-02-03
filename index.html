@@ -275,868 +275,877 @@
             <p class="text-gray-400 mb-8">نظام الدراسة الطبية المتقدم</p>
             <button @click="login()" class="btn btn-primary w-full py-4 text-lg">🔐 تسجيل الدخول بـ Google</button>
         </div>
-        <!-- Enrollment Modal -->
-        <div x-show="user && (enrolledCourses.length === 0 || showEnrollModal)" x-transition
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <div class="glass p-8 max-w-md w-full text-center">
-                <h2 class="text-3xl font-bold mb-4">👋 مرحباً بك!</h2>
-                <p class="text-gray-400 mb-8">اختر المواد التي تدرسها حالياً لتظهر لك في القائمة</p>
+    </div>
+    <!-- Enrollment Modal -->
+    <div x-show="user && (enrolledCourses.length === 0 || showEnrollModal)" x-transition
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="glass p-8 max-w-md w-full text-center">
+            <h2 class="text-3xl font-bold mb-4">👋 مرحباً بك!</h2>
+            <p class="text-gray-400 mb-8">اختر المواد التي تدرسها حالياً لتظهر لك في القائمة</p>
 
-                <div class="space-y-4 mb-8">
-                    <button @click="toggleEnrollment('medicine')"
-                        class="w-full p-4 rounded-xl border flex items-center justify-between transition group"
-                        :class="isEnrolled('medicine') ? 'bg-purple-500/20 border-purple-500 text-white' : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-400'">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">🫀</span>
-                            <span class="font-bold text-lg">الباطنة (Internal Medicine)</span>
-                        </div>
-                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
-                            :class="isEnrolled('medicine') ? 'border-purple-500 bg-purple-500' : 'border-gray-500'">
-                            <span x-show="isEnrolled('medicine')" class="text-xs">✓</span>
-                        </div>
-                    </button>
+            <div class="space-y-4 mb-8">
+                <button @click="toggleEnrollment('medicine')"
+                    class="w-full p-4 rounded-xl border flex items-center justify-between transition group"
+                    :class="isEnrolled('medicine') ? 'bg-purple-500/20 border-purple-500 text-white' : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-400'">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">🫀</span>
+                        <span class="font-bold text-lg">الباطنة (Internal Medicine)</span>
+                    </div>
+                    <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
+                        :class="isEnrolled('medicine') ? 'border-purple-500 bg-purple-500' : 'border-gray-500'">
+                        <span x-show="isEnrolled('medicine')" class="text-xs">✓</span>
+                    </div>
+                </button>
 
-                    <button @click="toggleEnrollment('pediatrics')"
-                        class="w-full p-4 rounded-xl border flex items-center justify-between transition group"
-                        :class="isEnrolled('pediatrics') ? 'bg-cyan-500/20 border-cyan-500 text-white' : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-400'">
-                        <div class="flex items-center gap-3">
-                            <span class="text-2xl">👶</span>
-                            <span class="font-bold text-lg">الأطفال (Pediatrics)</span>
-                        </div>
-                        <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
-                            :class="isEnrolled('pediatrics') ? 'border-cyan-500 bg-cyan-500' : 'border-gray-500'">
-                            <span x-show="isEnrolled('pediatrics')" class="text-xs">✓</span>
-                        </div>
-                    </button>
-                </div>
-
-                <button @click="showEnrollModal=false" :disabled="enrolledCourses.length===0"
-                    class="btn btn-primary w-full py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed">
-                    ✅ تأكيد الاختيار
+                <button @click="toggleEnrollment('pediatrics')"
+                    class="w-full p-4 rounded-xl border flex items-center justify-between transition group"
+                    :class="isEnrolled('pediatrics') ? 'bg-cyan-500/20 border-cyan-500 text-white' : 'bg-white/5 border-white/10 hover:bg-white/10 text-gray-400'">
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">👶</span>
+                        <span class="font-bold text-lg">الأطفال (Pediatrics)</span>
+                    </div>
+                    <div class="w-6 h-6 rounded-full border-2 flex items-center justify-center"
+                        :class="isEnrolled('pediatrics') ? 'border-cyan-500 bg-cyan-500' : 'border-gray-500'">
+                        <span x-show="isEnrolled('pediatrics')" class="text-xs">✓</span>
+                    </div>
                 </button>
             </div>
+
+            <button @click="showEnrollModal=false" :disabled="enrolledCourses.length===0"
+                class="btn btn-primary w-full py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                ✅ تأكيد الاختيار
+            </button>
         </div>
+    </div>
 
-        <!-- Main App -->
-        <div x-show="user&&!loading" x-transition class="min-h-screen">
+    <!-- Main App -->
+    <div x-show="user&&!loading" x-transition class="min-h-screen">
 
-            <!-- Header -->
-            <header class="sticky top-0 z-40 bg-[#0f0f15]/90 backdrop-blur-lg border-b border-white/5">
-                <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="text-2xl">📚</span>
-                        <span
-                            class="font-bold text-xl bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">The
-                            Last Turn</span>
-                    </div>
-                    <nav class="flex gap-2 flex-wrap">
-                        <button @click="tab='dashboard'" :class="tab==='dashboard'?'active':''" class="tab-btn">📊 لوحة
-                            التحكم</button>
-                        <button x-show="isEnrolled('medicine')" @click="tab='medicine'"
-                            :class="tab==='medicine'?'active':''" class="tab-btn">🫀
-                            الباطنة</button>
-                        <button x-show="isEnrolled('pediatrics')" @click="tab='pediatrics'"
-                            :class="tab==='pediatrics'?'active':''" class="tab-btn">👶
-                            الأطفال</button>
-                        <button @click="tab='leaderboard'; fetchLeaderboard()" :class="tab==='leaderboard'?'active':''"
-                            class="tab-btn">🏆
-                            منافساتي</button>
-                        <button @click="tab='tags'" :class="tab==='tags'?'active':''" class="tab-btn">🏷️
-                            العلامات</button>
-                        <button @click="tab='settings'" :class="tab==='settings'?'active':''"
-                            class="tab-btn">⚙️</button>
-                    </nav>
-                    <div class="flex items-center gap-3">
-                        <img :src="user?.photoURL" class="w-10 h-10 rounded-full border-2 border-purple-500"
-                            alt="صورة المستخدم">
-                        <button @click="logout()" class="text-sm text-gray-400 hover:text-white">خروج</button>
-                    </div>
+        <!-- Header -->
+        <header class="sticky top-0 z-40 bg-[#0f0f15]/90 backdrop-blur-lg border-b border-white/5">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">📚</span>
+                    <span
+                        class="font-bold text-xl bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">The
+                        Last Turn</span>
                 </div>
-            </header>
+                <nav class="flex gap-2 flex-wrap">
+                    <button @click="tab='dashboard'" :class="tab==='dashboard'?'active':''" class="tab-btn">📊 لوحة
+                        التحكم</button>
+                    <button x-show="isEnrolled('medicine')" @click="tab='medicine'"
+                        :class="tab==='medicine'?'active':''" class="tab-btn">🫀
+                        الباطنة</button>
+                    <button x-show="isEnrolled('pediatrics')" @click="tab='pediatrics'"
+                        :class="tab==='pediatrics'?'active':''" class="tab-btn">👶
+                        الأطفال</button>
+                    <button @click="tab='leaderboard'; fetchLeaderboard()" :class="tab==='leaderboard'?'active':''"
+                        class="tab-btn">🏆
+                        منافساتي</button>
+                    <button @click="tab='tags'" :class="tab==='tags'?'active':''" class="tab-btn">🏷️
+                        العلامات</button>
+                    <button @click="tab='settings'" :class="tab==='settings'?'active':''" class="tab-btn">⚙️</button>
+                </nav>
+                <div class="flex items-center gap-3">
+                    <img :src="user?.photoURL" class="w-10 h-10 rounded-full border-2 border-purple-500"
+                        alt="صورة المستخدم">
+                    <button @click="logout()" class="text-sm text-gray-400 hover:text-white">خروج</button>
+                </div>
+            </div>
+        </header>
 
-            <main class="max-w-7xl mx-auto px-4 py-6">
+        <main class="max-w-7xl mx-auto px-4 py-6">
 
-                <!-- Dashboard -->
-                <div x-show="tab==='dashboard'" x-transition>
-                    <!-- Stats Grid -->
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                        <div class="stat-card">
-                            <p class="text-gray-400 text-sm mb-2">⏰ أيام للامتحان</p>
-                            <p class="text-4xl font-bold text-purple-400" x-text="daysToExam"></p>
-                        </div>
-                        <div class="stat-card">
-                            <p class="text-gray-400 text-sm mb-2">📅 أيام الخطة المتبقية</p>
-                            <p class="text-4xl font-bold text-blue-400" x-text="planDaysRemaining"></p>
-                        </div>
-                        <div class="stat-card">
-                            <p class="text-gray-400 text-sm mb-2">🎯 المعدل اليومي المطلوب</p>
-                            <p class="text-3xl font-bold text-orange-400" x-text="formatHours(dailyRequired)"></p>
-                        </div>
-                        <div class="stat-card">
-                            <p class="text-gray-400 text-sm mb-2">📈 التقدم الكلي</p>
-                            <p class="text-4xl font-bold text-green-400" x-text="totalProgress+'%'"></p>
-                            <div class="progress-bar mt-3">
-                                <div class="progress-fill progress-green" :style="'width:'+totalProgress+'%'"></div>
-                            </div>
-                        </div>
+            <!-- Dashboard -->
+            <div x-show="tab==='dashboard'" x-transition>
+                <!-- Stats Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="stat-card">
+                        <p class="text-gray-400 text-sm mb-2">⏰ أيام للامتحان</p>
+                        <p class="text-4xl font-bold text-purple-400" x-text="daysToExam"></p>
                     </div>
-
-                    <!-- Hours Cards -->
-                    <div class="grid grid-cols-2 gap-4 mb-8">
-                        <div class="stat-card">
-                            <p class="text-gray-400 text-sm mb-2">📚 الساعات الكلية</p>
-                            <p class="text-3xl font-bold text-cyan-400" x-text="formatHours(totalHoursNum)"></p>
-                        </div>
-                        <div class="stat-card">
-                            <p class="text-gray-400 text-sm mb-2">⏳ الساعات المتبقية</p>
-                            <p class="text-3xl font-bold text-yellow-400" x-text="formatHours(remainingHoursNum)"></p>
-                        </div>
+                    <div class="stat-card">
+                        <p class="text-gray-400 text-sm mb-2">📅 أيام الخطة المتبقية</p>
+                        <p class="text-4xl font-bold text-blue-400" x-text="planDaysRemaining"></p>
                     </div>
-
-                    <!-- Progress Bars -->
-                    <div class="grid md:grid-cols-2 gap-4 mb-8">
-                        <div class="stat-card">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="font-bold text-lg">🫀 الباطنة</span>
-                                <span class="text-purple-400 font-bold" x-text="getProgress('medicine')+'%'"></span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill progress-purple"
-                                    :style="'width:'+getProgress('medicine')+'%'">
-                                </div>
-                            </div>
-                            <div class="flex justify-between mt-3 text-sm">
-                                <div class="mini-card flex-1 ml-2">
-                                    <p class="text-gray-500 text-xs">الكلية</p>
-                                    <p class="text-purple-300 font-bold"
-                                        x-text="formatHours(getTotalHours('medicine'))">
-                                    </p>
-                                </div>
-                                <div class="mini-card flex-1">
-                                    <p class="text-gray-500 text-xs">المتبقية</p>
-                                    <p class="text-purple-300 font-bold"
-                                        x-text="formatHours(getRemainingHours('medicine'))"></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="flex justify-between items-center mb-3">
-                                <span class="font-bold text-lg">👶 الأطفال</span>
-                                <span class="text-cyan-400 font-bold" x-text="getProgress('pediatrics')+'%'"></span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill progress-cyan"
-                                    :style="'width:'+getProgress('pediatrics')+'%'">
-                                </div>
-                            </div>
-                            <div class="flex justify-between mt-3 text-sm">
-                                <div class="mini-card flex-1 ml-2">
-                                    <p class="text-gray-500 text-xs">الكلية</p>
-                                    <p class="text-cyan-300 font-bold"
-                                        x-text="formatHours(getTotalHours('pediatrics'))">
-                                    </p>
-                                </div>
-                                <div class="mini-card flex-1">
-                                    <p class="text-gray-500 text-xs">المتبقية</p>
-                                    <p class="text-cyan-300 font-bold"
-                                        x-text="formatHours(getRemainingHours('pediatrics'))"></p>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="stat-card">
+                        <p class="text-gray-400 text-sm mb-2">🎯 المعدل اليومي المطلوب</p>
+                        <p class="text-3xl font-bold text-orange-400" x-text="formatHours(dailyRequired)"></p>
                     </div>
-
-                    <!-- Motivational Card -->
-                    <!-- On Track / Ahead -->
-                    <div x-show="delayHours<=0" class="stat-card border-green-500/50 bg-green-500/5 mb-8">
-                        <div class="flex items-start gap-4">
-                            <span class="text-5xl" x-text="getRandomEmoji('good')">👏</span>
-                            <div class="flex-1">
-                                <h3 class="text-xl font-bold text-green-400 mb-2" x-text="getMotivationalTitle('good')">
-                                    أحسنت!</h3>
-                                <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('good')"></p>
-                                <div class="bg-black/30 rounded-xl p-4">
-                                    <p class="text-gray-400 text-sm">تقدمك:</p>
-                                    <p class="text-2xl font-bold text-green-400" x-text="totalProgress+'% مكتمل'"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Behind Schedule -->
-                    <div x-show="delayHours>0" class="stat-card border-orange-500/50 bg-orange-500/5 mb-8">
-                        <div class="flex items-start gap-4">
-                            <span class="text-5xl" x-text="getRandomEmoji('encourage')">💪</span>
-                            <div class="flex-1">
-                                <h3 class="text-xl font-bold text-orange-400 mb-2"
-                                    x-text="getMotivationalTitle('encourage')">لا تستسلم!</h3>
-                                <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('encourage')"></p>
-                                <div class="bg-black/30 rounded-xl p-4 mb-3">
-                                    <p class="text-gray-400 text-sm">متأخر بـ</p>
-                                    <p class="text-2xl font-bold text-orange-400" x-text="formatHours(delayHours)"></p>
-                                </div>
-                                <div class="bg-black/30 rounded-xl p-4">
-                                    <p class="text-gray-400 text-sm">للتعويض، أضف يومياً:</p>
-                                    <p class="text-2xl font-bold text-yellow-400" x-text="extraMinutes+' دقيقة'"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Today's Tasks -->
-                    <div class="grid md:grid-cols-2 gap-6 mb-8">
-                        <!-- Medicine Tasks -->
-                        <div class="stat-card">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-purple-400 text-lg">🫀 مهام الباطنة اليوم</h3>
-                                <span class="text-sm bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full"
-                                    x-text="formatMins(getTodayTasksTime('medicine'))"></span>
-                            </div>
-                            <div x-show="todayTasksComplete('medicine')" class="text-center py-8 text-gray-500">
-                                <span class="text-5xl">✅</span>
-                                <p class="mt-3 text-lg font-bold text-green-400">أنجزت مهام اليوم!</p>
-                                <p class="text-sm text-gray-500 mt-1">عد غداً للمزيد</p>
-                            </div>
-                            <template x-for="task in getFixedTodayTasks('medicine')" :key="task.id">
-                                <div class="task-card flex items-center justify-between" x-show="!task.done">
-                                    <div class="flex-1">
-                                        <p class="font-medium text-base" x-text="task.title"></p>
-                                        <p class="text-sm text-gray-400"
-                                            x-text="task.duration+' دقيقة • '+task.chapter">
-                                        </p>
-                                    </div>
-                                    <button @click="markDone(task)"
-                                        class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
-                                </div>
-                            </template>
-                        </div>
-                        <!-- Pediatrics Tasks -->
-                        <div class="stat-card">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="font-bold text-cyan-400 text-lg">👶 مهام الأطفال اليوم</h3>
-                                <span class="text-sm bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full"
-                                    x-text="formatMins(getTodayTasksTime('pediatrics'))"></span>
-                            </div>
-                            <div x-show="todayTasksComplete('pediatrics')" class="text-center py-8 text-gray-500">
-                                <span class="text-5xl">✅</span>
-                                <p class="mt-3 text-lg font-bold text-green-400">أنجزت مهام اليوم!</p>
-                                <p class="text-sm text-gray-500 mt-1">عد غداً للمزيد</p>
-                            </div>
-                            <template x-for="task in getFixedTodayTasks('pediatrics')" :key="task.id">
-                                <div class="task-card flex items-center justify-between" x-show="!task.done"
-                                    style="border-color:rgba(6,182,212,0.2);background:linear-gradient(135deg,rgba(6,182,212,0.1),rgba(6,182,212,0.05))">
-                                    <div class="flex-1">
-                                        <p class="font-medium text-base" x-text="task.title"></p>
-                                        <p class="text-sm text-gray-400"
-                                            x-text="task.duration+' دقيقة • '+task.chapter">
-                                        </p>
-                                    </div>
-                                    <button @click="markDone(task)"
-                                        class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
-                                </div>
-                            </template>
+                    <div class="stat-card">
+                        <p class="text-gray-400 text-sm mb-2">📈 التقدم الكلي</p>
+                        <p class="text-4xl font-bold text-green-400" x-text="totalProgress+'%'"></p>
+                        <div class="progress-bar mt-3">
+                            <div class="progress-fill progress-green" :style="'width:'+totalProgress+'%'"></div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Subject Views -->
-                <template x-for="subj in ['medicine','pediatrics']" :key="subj">
-                    <div x-show="tab===subj" x-transition>
-                        <!-- Header -->
-                        <div class="flex items-center justify-between mb-6">
-                            <div>
-                                <h2 class="text-3xl font-bold" x-text="subj==='medicine'?'🫀 الباطنة':'👶 الأطفال'">
-                                </h2>
-                                <div class="flex gap-4 mt-2">
-                                    <div class="mini-card">
-                                        <span class="text-gray-500 text-sm">المحاضرات: </span>
-                                        <span class="font-bold"
-                                            x-text="getStats(subj).done+'/'+getStats(subj).total"></span>
-                                    </div>
-                                    <div class="mini-card">
-                                        <span class="text-gray-500 text-sm">الساعات: </span>
-                                        <span class="font-bold" x-text="formatHours(getTotalHours(subj))"></span>
-                                    </div>
-                                    <div class="mini-card">
-                                        <span class="text-gray-500 text-sm">المتبقي: </span>
-                                        <span class="font-bold" x-text="formatHours(getRemainingHours(subj))"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="text-left">
-                                <p class="text-4xl font-bold"
-                                    :class="subj==='medicine'?'text-purple-400':'text-cyan-400'"
-                                    x-text="getProgress(subj)+'%'"></p>
-                                <p class="text-sm text-gray-500">مكتمل</p>
+                <!-- Hours Cards -->
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <div class="stat-card">
+                        <p class="text-gray-400 text-sm mb-2">📚 الساعات الكلية</p>
+                        <p class="text-3xl font-bold text-cyan-400" x-text="formatHours(totalHoursNum)"></p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="text-gray-400 text-sm mb-2">⏳ الساعات المتبقية</p>
+                        <p class="text-3xl font-bold text-yellow-400" x-text="formatHours(remainingHoursNum)"></p>
+                    </div>
+                </div>
+
+                <!-- Progress Bars -->
+                <div class="grid md:grid-cols-2 gap-4 mb-8">
+                    <div class="stat-card">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-bold text-lg">🫀 الباطنة</span>
+                            <span class="text-purple-400 font-bold" x-text="getProgress('medicine')+'%'"></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-purple" :style="'width:'+getProgress('medicine')+'%'">
                             </div>
                         </div>
-
-                        <p class="text-sm text-gray-500 mb-4">💡 اسحب ☰ لإعادة ترتيب الفصول والمحاضرات</p>
-
-                        <!-- Chapters List -->
-                        <div :id="subj+'-chapters'" class="space-y-5">
-                            <template x-for="(ch,ci) in data[subj]" :key="ch.id">
-                                <div class="chapter-card" :class="ch.ignored?'ignored':''" :data-id="ch.id">
-                                    <!-- Chapter Header - Entire area clickable -->
-                                    <div class="chapter-header" @click="toggleCh(subj,ci)">
-                                        <div class="flex items-center gap-4">
-                                            <span class="drag-handle text-xl px-3 py-2 bg-gray-700/50 rounded-lg"
-                                                @click.stop title="اسحب لإعادة الترتيب">☰</span>
-                                            <span class="text-3xl" x-text="ch.icon">📚</span>
-                                            <div>
-                                                <h3 class="font-bold text-xl" x-text="ch.name"></h3>
-                                                <div class="flex gap-2 mt-1">
-                                                    <span class="text-xs bg-gray-700 px-2 py-1 rounded"
-                                                        x-text="getChProg(subj,ci)+'% مكتمل'"></span>
-                                                    <span class="text-xs bg-gray-700 px-2 py-1 rounded"
-                                                        x-text="ch.lectures.length+' محاضرة'"></span>
-                                                    <span class="text-xs bg-gray-700 px-2 py-1 rounded"
-                                                        x-text="formatHours(getChHrsNum(subj,ci))"></span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-3">
-                                            <div class="w-28 progress-bar hidden sm:block">
-                                                <div class="progress-fill"
-                                                    :class="subj==='medicine'?'progress-purple':'progress-cyan'"
-                                                    :style="'width:'+getChProg(subj,ci)+'%'"></div>
-                                            </div>
-                                            <button @click.stop="ch.ignored=!ch.ignored;save()" class="icon-btn"
-                                                :class="ch.ignored?'bg-gray-500 text-white':'bg-gray-700/50 text-gray-400'"
-                                                title="تجاهل الفصل">👁</button>
-                                            <button @click.stop="deleteChapter(subj,ci)"
-                                                class="icon-btn bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
-                                                title="حذف الفصل">🗑️</button>
-                                            <span class="text-gray-400 text-lg" x-text="openCh[subj+ci]?'▲':'▼'"></span>
-                                        </div>
-                                    </div>
-                                    <!-- Lectures -->
-                                    <div x-show="openCh[subj+ci]" x-transition
-                                        class="px-5 pb-5 border-t border-white/5 pt-4">
-                                        <div :id="'lec-'+ch.id" class="space-y-2">
-                                            <template x-for="(lec,li) in ch.lectures" :key="lec.id">
-                                                <div class="lecture-row" :class="lec.done?'opacity-50':''"
-                                                    :data-id="lec.id">
-                                                    <div class="flex items-center gap-3 flex-1">
-                                                        <span
-                                                            class="drag-handle text-sm px-2 py-1 bg-gray-700/50 rounded cursor-grab"
-                                                            title="اسحب">☰</span>
-                                                        <span
-                                                            class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold"
-                                                            :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-300'"
-                                                            x-text="li+1"></span>
-                                                        <div class="flex-1 min-w-0">
-                                                            <p class="font-medium text-base"
-                                                                :class="lec.done?'line-through text-gray-500':''"
-                                                                x-text="lec.title"></p>
-                                                            <p class="text-sm text-gray-500"
-                                                                x-text="lec.duration+' دقيقة'">
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex gap-2 mr-4">
-                                                        <button @click="lec.done=!lec.done;save()" class="icon-btn"
-                                                            :class="lec.done?'bg-green-500 text-white':'tag-none'"
-                                                            title="مكتمل">✓</button>
-                                                        <button @click="cycleTag(lec)" class="icon-btn"
-                                                            :class="lec.tag==='review'?'tag-red':lec.tag==='mastered'?'tag-green':'tag-none'"
-                                                            :title="lec.tag==='review'?'يحتاج مراجعة':lec.tag==='mastered'?'متقن':'بدون علامة'">
-                                                            <span
-                                                                x-text="lec.tag==='review'?'🔴':lec.tag==='mastered'?'🟢':'⚪'"></span>
-                                                        </button>
-                                                        <button @click="deleteLecture(subj,ci,li)"
-                                                            class="icon-btn bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
-                                                            title="حذف">🗑️</button>
-                                                    </div>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
+                        <div class="flex justify-between mt-3 text-sm">
+                            <div class="mini-card flex-1 ml-2">
+                                <p class="text-gray-500 text-xs">الكلية</p>
+                                <p class="text-purple-300 font-bold" x-text="formatHours(getTotalHours('medicine'))">
+                                </p>
+                            </div>
+                            <div class="mini-card flex-1">
+                                <p class="text-gray-500 text-xs">المتبقية</p>
+                                <p class="text-purple-300 font-bold"
+                                    x-text="formatHours(getRemainingHours('medicine'))"></p>
+                            </div>
                         </div>
                     </div>
-                </template>
-
-                <!-- Tags View -->
-                <div x-show="tab==='tags'" x-transition>
-                    <h2 class="text-3xl font-bold mb-6">🏷️ إدارة العلامات</h2>
-
-                    <!-- Review Needed (Red) -->
-                    <div class="stat-card mb-6 border-red-500/30">
-                        <h3 class="font-bold text-red-400 text-xl mb-4">🔴 يحتاج مراجعة (<span
-                                x-text="getTaggedLectures('review').length"></span>)</h3>
-                        <div x-show="getTaggedLectures('review').length===0" class="text-center py-6 text-gray-500">
-                            لا توجد محاضرات تحتاج مراجعة
+                    <div class="stat-card">
+                        <div class="flex justify-between items-center mb-3">
+                            <span class="font-bold text-lg">👶 الأطفال</span>
+                            <span class="text-cyan-400 font-bold" x-text="getProgress('pediatrics')+'%'"></span>
                         </div>
-                        <template x-for="item in getTaggedLectures('review')" :key="item.id">
-                            <div class="lecture-row flex items-center justify-between">
+                        <div class="progress-bar">
+                            <div class="progress-fill progress-cyan" :style="'width:'+getProgress('pediatrics')+'%'">
+                            </div>
+                        </div>
+                        <div class="flex justify-between mt-3 text-sm">
+                            <div class="mini-card flex-1 ml-2">
+                                <p class="text-gray-500 text-xs">الكلية</p>
+                                <p class="text-cyan-300 font-bold" x-text="formatHours(getTotalHours('pediatrics'))">
+                                </p>
+                            </div>
+                            <div class="mini-card flex-1">
+                                <p class="text-gray-500 text-xs">المتبقية</p>
+                                <p class="text-cyan-300 font-bold"
+                                    x-text="formatHours(getRemainingHours('pediatrics'))"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motivational Card -->
+                <!-- On Track / Ahead -->
+                <div x-show="delayHours<=0" class="stat-card border-green-500/50 bg-green-500/5 mb-8">
+                    <div class="flex items-start gap-4">
+                        <span class="text-5xl" x-text="getRandomEmoji('good')">👏</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-green-400 mb-2" x-text="getMotivationalTitle('good')">
+                                أحسنت!</h3>
+                            <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('good')"></p>
+                            <div class="bg-black/30 rounded-xl p-4">
+                                <p class="text-gray-400 text-sm">تقدمك:</p>
+                                <p class="text-2xl font-bold text-green-400" x-text="totalProgress+'% مكتمل'"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Behind Schedule -->
+                <div x-show="delayHours>0" class="stat-card border-orange-500/50 bg-orange-500/5 mb-8">
+                    <div class="flex items-start gap-4">
+                        <span class="text-5xl" x-text="getRandomEmoji('encourage')">💪</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold text-orange-400 mb-2"
+                                x-text="getMotivationalTitle('encourage')">لا تستسلم!</h3>
+                            <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('encourage')"></p>
+                            <div class="bg-black/30 rounded-xl p-4 mb-3">
+                                <p class="text-gray-400 text-sm">متأخر بـ</p>
+                                <p class="text-2xl font-bold text-orange-400" x-text="formatHours(delayHours)"></p>
+                            </div>
+                            <div class="bg-black/30 rounded-xl p-4">
+                                <p class="text-gray-400 text-sm">للتعويض، أضف يومياً:</p>
+                                <p class="text-2xl font-bold text-yellow-400" x-text="extraMinutes+' دقيقة'"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Today's Tasks -->
+                <div class="grid md:grid-cols-2 gap-6 mb-8">
+                    <!-- Medicine Tasks -->
+                    <div class="stat-card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-purple-400 text-lg">🫀 مهام الباطنة اليوم</h3>
+                            <span class="text-sm bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full"
+                                x-text="formatMins(getTodayTasksTime('medicine'))"></span>
+                        </div>
+                        <div x-show="todayTasksComplete('medicine')" class="text-center py-8 text-gray-500">
+                            <span class="text-5xl">✅</span>
+                            <p class="mt-3 text-lg font-bold text-green-400">أنجزت مهام اليوم!</p>
+                            <p class="text-sm text-gray-500 mt-1">عد غداً للمزيد</p>
+                        </div>
+                        <template x-for="task in getFixedTodayTasks('medicine')" :key="task.id">
+                            <div class="task-card flex items-center justify-between" x-show="!task.done">
                                 <div class="flex-1">
-                                    <p class="font-medium" x-text="item.title"></p>
-                                    <p class="text-sm text-gray-500"
-                                        x-text="item.duration+' دقيقة • '+item.chapter+' • '+(item.subject==='medicine'?'الباطنة':'الأطفال')">
+                                    <p class="font-medium text-base" x-text="task.title"></p>
+                                    <p class="text-sm text-gray-400" x-text="task.duration+' دقيقة • '+task.chapter">
                                     </p>
                                 </div>
-                                <div class="flex gap-2">
-                                    <button @click="setTag(item,'mastered')" class="icon-btn tag-green"
-                                        title="تم الإتقان">🟢</button>
-                                    <button @click="setTag(item,'none')" class="icon-btn tag-none"
-                                        title="إزالة العلامة">⚪</button>
-                                </div>
+                                <button @click="markDone(task)"
+                                    class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
                             </div>
                         </template>
                     </div>
-
-                    <!-- Mastered (Green) -->
-                    <div class="stat-card border-green-500/30">
-                        <h3 class="font-bold text-green-400 text-xl mb-4">🟢 تم الإتقان (<span
-                                x-text="getTaggedLectures('mastered').length"></span>)</h3>
-                        <div x-show="getTaggedLectures('mastered').length===0" class="text-center py-6 text-gray-500">
-                            لا توجد محاضرات متقنة
+                    <!-- Pediatrics Tasks -->
+                    <div class="stat-card">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-cyan-400 text-lg">👶 مهام الأطفال اليوم</h3>
+                            <span class="text-sm bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full"
+                                x-text="formatMins(getTodayTasksTime('pediatrics'))"></span>
                         </div>
-                        <template x-for="item in getTaggedLectures('mastered')" :key="item.id">
-                            <div class="lecture-row flex items-center justify-between">
+                        <div x-show="todayTasksComplete('pediatrics')" class="text-center py-8 text-gray-500">
+                            <span class="text-5xl">✅</span>
+                            <p class="mt-3 text-lg font-bold text-green-400">أنجزت مهام اليوم!</p>
+                            <p class="text-sm text-gray-500 mt-1">عد غداً للمزيد</p>
+                        </div>
+                        <template x-for="task in getFixedTodayTasks('pediatrics')" :key="task.id">
+                            <div class="task-card flex items-center justify-between" x-show="!task.done"
+                                style="border-color:rgba(6,182,212,0.2);background:linear-gradient(135deg,rgba(6,182,212,0.1),rgba(6,182,212,0.05))">
                                 <div class="flex-1">
-                                    <p class="font-medium" x-text="item.title"></p>
-                                    <p class="text-sm text-gray-500"
-                                        x-text="item.duration+' دقيقة • '+item.chapter+' • '+(item.subject==='medicine'?'الباطنة':'الأطفال')">
+                                    <p class="font-medium text-base" x-text="task.title"></p>
+                                    <p class="text-sm text-gray-400" x-text="task.duration+' دقيقة • '+task.chapter">
                                     </p>
                                 </div>
-                                <div class="flex gap-2">
-                                    <button @click="setTag(item,'review')" class="icon-btn tag-red"
-                                        title="يحتاج مراجعة">🔴</button>
-                                    <button @click="setTag(item,'none')" class="icon-btn tag-none"
-                                        title="إزالة العلامة">⚪</button>
+                                <button @click="markDone(task)"
+                                    class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subject Views -->
+            <template x-for="subj in ['medicine','pediatrics']" :key="subj">
+                <div x-show="tab===subj" x-transition>
+                    <!-- Header -->
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-3xl font-bold" x-text="subj==='medicine'?'🫀 الباطنة':'👶 الأطفال'">
+                            </h2>
+                            <div class="flex gap-4 mt-2">
+                                <div class="mini-card">
+                                    <span class="text-gray-500 text-sm">المحاضرات: </span>
+                                    <span class="font-bold"
+                                        x-text="getStats(subj).done+'/'+getStats(subj).total"></span>
+                                </div>
+                                <div class="mini-card">
+                                    <span class="text-gray-500 text-sm">الساعات: </span>
+                                    <span class="font-bold" x-text="formatHours(getTotalHours(subj))"></span>
+                                </div>
+                                <div class="mini-card">
+                                    <span class="text-gray-500 text-sm">المتبقي: </span>
+                                    <span class="font-bold" x-text="formatHours(getRemainingHours(subj))"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-left">
+                            <p class="text-4xl font-bold" :class="subj==='medicine'?'text-purple-400':'text-cyan-400'"
+                                x-text="getProgress(subj)+'%'"></p>
+                            <p class="text-sm text-gray-500">مكتمل</p>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-gray-500 mb-4">💡 اسحب ☰ لإعادة ترتيب الفصول والمحاضرات</p>
+
+                    <!-- Chapters List -->
+                    <div :id="subj+'-chapters'" class="space-y-5">
+                        <template x-for="(ch,ci) in data[subj]" :key="ch.id">
+                            <div class="chapter-card" :class="ch.ignored?'ignored':''" :data-id="ch.id">
+                                <!-- Chapter Header - Entire area clickable -->
+                                <div class="chapter-header" @click="toggleCh(subj,ci)">
+                                    <div class="flex items-center gap-4">
+                                        <span class="drag-handle text-xl px-3 py-2 bg-gray-700/50 rounded-lg"
+                                            @click.stop title="اسحب لإعادة الترتيب">☰</span>
+                                        <span class="text-3xl" x-text="ch.icon">📚</span>
+                                        <div>
+                                            <h3 class="font-bold text-xl" x-text="ch.name"></h3>
+                                            <div class="flex gap-2 mt-1">
+                                                <span class="text-xs bg-gray-700 px-2 py-1 rounded"
+                                                    x-text="getChProg(subj,ci)+'% مكتمل'"></span>
+                                                <span class="text-xs bg-gray-700 px-2 py-1 rounded"
+                                                    x-text="ch.lectures.length+' محاضرة'"></span>
+                                                <span class="text-xs bg-gray-700 px-2 py-1 rounded"
+                                                    x-text="formatHours(getChHrsNum(subj,ci))"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-28 progress-bar hidden sm:block">
+                                            <div class="progress-fill"
+                                                :class="subj==='medicine'?'progress-purple':'progress-cyan'"
+                                                :style="'width:'+getChProg(subj,ci)+'%'"></div>
+                                        </div>
+                                        <button @click.stop="ch.ignored=!ch.ignored;save()" class="icon-btn"
+                                            :class="ch.ignored?'bg-gray-500 text-white':'bg-gray-700/50 text-gray-400'"
+                                            title="تجاهل الفصل">👁</button>
+                                        <button @click.stop="deleteChapter(subj,ci)"
+                                            class="icon-btn bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
+                                            title="حذف الفصل">🗑️</button>
+                                        <span class="text-gray-400 text-lg" x-text="openCh[subj+ci]?'▲':'▼'"></span>
+                                    </div>
+                                </div>
+                                <!-- Lectures -->
+                                <div x-show="openCh[subj+ci]" x-transition
+                                    class="px-5 pb-5 border-t border-white/5 pt-4">
+                                    <div :id="'lec-'+ch.id" class="space-y-2">
+                                        <template x-for="(lec,li) in ch.lectures" :key="lec.id">
+                                            <div class="lecture-row" :class="lec.done?'opacity-50':''"
+                                                :data-id="lec.id">
+                                                <div class="flex items-center gap-3 flex-1">
+                                                    <span
+                                                        class="drag-handle text-sm px-2 py-1 bg-gray-700/50 rounded cursor-grab"
+                                                        title="اسحب">☰</span>
+                                                    <span
+                                                        class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold"
+                                                        :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-300'"
+                                                        x-text="li+1"></span>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="font-medium text-base"
+                                                            :class="lec.done?'line-through text-gray-500':''"
+                                                            x-text="lec.title"></p>
+                                                        <p class="text-sm text-gray-500" x-text="lec.duration+' دقيقة'">
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                <div class="flex gap-2 mr-4">
+                                                    <button @click="lec.done=!lec.done;save()" class="icon-btn"
+                                                        :class="lec.done?'bg-green-500 text-white':'tag-none'"
+                                                        title="مكتمل">✓</button>
+                                                    <button @click="cycleTag(lec)" class="icon-btn"
+                                                        :class="lec.tag==='review'?'tag-red':lec.tag==='mastered'?'tag-green':'tag-none'"
+                                                        :title="lec.tag==='review'?'يحتاج مراجعة':lec.tag==='mastered'?'متقن':'بدون علامة'">
+                                                        <span
+                                                            x-text="lec.tag==='review'?'🔴':lec.tag==='mastered'?'🟢':'⚪'"></span>
+                                                    </button>
+                                                    <button @click="deleteLecture(subj,ci,li)"
+                                                        class="icon-btn bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
+                                                        title="حذف">🗑️</button>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </div>
                                 </div>
                             </div>
                         </template>
                     </div>
                 </div>
+            </template>
 
-                <!-- Leaderboard Tab: The Race Track -->
-                <div x-show="tab==='leaderboard'" x-transition class="max-w-4xl mx-auto">
-                    <h2 class="text-3xl font-bold mb-6 text-center">🏁 مضمار المنافسة</h2>
+            <!-- Tags View -->
+            <div x-show="tab==='tags'" x-transition>
+                <h2 class="text-3xl font-bold mb-6">🏷️ إدارة العلامات</h2>
 
-                    <!-- Loading State -->
-                    <div x-show="leaderboardLoading" class="text-center py-10">
-                        <div
-                            class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4">
-                        </div>
-                        <p class="text-gray-400">جاري تجهيز المتسابقين...</p>
+                <!-- Review Needed (Red) -->
+                <div class="stat-card mb-6 border-red-500/30">
+                    <h3 class="font-bold text-red-400 text-xl mb-4">🔴 يحتاج مراجعة (<span
+                            x-text="getTaggedLectures('review').length"></span>)</h3>
+                    <div x-show="getTaggedLectures('review').length===0" class="text-center py-6 text-gray-500">
+                        لا توجد محاضرات تحتاج مراجعة
                     </div>
+                    <template x-for="item in getTaggedLectures('review')" :key="item.id">
+                        <div class="lecture-row flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="font-medium" x-text="item.title"></p>
+                                <p class="text-sm text-gray-500"
+                                    x-text="item.duration+' دقيقة • '+item.chapter+' • '+(item.subject==='medicine'?'الباطنة':'الأطفال')">
+                                </p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button @click="setTag(item,'mastered')" class="icon-btn tag-green"
+                                    title="تم الإتقان">🟢</button>
+                                <button @click="setTag(item,'none')" class="icon-btn tag-none"
+                                    title="إزالة العلامة">⚪</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
 
-                    <div x-show="!leaderboardLoading">
-                        <template x-for="subj in ['medicine', 'pediatrics']" :key="subj">
-                            <div x-show="isEnrolled(subj)"
-                                class="mb-12 bg-[#1a1a24] p-6 rounded-3xl border border-white/5 relative overflow-hidden">
-                                <!-- Background Grid Effect -->
+                <!-- Mastered (Green) -->
+                <div class="stat-card border-green-500/30">
+                    <h3 class="font-bold text-green-400 text-xl mb-4">🟢 تم الإتقان (<span
+                            x-text="getTaggedLectures('mastered').length"></span>)</h3>
+                    <div x-show="getTaggedLectures('mastered').length===0" class="text-center py-6 text-gray-500">
+                        لا توجد محاضرات متقنة
+                    </div>
+                    <template x-for="item in getTaggedLectures('mastered')" :key="item.id">
+                        <div class="lecture-row flex items-center justify-between">
+                            <div class="flex-1">
+                                <p class="font-medium" x-text="item.title"></p>
+                                <p class="text-sm text-gray-500"
+                                    x-text="item.duration+' دقيقة • '+item.chapter+' • '+(item.subject==='medicine'?'الباطنة':'الأطفال')">
+                                </p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button @click="setTag(item,'review')" class="icon-btn tag-red"
+                                    title="يحتاج مراجعة">🔴</button>
+                                <button @click="setTag(item,'none')" class="icon-btn tag-none"
+                                    title="إزالة العلامة">⚪</button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Leaderboard Tab: The Race Track -->
+            <div x-show="tab==='leaderboard'" x-transition class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-6 text-center">🏁 مضمار المنافسة</h2>
+
+                <!-- Loading State -->
+                <div x-show="leaderboardLoading" class="text-center py-10">
+                    <div
+                        class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4">
+                    </div>
+                    <p class="text-gray-400">جاري تجهيز المتسابقين...</p>
+                </div>
+
+                <div x-show="!leaderboardLoading">
+                    <template x-for="subj in ['medicine', 'pediatrics']" :key="subj">
+                        <div x-show="isEnrolled(subj)"
+                            class="mb-12 bg-[#1a1a24] p-6 rounded-3xl border border-white/5 relative overflow-hidden">
+                            <!-- Background Grid Effect -->
+                            <div
+                                class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20">
+                            </div>
+
+                            <h3 class="text-2xl font-bold mb-8 flex items-center gap-2 relative z-10"
+                                :class="subj==='medicine'?'text-purple-400':'text-cyan-400'">
+                                <span x-text="subj==='medicine'?'🫀':'👶'"></span>
+                                <span x-text="subj==='medicine'?'سباق الباطنة':'سباق الأطفال'"></span>
+                            </h3>
+
+                            <div x-show="!leaderboardData[subj] || leaderboardData[subj].length === 0"
+                                class="text-center py-6 text-gray-500 relative z-10">
+                                لا يوجد متسابقين حتى الآن 😴
+                            </div>
+
+                            <!-- The Track Container -->
+                            <div x-show="leaderboardData[subj] && leaderboardData[subj].length > 0"
+                                class="relative z-10 mt-10 mb-6 mx-4">
+
+                                <!-- Finish Line (Goal) -->
+                                <div class="absolute right-0 -top-8 bottom-0 flex flex-col items-center z-0">
+                                    <span class="text-2xl mb-2">🏁</span>
+                                    <div class="w-0.5 h-full bg-white/20 border-r border-dashed border-white/50">
+                                    </div>
+                                    <span class="text-xs text-gray-500 mt-2">100%</span>
+                                </div>
+
+                                <!-- Start Line -->
+                                <div class="absolute left-0 -top-8 bottom-0 flex flex-col items-center z-0">
+                                    <span class="text-xs text-gray-500 mb-2">البداية</span>
+                                    <div class="w-0.5 h-full bg-white/10"></div>
+                                </div>
+
+                                <!-- The Track Lines -->
                                 <div
-                                    class="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20">
+                                    class="h-0.5 w-[calc(100%-1rem)] bg-white/10 absolute top-1/2 left-2 right-2 -translate-y-1/2 rounded-full">
                                 </div>
 
-                                <h3 class="text-2xl font-bold mb-8 flex items-center gap-2 relative z-10"
-                                    :class="subj==='medicine'?'text-purple-400':'text-cyan-400'">
-                                    <span x-text="subj==='medicine'?'🫀':'👶'"></span>
-                                    <span x-text="subj==='medicine'?'سباق الباطنة':'سباق الأطفال'"></span>
-                                </h3>
+                                <!-- Racers Area (Height for stacking) -->
+                                <div class="relative h-24 w-full" dir="ltr">
+                                    <template x-for="(student, index) in leaderboardData[subj]" :key="student.uid">
+                                        <!-- Racer Avatar -->
+                                        <div class="absolute top-1/2 -translate-y-1/2 transition-all duration-700 ease-out group"
+                                            :style="`left: ${Math.min(student.progress, 98)}%; z-index: ${100-index}`">
 
-                                <div x-show="!leaderboardData[subj] || leaderboardData[subj].length === 0"
-                                    class="text-center py-6 text-gray-500 relative z-10">
-                                    لا يوجد متسابقين حتى الآن 😴
-                                </div>
+                                            <!-- Tooltip -->
+                                            <div
+                                                class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-black/90 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
+                                                <span x-text="student.name"></span> • <span
+                                                    x-text="student.progress + '%'"></span>
+                                            </div>
 
-                                <!-- The Track Container -->
-                                <div x-show="leaderboardData[subj] && leaderboardData[subj].length > 0"
-                                    class="relative z-10 mt-10 mb-6 mx-4">
+                                            <!-- Image Ring -->
+                                            <div class="relative transition-transform duration-300 hover:scale-125 hover:z-50"
+                                                :class="{'z-40': student.uid === user.uid}">
 
-                                    <!-- Finish Line (Goal) -->
-                                    <div class="absolute right-0 -top-8 bottom-0 flex flex-col items-center z-0">
-                                        <span class="text-2xl mb-2">🏁</span>
-                                        <div class="w-0.5 h-full bg-white/20 border-r border-dashed border-white/50">
-                                        </div>
-                                        <span class="text-xs text-gray-500 mt-2">100%</span>
-                                    </div>
-
-                                    <!-- Start Line -->
-                                    <div class="absolute left-0 -top-8 bottom-0 flex flex-col items-center z-0">
-                                        <span class="text-xs text-gray-500 mb-2">البداية</span>
-                                        <div class="w-0.5 h-full bg-white/10"></div>
-                                    </div>
-
-                                    <!-- The Track Lines -->
-                                    <div
-                                        class="h-0.5 w-[calc(100%-1rem)] bg-white/10 absolute top-1/2 left-2 right-2 -translate-y-1/2 rounded-full">
-                                    </div>
-
-                                    <!-- Racers Area (Height for stacking) -->
-                                    <div class="relative h-24 w-full" dir="ltr">
-                                        <template x-for="(student, index) in leaderboardData[subj]" :key="student.uid">
-                                            <!-- Racer Avatar -->
-                                            <div class="absolute top-1/2 -translate-y-1/2 transition-all duration-700 ease-out group"
-                                                :style="`left: ${Math.min(student.progress, 98)}%; z-index: ${100-index}`">
-
-                                                <!-- Tooltip -->
-                                                <div
-                                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1 bg-black/90 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50">
-                                                    <span x-text="student.name"></span> • <span
-                                                        x-text="student.progress + '%'"></span>
+                                                <!-- Glowing Effect for 'Ahead' -->
+                                                <div x-show="student.status === 'ahead'"
+                                                    class="absolute inset-0 bg-green-500 rounded-full blur-md opacity-50 animate-pulse">
+                                                </div>
+                                                <!-- Warning Effect for 'Behind' -->
+                                                <div x-show="student.status === 'behind'"
+                                                    class="absolute inset-0 bg-red-500 rounded-full blur-md opacity-30">
                                                 </div>
 
-                                                <!-- Image Ring -->
-                                                <div class="relative transition-transform duration-300 hover:scale-125 hover:z-50"
-                                                    :class="{'z-40': student.uid === user.uid}">
-
-                                                    <!-- Glowing Effect for 'Ahead' -->
-                                                    <div x-show="student.status === 'ahead'"
-                                                        class="absolute inset-0 bg-green-500 rounded-full blur-md opacity-50 animate-pulse">
-                                                    </div>
-                                                    <!-- Warning Effect for 'Behind' -->
-                                                    <div x-show="student.status === 'behind'"
-                                                        class="absolute inset-0 bg-red-500 rounded-full blur-md opacity-30">
-                                                    </div>
-
-                                                    <img :src="student.photo || 'https://ui-avatars.com/api/?name='+student.name"
-                                                        class="w-12 h-12 rounded-full border-2 object-cover relative z-10 bg-[#0f0f15]"
-                                                        :class="{
+                                                <img :src="student.photo || 'https://ui-avatars.com/api/?name='+student.name"
+                                                    class="w-12 h-12 rounded-full border-2 object-cover relative z-10 bg-[#0f0f15]"
+                                                    :class="{
                                                             'border-green-400 shadow-[0_0_10px_rgba(74,222,128,0.5)]': student.status === 'ahead',
                                                             'border-red-400': student.status === 'behind',
                                                             'border-blue-400': student.status === 'on-track',
                                                             'border-yellow-400 w-14 h-14 -mt-1 ring-4 ring-yellow-400/20': student.uid === user.uid
                                                         }">
 
-                                                    <!-- You Indicator -->
-                                                    <div x-show="student.uid === user.uid"
-                                                        class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-yellow-400 animate-bounce">
-                                                        أنت
-                                                    </div>
+                                                <!-- You Indicator -->
+                                                <div x-show="student.uid === user.uid"
+                                                    class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-yellow-400 animate-bounce">
+                                                    أنت
                                                 </div>
                                             </div>
-                                        </template>
-                                    </div>
-
+                                        </div>
+                                    </template>
                                 </div>
+
                             </div>
-                        </template>
-                    </div>
+                        </div>
+                    </template>
                 </div>
+            </div>
 
-                <!-- Settings -->
-                <div x-show="tab==='settings'" x-transition class="max-w-2xl mx-auto">
-                    <h2 class="text-3xl font-bold mb-6">⚙️ الإعدادات</h2>
+            <!-- Settings -->
+            <div x-show="tab==='settings'" x-transition class="max-w-2xl mx-auto">
+                <h2 class="text-3xl font-bold mb-6">⚙️ الإعدادات</h2>
 
-                    <div class="space-y-4">
-                        <div class="stat-card">
-                            <label class="block text-gray-400 mb-2">📅 تاريخ الامتحان</label>
-                            <input type="date" x-model="settings.examDate" @change="save()">
-                        </div>
-                        <div class="stat-card">
-                            <label class="block text-gray-400 mb-2">� تاريخ بداية الخطة</label>
-                            <input type="date" x-model="settings.planStartDate" @change="save()">
-                            <p class="text-xs text-gray-500 mt-2">يُستخدم لحساب التأخير</p>
-                        </div>
-                        <div class="stat-card">
-                            <label class="block text-gray-400 mb-2">🏁 تاريخ انتهاء الخطة</label>
-                            <input type="date" x-model="settings.planEndDate" @change="save()">
-                            <p class="text-xs text-gray-500 mt-2">يُستخدم لحساب المعدل اليومي المطلوب</p>
-                        </div>
+                <div class="space-y-4">
+                    <div class="stat-card">
+                        <label class="block text-gray-400 mb-2">📅 تاريخ الامتحان</label>
+                        <input type="date" x-model="settings.examDate" @change="save()">
+                    </div>
+                    <div class="stat-card">
+                        <label class="block text-gray-400 mb-2">� تاريخ بداية الخطة</label>
+                        <input type="date" x-model="settings.planStartDate" @change="save()">
+                        <p class="text-xs text-gray-500 mt-2">يُستخدم لحساب التأخير</p>
+                    </div>
+                    <div class="stat-card">
+                        <label class="block text-gray-400 mb-2">🏁 تاريخ انتهاء الخطة</label>
+                        <input type="date" x-model="settings.planEndDate" @change="save()">
+                        <p class="text-xs text-gray-500 mt-2">يُستخدم لحساب المعدل اليومي المطلوب</p>
+                    </div>
 
-                        <!-- Smart Parser -->
-                        <div class="stat-card border-purple-500/30">
-                            <h3 class="font-bold text-purple-400 mb-4 text-lg">📥 إضافة محاضرات</h3>
+                    <!-- Smart Parser -->
+                    <div class="stat-card border-purple-500/30">
+                        <h3 class="font-bold text-purple-400 mb-4 text-lg">📥 إضافة محاضرات</h3>
 
-                            <div class="space-y-3">
-                                <div>
-                                    <label class="text-sm text-gray-500 mb-1 block">المادة</label>
-                                    <select x-model="parser.subject" @change="parser.chapter=''">
-                                        <option value="medicine">🫀 الباطنة</option>
-                                        <option value="pediatrics">👶 الأطفال</option>
-                                    </select>
-                                </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-sm text-gray-500 mb-1 block">المادة</label>
+                                <select x-model="parser.subject" @change="parser.chapter=''">
+                                    <option value="medicine">🫀 الباطنة</option>
+                                    <option value="pediatrics">👶 الأطفال</option>
+                                </select>
+                            </div>
 
-                                <div>
-                                    <label class="text-sm text-gray-500 mb-1 block">اختر فصل موجود أو أنشئ جديد</label>
-                                    <select x-model="parser.chapter">
-                                        <option value="">➕ إنشاء فصل جديد...</option>
-                                        <template x-for="ch in data[parser.subject]" :key="ch.id">
-                                            <option :value="ch.id" x-text="ch.icon+' '+ch.name"></option>
-                                        </template>
-                                    </select>
-                                </div>
+                            <div>
+                                <label class="text-sm text-gray-500 mb-1 block">اختر فصل موجود أو أنشئ جديد</label>
+                                <select x-model="parser.chapter">
+                                    <option value="">➕ إنشاء فصل جديد...</option>
+                                    <template x-for="ch in data[parser.subject]" :key="ch.id">
+                                        <option :value="ch.id" x-text="ch.icon+' '+ch.name"></option>
+                                    </template>
+                                </select>
+                            </div>
 
-                                <div x-show="parser.chapter===''">
-                                    <label class="text-sm text-gray-500 mb-1 block">اسم الفصل الجديد</label>
-                                    <input type="text" x-model="parser.newName" placeholder="مثل: Cardiology">
-                                </div>
-                                <div x-show="parser.chapter===''">
-                                    <label class="text-sm text-gray-500 mb-1 block">أيقونة الفصل</label>
-                                    <input type="text" x-model="parser.newIcon" placeholder="مثل: ❤️">
-                                </div>
+                            <div x-show="parser.chapter===''">
+                                <label class="text-sm text-gray-500 mb-1 block">اسم الفصل الجديد</label>
+                                <input type="text" x-model="parser.newName" placeholder="مثل: Cardiology">
+                            </div>
+                            <div x-show="parser.chapter===''">
+                                <label class="text-sm text-gray-500 mb-1 block">أيقونة الفصل</label>
+                                <input type="text" x-model="parser.newIcon" placeholder="مثل: ❤️">
+                            </div>
 
-                                <div>
-                                    <label class="text-sm text-gray-500 mb-1 block">المحاضرات (كل سطر: اسم -
-                                        مدة)</label>
-                                    <textarea x-model="parser.text" rows="5" placeholder="Lecture 1 - 30
+                            <div>
+                                <label class="text-sm text-gray-500 mb-1 block">المحاضرات (كل سطر: اسم -
+                                    مدة)</label>
+                                <textarea x-model="parser.text" rows="5" placeholder="Lecture 1 - 30
 Lecture 2 - 45
 Lecture 3 - 60"></textarea>
-                                </div>
-
-                                <button @click="parseAndAdd()" class="btn btn-primary w-full py-3">➕ إضافة
-                                    المحاضرات</button>
                             </div>
-                        </div>
 
-                        <!-- Admin Only: Publish Courses -->
-                        <div x-show="isAdmin" class="stat-card border-purple-500/30 bg-purple-500/10">
-                            <h3 class="font-bold text-purple-400 mb-3 text-lg">👑 لوحة الأدمن</h3>
-                            <button @click="publishCourses()"
-                                class="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl transition">
-                                📤 نشر المحاضرات لجميع الطلبة
-                            </button>
-                            <p class="text-sm text-gray-400 mt-2">انقر لنشر المحاضرات الحالية في قاعدة البيانات المشتركة
-                            </p>
-                        </div>
-
-                        <!-- Actions -->
-                        <div class="stat-card border-yellow-500/30">
-                            <button @click="forceReload()" class="text-yellow-400 font-bold">🔄 إعادة تحميل البيانات
-                                الأصلية</button>
-                            <p class="text-sm text-gray-500 mt-1">إذا كانت المحاضرات فارغة</p>
-                        </div>
-                        <div class="stat-card border-red-500/30">
-                            <button @click="resetAll()" class="text-red-400 font-bold">🗑️ حذف جميع البيانات</button>
+                            <button @click="parseAndAdd()" class="btn btn-primary w-full py-3">➕ إضافة
+                                المحاضرات</button>
                         </div>
                     </div>
+
+                    <!-- Admin Only: Publish Courses -->
+                    <div x-show="isAdmin" class="stat-card border-purple-500/30 bg-purple-500/10">
+                        <h3 class="font-bold text-purple-400 mb-3 text-lg">👑 لوحة الأدمن</h3>
+                        <button @click="publishCourses()"
+                            class="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl transition">
+                            📤 نشر المحاضرات لجميع الطلبة
+                        </button>
+                        <p class="text-sm text-gray-400 mt-2">انقر لنشر المحاضرات الحالية في قاعدة البيانات المشتركة
+                        </p>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="stat-card border-yellow-500/30">
+                        <button @click="forceReload()" class="text-yellow-400 font-bold">🔄 إعادة تحميل البيانات
+                            الأصلية</button>
+                        <p class="text-sm text-gray-500 mt-1">إذا كانت المحاضرات فارغة</p>
+                    </div>
+                    <div class="stat-card border-red-500/30">
+                        <button @click="resetAll()" class="text-red-400 font-bold">🗑️ حذف جميع البيانات</button>
+                    </div>
                 </div>
+            </div>
 
-            </main>
-        </div>
+        </main>
+    </div>
 
-        <script>
-            const DEFAULT_DATA = {
-                medicine: [],
-                pediatrics: []
-            };
+    <script>
+        const DEFAULT_DATA = {
+            medicine: [],
+            pediatrics: []
+        };
 
-            function app() {
-                return {
-                    loading: true,
-                    user: null,
-                    tab: 'dashboard',
-                    unsub: null,
-                    openCh: {},
-                    settings: { examDate: '2026-04-15', planEndDate: '2026-04-01', planStartDate: '2026-02-03' },
-                    parser: { subject: 'medicine', chapter: '', newName: '', newIcon: '📚', text: '' },
-                    data: { medicine: [], pediatrics: [] },
-                    todayCache: { date: '', medicine: [], pediatrics: [] },
-                    leaderboardData: { medicine: [], pediatrics: [] },
-                    leaderboardLoading: false,
-                    enrolledCourses: [], // 'medicine', 'pediatrics'
-                    showEnrollModal: false,
+        function app() {
+            return {
+                loading: true,
+                user: null,
+                tab: 'dashboard',
+                unsub: null,
+                openCh: {},
+                settings: { examDate: '2026-04-15', planEndDate: '2026-04-01', planStartDate: '2026-02-03' },
+                parser: { subject: 'medicine', chapter: '', newName: '', newIcon: '📚', text: '' },
+                data: { medicine: [], pediatrics: [] },
+                todayCache: { date: '', medicine: [], pediatrics: [] },
+                leaderboardData: { medicine: [], pediatrics: [] },
+                leaderboardLoading: false,
+                enrolledCourses: [], // 'medicine', 'pediatrics'
+                showEnrollModal: false,
 
-                    isEnrolled(subj) {
-                        return this.enrolledCourses.includes(subj);
-                    },
+                isEnrolled(subj) {
+                    return this.enrolledCourses.includes(subj);
+                },
 
-                    toggleEnrollment(subj) {
-                        if (this.enrolledCourses.includes(subj)) {
-                            this.enrolledCourses = this.enrolledCourses.filter(c => c !== subj);
-                        } else {
-                            this.enrolledCourses.push(subj);
+                toggleEnrollment(subj) {
+                    if (this.enrolledCourses.includes(subj)) {
+                        this.enrolledCourses = this.enrolledCourses.filter(c => c !== subj);
+                    } else {
+                        this.enrolledCourses.push(subj);
+                    }
+                    this.save();
+                },
+
+                async fetchLeaderboard() {
+                    this.leaderboardLoading = true;
+                    try {
+                        for (const subj of ['medicine', 'pediatrics']) {
+                            const ref = window.fb.collection(window.fb.db, 'leaderboard', subj, 'students');
+                            const snap = await window.fb.getDocs(ref);
+                            const students = [];
+                            snap.forEach(doc => {
+                                students.push(doc.data());
+                            });
+                            // Sort by progress descending
+                            this.leaderboardData[subj] = students.sort((a, b) => b.progress - a.progress);
                         }
-                        this.save();
-                    },
+                    } catch (e) {
+                        console.error('Error fetching leaderboard:', e);
+                    } finally {
+                        this.leaderboardLoading = false;
+                    }
+                },
 
-                    async fetchLeaderboard() {
-                        this.leaderboardLoading = true;
+                async init() {
+                    const setup = () => {
+                        window.fb.onAuthStateChanged(window.fb.auth, async (u) => {
+                            this.user = u;
+                            if (u) await this.load();
+                            this.loading = false;
+                            this.$nextTick(() => this.initSortable());
+                        });
+                    };
+                    if (window.fb) setup();
+                    else window.addEventListener('fb-ready', setup);
+                },
+
+                async login() {
+                    try { await window.fb.signInWithPopup(window.fb.auth, window.fb.provider); }
+                    catch (e) { alert('خطأ: ' + e.message); }
+                },
+
+                async logout() {
+                    if (this.unsub) this.unsub();
+                    await window.fb.signOut(window.fb.auth);
+                    this.user = null;
+                },
+
+                async load() {
+                    try {
+                        // 1. Load shared courses (ALWAYS)
+                        const coursesData = { medicine: [], pediatrics: [] };
+
                         try {
-                            for (const subj of ['medicine', 'pediatrics']) {
-                                const ref = window.fb.collection(window.fb.db, 'leaderboard', subj, 'students');
-                                const snap = await window.fb.getDocs(ref);
-                                const students = [];
-                                snap.forEach(doc => {
-                                    students.push(doc.data());
-                                });
-                                // Sort by progress descending
-                                this.leaderboardData[subj] = students.sort((a, b) => b.progress - a.progress);
+                            for (const subject of ['medicine', 'pediatrics']) {
+                                const courseRef = window.fb.doc(window.fb.db, 'courses', subject);
+                                const courseDoc = await window.fb.getDoc(courseRef);
+
+                                if (courseDoc.exists()) {
+                                    coursesData[subject] = courseDoc.data().chapters || [];
+                                }
                             }
                         } catch (e) {
-                            console.error('Error fetching leaderboard:', e);
-                        } finally {
-                            this.leaderboardLoading = false;
+                            console.error("Error fetching courses:", e);
                         }
-                    },
 
-                    async init() {
-                        const setup = () => {
-                            window.fb.onAuthStateChanged(window.fb.auth, async (u) => {
-                                this.user = u;
-                                if (u) await this.load();
-                                this.loading = false;
-                                this.$nextTick(() => this.initSortable());
-                            });
-                        };
-                        if (window.fb) setup();
-                        else window.addEventListener('fb-ready', setup);
-                    },
+                        // 2. Load user data
+                        const userRef = window.fb.doc(window.fb.db, 'users', this.user.uid);
+                        this.unsub = window.fb.onSnapshot(userRef, (userDoc) => {
+                            if (userDoc.exists()) {
+                                const userData = userDoc.data();
+                                const hasOldData = userData.data && (userData.data.medicine?.length > 0 || userData.data.pediatrics?.length > 0);
+                                const coursesEmpty = coursesData.medicine.length === 0 && coursesData.pediatrics.length === 0;
 
-                    async login() {
-                        try { await window.fb.signInWithPopup(window.fb.auth, window.fb.provider); }
-                        catch (e) { alert('خطأ: ' + e.message); }
-                    },
-
-                    async logout() {
-                        if (this.unsub) this.unsub();
-                        await window.fb.signOut(window.fb.auth);
-                        this.user = null;
-                    },
-
-                    async load() {
-                        try {
-                            // 1. Load shared courses (ALWAYS)
-                            const coursesData = { medicine: [], pediatrics: [] };
-
-                            try {
-                                for (const subject of ['medicine', 'pediatrics']) {
-                                    const courseRef = window.fb.doc(window.fb.db, 'courses', subject);
-                                    const courseDoc = await window.fb.getDoc(courseRef);
-
-                                    if (courseDoc.exists()) {
-                                        coursesData[subject] = courseDoc.data().chapters || [];
-                                    }
-                                }
-                            } catch (e) {
-                                console.error("Error fetching courses:", e);
-                            }
-
-                            // 2. Load user data
-                            const userRef = window.fb.doc(window.fb.db, 'users', this.user.uid);
-                            this.unsub = window.fb.onSnapshot(userRef, (userDoc) => {
-                                if (userDoc.exists()) {
-                                    const userData = userDoc.data();
-                                    const hasOldData = userData.data && (userData.data.medicine?.length > 0 || userData.data.pediatrics?.length > 0);
-                                    const coursesEmpty = coursesData.medicine.length === 0 && coursesData.pediatrics.length === 0;
-
-                                    if (coursesEmpty && hasOldData) {
-                                        // Fallback: Use old local data if shared courses aren't available
-                                        this.data = userData.data;
-                                    } else {
-                                        // STANDARD: Use Shared Courses + User Progress
-                                        for (const subject of ['medicine', 'pediatrics']) {
-                                            // Start with fresh copy of shared course
-                                            this.data[subject] = JSON.parse(JSON.stringify(coursesData[subject]));
-
-                                            // Apply user progress
-                                            const userProgress = userData.progress?.[subject] || {};
-
-                                            this.data[subject].forEach(chapter => {
-                                                chapter.lectures?.forEach(lecture => {
-                                                    const lectureProgress = userProgress[lecture.id];
-                                                    if (lectureProgress) {
-                                                        lecture.done = lectureProgress.done || false;
-                                                        lecture.tag = lectureProgress.tag || 'none';
-                                                    }
-                                                });
-                                            });
-                                        }
-                                    }
-
-                                    // Load settings
-                                    if (userData.settings) this.settings = { ...this.settings, ...userData.settings };
-                                    if (userData.todayCache) this.todayCache = userData.todayCache;
-
-                                    // Load Enrollment
-                                    this.enrolledCourses = userData.enrolledCourses || [];
-                                    // Auto-enroll in everything if fresh user (can be changed later)
-                                    // Actually user requested a selection modal. We'll handle that next.
-
+                                if (coursesEmpty && hasOldData) {
+                                    // Fallback: Use old local data if shared courses aren't available
+                                    this.data = userData.data;
                                 } else {
-                                    // New User: Use courses data directly
-                                    this.data = JSON.parse(JSON.stringify(coursesData));
-                                    this.enrolledCourses = []; // Will trigger modal
-                                    this.save();
+                                    // STANDARD: Use Shared Courses + User Progress
+                                    for (const subject of ['medicine', 'pediatrics']) {
+                                        // Start with fresh copy of shared course
+                                        this.data[subject] = JSON.parse(JSON.stringify(coursesData[subject]));
+
+                                        // Apply user progress
+                                        const userProgress = userData.progress?.[subject] || {};
+
+                                        this.data[subject].forEach(chapter => {
+                                            chapter.lectures?.forEach(lecture => {
+                                                const lectureProgress = userProgress[lecture.id];
+                                                if (lectureProgress) {
+                                                    lecture.done = lectureProgress.done || false;
+                                                    lecture.tag = lectureProgress.tag || 'none';
+                                                }
+                                            });
+                                        });
+                                    }
                                 }
 
-                                this.refreshTodayTasks();
-                                this.$nextTick(() => this.initSortable());
-                            });
+                                // Load settings
+                                if (userData.settings) this.settings = { ...this.settings, ...userData.settings };
+                                if (userData.todayCache) this.todayCache = userData.todayCache;
 
-                        } catch (e) {
-                            console.error('Error loading data:', e);
-                            alert('خطأ في تحميل البيانات: ' + e.message);
-                        }
-                    },
+                                // Load Enrollment
+                                this.enrolledCourses = userData.enrolledCourses || [];
+                                // Auto-enroll in everything if fresh user (can be changed later)
+                                // Actually user requested a selection modal. We'll handle that next.
 
-                    async save() {
-                        if (!this.user) return;
-
-                        // Extract only user-specific progress
-                        const progress = { medicine: {}, pediatrics: {} };
-
-                        for (const subject of ['medicine', 'pediatrics']) {
-                            this.data[subject]?.forEach(chapter => {
-                                chapter.lectures?.forEach(lecture => {
-                                    if (lecture.done || lecture.tag !== 'none') {
-                                        progress[subject][lecture.id] = {
-                                            done: lecture.done || false,
-                                            tag: lecture.tag || 'none'
-                                        };
-                                    }
-                                });
-                            });
-                        }
-
-                        await window.fb.setDoc(window.fb.doc(window.fb.db, 'users', this.user.uid), {
-                            progress: progress,
-                            settings: this.settings,
-                            todayCache: this.todayCache,
-                            enrolledCourses: this.enrolledCourses,
-                            profile: {
-                                name: this.user.displayName,
-                                photo: this.user.photoURL,
-                                email: this.user.email
+                            } else {
+                                // New User: Use courses data directly
+                                this.data = JSON.parse(JSON.stringify(coursesData));
+                                this.enrolledCourses = []; // Will trigger modal
+                                this.save();
                             }
-                        }, { merge: true });
 
-                        // Publish to Shared Leaderboard
-                        ['medicine', 'pediatrics'].forEach(async (subj) => {
-                            const prog = this.getProgress(subj);
+                            this.refreshTodayTasks();
+                            this.$nextTick(() => this.initSortable());
+                        });
 
-                            // Calculate Status (simple logic for now)
-                            let status = 'on-track';
-                            // You can enhance logic here if needed
+                    } catch (e) {
+                        console.error('Error loading data:', e);
+                        alert('خطأ في تحميل البيانات: ' + e.message);
+                    }
+                },
 
-                            const statsRef = window.fb.doc(window.fb.db, 'leaderboard', subj, 'students', this.user.uid);
-                            await window.fb.setDoc(statsRef, {
-                                name: this.user.displayName,
-                                photo: this.user.photoURL,
-                                uid: this.user.uid,
-                                progress: prog,
-                                status: this.delayHours > 0 ? 'behind' : 'ahead', // Simple status based on delay
-                                lastUpdate: new Date().toISOString()
+                async save() {
+                    if (!this.user) return;
+
+                    // Extract only user-specific progress
+                    const progress = { medicine: {}, pediatrics: {} };
+
+                    for (const subject of ['medicine', 'pediatrics']) {
+                        this.data[subject]?.forEach(chapter => {
+                            chapter.lectures?.forEach(lecture => {
+                                if (lecture.done || lecture.tag !== 'none') {
+                                    progress[subject][lecture.id] = {
+                                        done: lecture.done || false,
+                                        tag: lecture.tag || 'none'
+                                    };
+                                }
                             });
                         });
-                    },
+                    }
 
-                    // Format helpers
-                    formatHours(hrs) {
-                        const h = Math.floor(hrs);
-                        const m = Math.round((hrs - h) * 60);
-                        if (h === 0) return m + ' دقيقة';
-                        if (m === 0) return h + ' ساعة';
-                        return h + ' ساعة و ' + m + ' دقيقة';
-                    },
+                    await window.fb.setDoc(window.fb.doc(window.fb.db, 'users', this.user.uid), {
+                        progress: progress,
+                        settings: this.settings,
+                        todayCache: this.todayCache,
+                        enrolledCourses: this.enrolledCourses,
+                        profile: {
+                            name: this.user.displayName,
+                            photo: this.user.photoURL,
+                            email: this.user.email
+                        }
+                    }, { merge: true });
 
-                    formatMins(mins) {
-                        const h = Math.floor(mins / 60);
-                        const m = mins % 60;
-                        if (h === 0) return m + ' دقيقة';
-                        if (m === 0) return h + ' ساعة';
-                        return h + ' ساعة و ' + m + ' دقيقة';
-                    },
+                    // Publish to Shared Leaderboard
+                    ['medicine', 'pediatrics'].forEach(async (subj) => {
+                        const prog = this.getProgress(subj);
 
-                    initSortable() {
-                        const self = this;
-                        ['medicine', 'pediatrics'].forEach(subj => {
-                            const el = document.getElementById(subj + '-chapters');
+                        // Calculate Status (simple logic for now)
+                        let status = 'on-track';
+                        // You can enhance logic here if needed
+
+                        const statsRef = window.fb.doc(window.fb.db, 'leaderboard', subj, 'students', this.user.uid);
+                        await window.fb.setDoc(statsRef, {
+                            name: this.user.displayName,
+                            photo: this.user.photoURL,
+                            uid: this.user.uid,
+                            progress: prog,
+                            status: this.delayHours > 0 ? 'behind' : 'ahead', // Simple status based on delay
+                            lastUpdate: new Date().toISOString()
+                        });
+                    });
+                },
+
+                // Format helpers
+                formatHours(hrs) {
+                    const h = Math.floor(hrs);
+                    const m = Math.round((hrs - h) * 60);
+                    if (h === 0) return m + ' دقيقة';
+                    if (m === 0) return h + ' ساعة';
+                    return h + ' ساعة و ' + m + ' دقيقة';
+                },
+
+                formatMins(mins) {
+                    const h = Math.floor(mins / 60);
+                    const m = mins % 60;
+                    if (h === 0) return m + ' دقيقة';
+                    if (m === 0) return h + ' ساعة';
+                    return h + ' ساعة و ' + m + ' دقيقة';
+                },
+
+                initSortable() {
+                    const self = this;
+                    ['medicine', 'pediatrics'].forEach(subj => {
+                        const el = document.getElementById(subj + '-chapters');
+                        if (el && !el._sortable) {
+                            el._sortable = new Sortable(el, {
+                                handle: '.drag-handle',
+                                animation: 200,
+                                ghostClass: 'sortable-ghost',
+                                onEnd: () => {
+                                    const items = [...el.querySelectorAll('[data-id]')].map(e => e.dataset.id);
+                                    const newOrder = items.map(id => self.data[subj].find(ch => ch.id === id)).filter(Boolean);
+                                    self.data[subj] = newOrder;
+                                    self.save();
+                                }
+                            });
+                        }
+                    });
+                    ['medicine', 'pediatrics'].forEach(subj => {
+                        this.data[subj]?.forEach((ch) => {
+                            const el = document.getElementById('lec-' + ch.id);
                             if (el && !el._sortable) {
                                 el._sortable = new Sortable(el, {
                                     handle: '.drag-handle',
@@ -1144,393 +1153,376 @@ Lecture 3 - 60"></textarea>
                                     ghostClass: 'sortable-ghost',
                                     onEnd: () => {
                                         const items = [...el.querySelectorAll('[data-id]')].map(e => e.dataset.id);
-                                        const newOrder = items.map(id => self.data[subj].find(ch => ch.id === id)).filter(Boolean);
-                                        self.data[subj] = newOrder;
+                                        const newOrder = items.map(id => ch.lectures.find(l => l.id === id)).filter(Boolean);
+                                        ch.lectures = newOrder;
                                         self.save();
                                     }
                                 });
                             }
                         });
-                        ['medicine', 'pediatrics'].forEach(subj => {
-                            this.data[subj]?.forEach((ch) => {
-                                const el = document.getElementById('lec-' + ch.id);
-                                if (el && !el._sortable) {
-                                    el._sortable = new Sortable(el, {
-                                        handle: '.drag-handle',
-                                        animation: 200,
-                                        ghostClass: 'sortable-ghost',
-                                        onEnd: () => {
-                                            const items = [...el.querySelectorAll('[data-id]')].map(e => e.dataset.id);
-                                            const newOrder = items.map(id => ch.lectures.find(l => l.id === id)).filter(Boolean);
-                                            ch.lectures = newOrder;
-                                            self.save();
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                    },
+                    });
+                },
 
-                    toggleCh(subj, i) {
-                        this.openCh[subj + i] = !this.openCh[subj + i];
-                        this.$nextTick(() => this.initSortable());
-                    },
+                toggleCh(subj, i) {
+                    this.openCh[subj + i] = !this.openCh[subj + i];
+                    this.$nextTick(() => this.initSortable());
+                },
 
-                    deleteChapter(subj, ci) {
-                        if (confirm('حذف هذا الفصل وجميع محاضراته؟')) {
-                            this.data[subj].splice(ci, 1);
-                            this.save();
-                        }
-                    },
-
-                    deleteLecture(subj, ci, li) {
-                        if (confirm('حذف هذه المحاضرة؟')) {
-                            this.data[subj][ci].lectures.splice(li, 1);
-                            this.save();
-                        }
-                    },
-
-                    // Tags
-                    cycleTag(lec) {
-                        if (!lec.tag || lec.tag === 'none') lec.tag = 'review';
-                        else if (lec.tag === 'review') lec.tag = 'mastered';
-                        else lec.tag = 'none';
+                deleteChapter(subj, ci) {
+                    if (confirm('حذف هذا الفصل وجميع محاضراته؟')) {
+                        this.data[subj].splice(ci, 1);
                         this.save();
-                    },
-
-                    setTag(item, tag) {
-                        for (const s of ['medicine', 'pediatrics']) {
-                            for (const ch of this.data[s] || []) {
-                                for (const l of ch.lectures || []) {
-                                    if (l.id === item.id) { l.tag = tag; this.save(); return; }
-                                }
-                            }
-                        }
-                    },
-
-                    getTaggedLectures(tag) {
-                        const list = [];
-                        for (const s of ['medicine', 'pediatrics']) {
-                            for (const ch of this.data[s] || []) {
-                                for (const l of ch.lectures || []) {
-                                    if (l.tag === tag) {
-                                        list.push({ ...l, subject: s, chapter: ch.name });
-                                    }
-                                }
-                            }
-                        }
-                        return list;
-                    },
-
-                    // Calculations
-                    get daysToExam() { return Math.max(0, Math.ceil((new Date(this.settings.examDate) - new Date()) / 86400000)); },
-                    get planDaysRemaining() { return Math.max(1, Math.ceil((new Date(this.settings.planEndDate) - new Date()) / 86400000)); },
-                    get planDaysPassed() {
-                        const start = new Date(this.settings.planStartDate);
-                        const now = new Date();
-                        const passed = Math.floor((now - start) / 86400000);
-                        return Math.max(0, passed);
-                    },
-                    get totalPlanDays() {
-                        const start = new Date(this.settings.planStartDate);
-                        const end = new Date(this.settings.planEndDate);
-                        return Math.max(1, Math.ceil((end - start) / 86400000));
-                    },
-
-                    getTotalHours(subj) {
-                        let t = 0;
-                        this.data[subj]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => t += l.duration); });
-                        return t / 60;
-                    },
-
-                    getRemainingHours(subj) {
-                        let t = 0;
-                        this.data[subj]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => { if (!l.done) t += l.duration; }); });
-                        return t / 60;
-                    },
-
-                    getDailyRequired(subj) {
-                        const remaining = this.getRemainingHours(subj);
-                        return remaining / this.planDaysRemaining;
-                    },
-
-                    get dailyRequired() {
-                        return this.getDailyRequired('medicine') + this.getDailyRequired('pediatrics');
-                    },
-
-                    get totalHoursNum() {
-                        return this.getTotalHours('medicine') + this.getTotalHours('pediatrics');
-                    },
-
-                    get remainingHoursNum() {
-                        return this.getRemainingHours('medicine') + this.getRemainingHours('pediatrics');
-                    },
-
-                    get totalProgress() {
-                        const t = this.totalHoursNum, d = t - this.remainingHoursNum;
-                        return t > 0 ? Math.round(d / t * 100) : 0;
-                    },
-
-                    getProgress(subj) {
-                        let t = 0, d = 0;
-                        this.data[subj]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => { t++; if (l.done) d++; }); });
-                        return t > 0 ? Math.round(d / t * 100) : 0;
-                    },
-                    getStats(subj) {
-                        let t = 0, d = 0;
-                        this.data[subj]?.forEach(c => c.lectures?.forEach(l => { t++; if (l.done) d++; }));
-                        return { total: t, done: d };
-                    },
-                    getChProg(subj, i) {
-                        const ch = this.data[subj]?.[i];
-                        if (!ch || !ch.lectures?.length) return 0;
-                        return Math.round(ch.lectures.filter(l => l.done).length / ch.lectures.length * 100);
-                    },
-                    getChHrsNum(subj, i) {
-                        const ch = this.data[subj]?.[i];
-                        if (!ch) return 0;
-                        return ch.lectures?.reduce((a, l) => a + l.duration, 0) / 60;
-                    },
-
-                    get expectedHours() {
-                        // Expected = (total hours / total plan days) * days passed since start
-                        if (this.totalPlanDays <= 0 || this.planDaysPassed <= 0) return 0;
-                        return (this.totalHoursNum / this.totalPlanDays) * this.planDaysPassed;
-                    },
-                    get delayHours() {
-                        const done = this.totalHoursNum - this.remainingHoursNum;
-                        return Math.max(0, this.expectedHours - done);
-                    },
-                    get extraMinutes() { return this.planDaysRemaining > 0 ? Math.round(this.delayHours * 60 / this.planDaysRemaining) : 0; },
-
-                    // Motivational Messages
-                    getRandomEmoji(type) {
-                        const emojis = type === 'good'
-                            ? ['👏', '🎉', '⭐', '🏆', '🔥', '💯', '🚀', '✨', '👑', '💪']
-                            : ['💪', '🌟', '🎯', '⚡', '🦁', '🔱', '💎', '🌈', '🎓', '⏰'];
-                        return emojis[Math.floor(Math.random() * emojis.length)];
-                    },
-
-                    getMotivationalTitle(type) {
-                        const titles = type === 'good'
-                            ? ['أحسنت! أنت ملتزم بالخطة', 'رائع! استمر هكذا', 'ممتاز! أنت على الطريق الصحيح', 'بطل! تقدمك مذهل', 'مبدع! خطتك ناجحة']
-                            : ['لا تستسلم!', 'أنت قادر على التعويض', 'كل تأخير يُعوَّض', 'النجاح يحتاج صبراً', 'ابدأ الآن!'];
-                        return titles[Math.floor(Math.random() * titles.length)];
-                    },
-
-                    getMotivationalQuote(type) {
-                        const quotes = type === 'good'
-                            ? [
-                                'الالتزام هو سر النجاح. استمر!',
-                                'كل محاضرة تُنهيها هي خطوة نحو حلمك.',
-                                'أنت تصنع مستقبلك بكل لحظة تقضيها في الدراسة.',
-                                'التميز ليس صدفة، بل نتيجة جهد متواصل.',
-                                'الطبيب الناجح يبدأ بطالب ملتزم.',
-                                'كل ساعة تستثمرها اليوم ستُكافأ غداً.',
-                                'أنت في الطريق الصحيح، لا تتوقف!'
-                            ]
-                            : [
-                                'ليس المهم أن تسقط، بل أن تنهض.',
-                                'كل يوم فرصة جديدة للبدء من جديد.',
-                                'التأخير ليس نهاية العالم، التوقف هو.',
-                                'الطريق إلى الألف ميل يبدأ بخطوة.',
-                                'لا تقارن نفسك بالآخرين، قارنها بنفسك أمس.',
-                                'النجاح ليس نهائياً والفشل ليس قاتلاً.',
-                                'ابدأ من حيث أنت، استخدم ما لديك.',
-                                'العظماء لا يستسلمون عند أول عقبة.'
-                            ];
-                        return quotes[Math.floor(Math.random() * quotes.length)];
-                    },
-
-                    // Daily Tasks - Fixed per day
-                    getToday() {
-                        return new Date().toISOString().split('T')[0];
-                    },
-
-                    refreshTodayTasks() {
-                        const today = this.getToday();
-                        if (this.todayCache.date !== today) {
-                            // New day - recalculate tasks
-                            this.todayCache = {
-                                date: today,
-                                medicine: this.calculateTodayTasks('medicine'),
-                                pediatrics: this.calculateTodayTasks('pediatrics')
-                            };
-                            this.save();
-                        }
-                    },
-
-                    calculateTodayTasks(subj) {
-                        const taskIds = [];
-                        let totalMins = 0;
-                        const targetMins = this.getDailyRequired(subj) * 60;
-
-                        for (const ch of (this.data[subj] || [])) {
-                            if (ch.ignored) continue;
-                            for (const l of (ch.lectures || [])) {
-                                if (l.done) continue;
-
-                                // Always add at least one if we have none
-                                if (taskIds.length === 0) {
-                                    taskIds.push(l.id);
-                                    totalMins += l.duration;
-                                    continue;
-                                }
-
-                                // If adding this gets us closer to target, add it
-                                if (totalMins < targetMins) {
-                                    taskIds.push(l.id);
-                                    totalMins += l.duration;
-                                } else {
-                                    // We're at or over target - check if we should add one more
-                                    const withoutThis = Math.abs(totalMins - targetMins);
-                                    const withThis = Math.abs(totalMins + l.duration - targetMins);
-                                    if (withThis < withoutThis) {
-                                        // Adding this gets us closer - add it (lean towards more)
-                                        taskIds.push(l.id);
-                                        totalMins += l.duration;
-                                    }
-                                    break;
-                                }
-                            }
-                            if (totalMins >= targetMins) break;
-                        }
-                        return taskIds;
-                    },
-
-                    getFixedTodayTasks(subj) {
-                        const ids = this.todayCache[subj] || [];
-                        const tasks = [];
-                        for (const ch of (this.data[subj] || [])) {
-                            for (const l of (ch.lectures || [])) {
-                                if (ids.includes(l.id)) {
-                                    tasks.push({ ...l, chapter: ch.name });
-                                }
-                            }
-                        }
-                        return tasks;
-                    },
-
-                    getTodayTasksTime(subj) {
-                        return this.getFixedTodayTasks(subj).reduce((a, t) => a + t.duration, 0);
-                    },
-
-                    todayTasksComplete(subj) {
-                        const tasks = this.getFixedTodayTasks(subj);
-                        return tasks.length > 0 && tasks.every(t => t.done);
-                    },
-
-                    markDone(task) {
-                        for (const s of ['medicine', 'pediatrics']) {
-                            for (const ch of (this.data[s] || [])) {
-                                for (const l of (ch.lectures || [])) {
-                                    if (l.id === task.id) { l.done = true; this.save(); return; }
-                                }
-                            }
-                        }
-                    },
-
-                    // Admin Functions
-                    get isAdmin() {
-                        return this.user?.email === 'aliahmed323se@gmail.com';
-                    },
-
-                    async migrateDataToCourses() {
-                        if (!this.isAdmin) {
-                            alert('هذه الميزة متاحة للأدمن فقط');
-                            return;
-                        }
-
-                        if (!confirm('هل تريد نقل البيانات الحالية إلى المحاضرات المشتركة؟\nسيراها جميع الطلبة')) return;
-
-                        try {
-                            for (const subject of ['medicine', 'pediatrics']) {
-                                // Clean data: remove user-specific fields
-                                const cleanChapters = JSON.parse(JSON.stringify(this.data[subject]));
-                                cleanChapters.forEach(ch => {
-                                    ch.lectures?.forEach(l => {
-                                        delete l.done;
-                                        l.tag = 'none';
-                                    });
-                                });
-
-                                await window.fb.setDoc(
-                                    window.fb.doc(window.fb.db, 'courses', subject),
-                                    { chapters: cleanChapters },
-                                    { merge: true }
-                                );
-                            }
-                            alert('✅ تم نشر المحاضرات بنجاح!\nالآن سيراها جميع الطلبة.');
-                        } catch (e) {
-                            alert('خطأ: ' + e.message);
-                        }
-                    },
-
-                    async publishCourses() {
-                        if (!this.isAdmin) return;
-                        await this.migrateDataToCourses();
-                    },
-
-                    forceReload() {
-                        alert('لا توجد بيانات افتراضية. أضف محاضراتك من الإعدادات.');
-                    },
-
-                    resetAll() {
-                        if (confirm('هل أنت متأكد من حذف جميع البيانات؟')) {
-                            this.data = { medicine: [], pediatrics: [] };
-                            this.todayCache = { date: '', medicine: [], pediatrics: [] };
-                            this.save();
-                        }
-                    },
-
-                    parseAndAdd() {
-                        if (!this.parser.text.trim()) {
-                            alert('أدخل المحاضرات');
-                            return;
-                        }
-
-                        const lines = this.parser.text.trim().split('\n');
-                        const newLectures = lines.map((line, i) => {
-                            const parts = line.split('-');
-                            return {
-                                id: 'lec_' + Date.now() + '_' + i,
-                                title: parts[0]?.trim() || 'محاضرة',
-                                duration: parseInt(parts[1]) || 30,
-                                done: false,
-                                tag: 'none'
-                            };
-                        });
-
-                        if (this.parser.chapter) {
-                            const ch = this.data[this.parser.subject].find(c => c.id === this.parser.chapter);
-                            if (ch) {
-                                ch.lectures.push(...newLectures);
-                                alert('تم إضافة ' + newLectures.length + ' محاضرة إلى ' + ch.name);
-                            }
-                        } else {
-                            if (!this.parser.newName) {
-                                alert('أدخل اسم الفصل الجديد');
-                                return;
-                            }
-                            const newChapter = {
-                                id: 'ch_' + Date.now(),
-                                name: this.parser.newName,
-                                icon: this.parser.newIcon || '📚',
-                                ignored: false,
-                                lectures: newLectures
-                            };
-                            this.data[this.parser.subject].push(newChapter);
-                            alert('تم إنشاء فصل جديد: ' + this.parser.newName + ' (' + newLectures.length + ' محاضرة)');
-                        }
-
-                        this.parser = { subject: this.parser.subject, chapter: '', newName: '', newIcon: '📚', text: '' };
-                        this.refreshTodayTasks();
-                        this.save();
-                        this.$nextTick(() => this.initSortable());
                     }
-                };
-            }
-        </script>
+                },
+
+                deleteLecture(subj, ci, li) {
+                    if (confirm('حذف هذه المحاضرة؟')) {
+                        this.data[subj][ci].lectures.splice(li, 1);
+                        this.save();
+                    }
+                },
+
+                // Tags
+                cycleTag(lec) {
+                    if (!lec.tag || lec.tag === 'none') lec.tag = 'review';
+                    else if (lec.tag === 'review') lec.tag = 'mastered';
+                    else lec.tag = 'none';
+                    this.save();
+                },
+
+                setTag(item, tag) {
+                    for (const s of ['medicine', 'pediatrics']) {
+                        for (const ch of this.data[s] || []) {
+                            for (const l of ch.lectures || []) {
+                                if (l.id === item.id) { l.tag = tag; this.save(); return; }
+                            }
+                        }
+                    }
+                },
+
+                getTaggedLectures(tag) {
+                    const list = [];
+                    for (const s of ['medicine', 'pediatrics']) {
+                        for (const ch of this.data[s] || []) {
+                            for (const l of ch.lectures || []) {
+                                if (l.tag === tag) {
+                                    list.push({ ...l, subject: s, chapter: ch.name });
+                                }
+                            }
+                        }
+                    }
+                    return list;
+                },
+
+                // Calculations
+                get daysToExam() { return Math.max(0, Math.ceil((new Date(this.settings.examDate) - new Date()) / 86400000)); },
+                get planDaysRemaining() { return Math.max(1, Math.ceil((new Date(this.settings.planEndDate) - new Date()) / 86400000)); },
+                get planDaysPassed() {
+                    const start = new Date(this.settings.planStartDate);
+                    const now = new Date();
+                    const passed = Math.floor((now - start) / 86400000);
+                    return Math.max(0, passed);
+                },
+                get totalPlanDays() {
+                    const start = new Date(this.settings.planStartDate);
+                    const end = new Date(this.settings.planEndDate);
+                    return Math.max(1, Math.ceil((end - start) / 86400000));
+                },
+
+                getTotalHours(subj) {
+                    let t = 0;
+                    this.data[subj]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => t += l.duration); });
+                    return t / 60;
+                },
+
+                getRemainingHours(subj) {
+                    let t = 0;
+                    this.data[subj]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => { if (!l.done) t += l.duration; }); });
+                    return t / 60;
+                },
+
+                getDailyRequired(subj) {
+                    const remaining = this.getRemainingHours(subj);
+                    return remaining / this.planDaysRemaining;
+                },
+
+                get dailyRequired() {
+                    return this.getDailyRequired('medicine') + this.getDailyRequired('pediatrics');
+                },
+
+                get totalHoursNum() {
+                    return this.getTotalHours('medicine') + this.getTotalHours('pediatrics');
+                },
+
+                get remainingHoursNum() {
+                    return this.getRemainingHours('medicine') + this.getRemainingHours('pediatrics');
+                },
+
+                get totalProgress() {
+                    const t = this.totalHoursNum, d = t - this.remainingHoursNum;
+                    return t > 0 ? Math.round(d / t * 100) : 0;
+                },
+
+                getProgress(subj) {
+                    let t = 0, d = 0;
+                    this.data[subj]?.forEach(c => { if (!c.ignored) c.lectures?.forEach(l => { t++; if (l.done) d++; }); });
+                    return t > 0 ? Math.round(d / t * 100) : 0;
+                },
+                getStats(subj) {
+                    let t = 0, d = 0;
+                    this.data[subj]?.forEach(c => c.lectures?.forEach(l => { t++; if (l.done) d++; }));
+                    return { total: t, done: d };
+                },
+                getChProg(subj, i) {
+                    const ch = this.data[subj]?.[i];
+                    if (!ch || !ch.lectures?.length) return 0;
+                    return Math.round(ch.lectures.filter(l => l.done).length / ch.lectures.length * 100);
+                },
+                getChHrsNum(subj, i) {
+                    const ch = this.data[subj]?.[i];
+                    if (!ch) return 0;
+                    return ch.lectures?.reduce((a, l) => a + l.duration, 0) / 60;
+                },
+
+                get expectedHours() {
+                    // Expected = (total hours / total plan days) * days passed since start
+                    if (this.totalPlanDays <= 0 || this.planDaysPassed <= 0) return 0;
+                    return (this.totalHoursNum / this.totalPlanDays) * this.planDaysPassed;
+                },
+                get delayHours() {
+                    const done = this.totalHoursNum - this.remainingHoursNum;
+                    return Math.max(0, this.expectedHours - done);
+                },
+                get extraMinutes() { return this.planDaysRemaining > 0 ? Math.round(this.delayHours * 60 / this.planDaysRemaining) : 0; },
+
+                // Motivational Messages
+                getRandomEmoji(type) {
+                    const emojis = type === 'good'
+                        ? ['👏', '🎉', '⭐', '🏆', '🔥', '💯', '🚀', '✨', '👑', '💪']
+                        : ['💪', '🌟', '🎯', '⚡', '🦁', '🔱', '💎', '🌈', '🎓', '⏰'];
+                    return emojis[Math.floor(Math.random() * emojis.length)];
+                },
+
+                getMotivationalTitle(type) {
+                    const titles = type === 'good'
+                        ? ['أحسنت! أنت ملتزم بالخطة', 'رائع! استمر هكذا', 'ممتاز! أنت على الطريق الصحيح', 'بطل! تقدمك مذهل', 'مبدع! خطتك ناجحة']
+                        : ['لا تستسلم!', 'أنت قادر على التعويض', 'كل تأخير يُعوَّض', 'النجاح يحتاج صبراً', 'ابدأ الآن!'];
+                    return titles[Math.floor(Math.random() * titles.length)];
+                },
+
+                getMotivationalQuote(type) {
+                    const quotes = type === 'good'
+                        ? [
+                            'الالتزام هو سر النجاح. استمر!',
+                            'كل محاضرة تُنهيها هي خطوة نحو حلمك.',
+                            'أنت تصنع مستقبلك بكل لحظة تقضيها في الدراسة.',
+                            'التميز ليس صدفة، بل نتيجة جهد متواصل.',
+                            'الطبيب الناجح يبدأ بطالب ملتزم.',
+                            'كل ساعة تستثمرها اليوم ستُكافأ غداً.',
+                            'أنت في الطريق الصحيح، لا تتوقف!'
+                        ]
+                        : [
+                            'ليس المهم أن تسقط، بل أن تنهض.',
+                            'كل يوم فرصة جديدة للبدء من جديد.',
+                            'التأخير ليس نهاية العالم، التوقف هو.',
+                            'الطريق إلى الألف ميل يبدأ بخطوة.',
+                            'لا تقارن نفسك بالآخرين، قارنها بنفسك أمس.',
+                            'النجاح ليس نهائياً والفشل ليس قاتلاً.',
+                            'ابدأ من حيث أنت، استخدم ما لديك.',
+                            'العظماء لا يستسلمون عند أول عقبة.'
+                        ];
+                    return quotes[Math.floor(Math.random() * quotes.length)];
+                },
+
+                // Daily Tasks - Fixed per day
+                getToday() {
+                    return new Date().toISOString().split('T')[0];
+                },
+
+                refreshTodayTasks() {
+                    const today = this.getToday();
+                    if (this.todayCache.date !== today) {
+                        // New day - recalculate tasks
+                        this.todayCache = {
+                            date: today,
+                            medicine: this.calculateTodayTasks('medicine'),
+                            pediatrics: this.calculateTodayTasks('pediatrics')
+                        };
+                        this.save();
+                    }
+                },
+
+                calculateTodayTasks(subj) {
+                    const taskIds = [];
+                    let totalMins = 0;
+                    const targetMins = this.getDailyRequired(subj) * 60;
+
+                    for (const ch of (this.data[subj] || [])) {
+                        if (ch.ignored) continue;
+                        for (const l of (ch.lectures || [])) {
+                            if (l.done) continue;
+
+                            // Always add at least one if we have none
+                            if (taskIds.length === 0) {
+                                taskIds.push(l.id);
+                                totalMins += l.duration;
+                                continue;
+                            }
+
+                            // If adding this gets us closer to target, add it
+                            if (totalMins < targetMins) {
+                                taskIds.push(l.id);
+                                totalMins += l.duration;
+                            } else {
+                                // We're at or over target - check if we should add one more
+                                const withoutThis = Math.abs(totalMins - targetMins);
+                                const withThis = Math.abs(totalMins + l.duration - targetMins);
+                                if (withThis < withoutThis) {
+                                    // Adding this gets us closer - add it (lean towards more)
+                                    taskIds.push(l.id);
+                                    totalMins += l.duration;
+                                }
+                                break;
+                            }
+                        }
+                        if (totalMins >= targetMins) break;
+                    }
+                    return taskIds;
+                },
+
+                getFixedTodayTasks(subj) {
+                    const ids = this.todayCache[subj] || [];
+                    const tasks = [];
+                    for (const ch of (this.data[subj] || [])) {
+                        for (const l of (ch.lectures || [])) {
+                            if (ids.includes(l.id)) {
+                                tasks.push({ ...l, chapter: ch.name });
+                            }
+                        }
+                    }
+                    return tasks;
+                },
+
+                getTodayTasksTime(subj) {
+                    return this.getFixedTodayTasks(subj).reduce((a, t) => a + t.duration, 0);
+                },
+
+                todayTasksComplete(subj) {
+                    const tasks = this.getFixedTodayTasks(subj);
+                    return tasks.length > 0 && tasks.every(t => t.done);
+                },
+
+                markDone(task) {
+                    for (const s of ['medicine', 'pediatrics']) {
+                        for (const ch of (this.data[s] || [])) {
+                            for (const l of (ch.lectures || [])) {
+                                if (l.id === task.id) { l.done = true; this.save(); return; }
+                            }
+                        }
+                    }
+                },
+
+                // Admin Functions
+                get isAdmin() {
+                    return this.user?.email === 'aliahmed323se@gmail.com';
+                },
+
+                async migrateDataToCourses() {
+                    if (!this.isAdmin) {
+                        alert('هذه الميزة متاحة للأدمن فقط');
+                        return;
+                    }
+
+                    if (!confirm('هل تريد نقل البيانات الحالية إلى المحاضرات المشتركة؟\nسيراها جميع الطلبة')) return;
+
+                    try {
+                        for (const subject of ['medicine', 'pediatrics']) {
+                            // Clean data: remove user-specific fields
+                            const cleanChapters = JSON.parse(JSON.stringify(this.data[subject]));
+                            cleanChapters.forEach(ch => {
+                                ch.lectures?.forEach(l => {
+                                    delete l.done;
+                                    l.tag = 'none';
+                                });
+                            });
+
+                            await window.fb.setDoc(
+                                window.fb.doc(window.fb.db, 'courses', subject),
+                                { chapters: cleanChapters },
+                                { merge: true }
+                            );
+                        }
+                        alert('✅ تم نشر المحاضرات بنجاح!\nالآن سيراها جميع الطلبة.');
+                    } catch (e) {
+                        alert('خطأ: ' + e.message);
+                    }
+                },
+
+                async publishCourses() {
+                    if (!this.isAdmin) return;
+                    await this.migrateDataToCourses();
+                },
+
+                forceReload() {
+                    alert('لا توجد بيانات افتراضية. أضف محاضراتك من الإعدادات.');
+                },
+
+                resetAll() {
+                    if (confirm('هل أنت متأكد من حذف جميع البيانات؟')) {
+                        this.data = { medicine: [], pediatrics: [] };
+                        this.todayCache = { date: '', medicine: [], pediatrics: [] };
+                        this.save();
+                    }
+                },
+
+                parseAndAdd() {
+                    if (!this.parser.text.trim()) {
+                        alert('أدخل المحاضرات');
+                        return;
+                    }
+
+                    const lines = this.parser.text.trim().split('\n');
+                    const newLectures = lines.map((line, i) => {
+                        const parts = line.split('-');
+                        return {
+                            id: 'lec_' + Date.now() + '_' + i,
+                            title: parts[0]?.trim() || 'محاضرة',
+                            duration: parseInt(parts[1]) || 30,
+                            done: false,
+                            tag: 'none'
+                        };
+                    });
+
+                    if (this.parser.chapter) {
+                        const ch = this.data[this.parser.subject].find(c => c.id === this.parser.chapter);
+                        if (ch) {
+                            ch.lectures.push(...newLectures);
+                            alert('تم إضافة ' + newLectures.length + ' محاضرة إلى ' + ch.name);
+                        }
+                    } else {
+                        if (!this.parser.newName) {
+                            alert('أدخل اسم الفصل الجديد');
+                            return;
+                        }
+                        const newChapter = {
+                            id: 'ch_' + Date.now(),
+                            name: this.parser.newName,
+                            icon: this.parser.newIcon || '📚',
+                            ignored: false,
+                            lectures: newLectures
+                        };
+                        this.data[this.parser.subject].push(newChapter);
+                        alert('تم إنشاء فصل جديد: ' + this.parser.newName + ' (' + newLectures.length + ' محاضرة)');
+                    }
+
+                    this.parser = { subject: this.parser.subject, chapter: '', newName: '', newIcon: '📚', text: '' };
+                    this.refreshTodayTasks();
+                    this.save();
+                    this.$nextTick(() => this.initSortable());
+                }
+            };
+        }
+    </script>
 </body>
 
 </html>
