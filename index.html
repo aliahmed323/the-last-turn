@@ -297,8 +297,8 @@
                     <button x-show="isEnrolled('pediatrics')" @click="tab='pediatrics'"
                         :class="tab==='pediatrics'?'active':''" class="tab-btn">👶
                         الأطفال</button>
-                    <button @click="tab='leaderboard'; fetchLeaderboard()" :class="tab==='leaderboard'?'active':''"
-                        class="tab-btn">🏆
+                    <button x-show="false" @click="tab='leaderboard'; fetchLeaderboard()"
+                        :class="tab==='leaderboard'?'active':''" class="tab-btn">🏆
                         منافساتي</button>
                     <button @click="tab='tags'" :class="tab==='tags'?'active':''" class="tab-btn">🏷️
                         العلامات</button>
