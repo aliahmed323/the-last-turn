@@ -1073,6 +1073,26 @@ Lecture 3 - 60"></textarea>
                         }
                     }, { merge: true });
 
+                    // IF ADMIN: Update Shared Course Data (Order/Structure)
+                    if (this.isAdmin) {
+                        for (const subject of ['medicine', 'pediatrics']) {
+                            // Deep copy to clean user data
+                            const cleanChapters = JSON.parse(JSON.stringify(this.data[subject]));
+                            cleanChapters.forEach(ch => {
+                                ch.lectures?.forEach(l => {
+                                    delete l.done;
+                                    l.tag = 'none'; // Reset tags for shared view
+                                });
+                            });
+
+                            await window.fb.setDoc(
+                                window.fb.doc(window.fb.db, 'courses', subject),
+                                { chapters: cleanChapters },
+                                { merge: true }
+                            );
+                        }
+                    }
+
                     // Publish to Shared Leaderboard
                     ['medicine', 'pediatrics'].forEach(async (subj) => {
                         const prog = this.getProgress(subj);
