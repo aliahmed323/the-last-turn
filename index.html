@@ -1351,15 +1351,13 @@ Lecture 3 - 60"></textarea>
 
                 refreshTodayTasks() {
                     const today = this.getToday();
-                    if (this.todayCache.date !== today) {
-                        // New day - recalculate tasks
-                        this.todayCache = {
-                            date: today,
-                            medicine: this.calculateTodayTasks('medicine'),
-                            pediatrics: this.calculateTodayTasks('pediatrics')
-                        };
-                        this.save();
-                    }
+                    // Always recalculate to reflect current order (Sequential)
+                    this.todayCache = {
+                        date: today,
+                        medicine: this.calculateTodayTasks('medicine'),
+                        pediatrics: this.calculateTodayTasks('pediatrics')
+                    };
+                    this.save();
                 },
 
                 calculateTodayTasks(subj) {
@@ -1367,35 +1365,19 @@ Lecture 3 - 60"></textarea>
                     let totalMins = 0;
                     const targetMins = this.getDailyRequired(subj) * 60;
 
+                    // Sequential: Just take the first available undone lectures in order
                     for (const ch of (this.data[subj] || [])) {
                         if (ch.ignored) continue;
                         for (const l of (ch.lectures || [])) {
                             if (l.done) continue;
 
-                            // Always add at least one if we have none
-                            if (taskIds.length === 0) {
-                                taskIds.push(l.id);
-                                totalMins += l.duration;
-                                continue;
-                            }
+                            // Add lecture
+                            taskIds.push(l.id);
+                            totalMins += l.duration;
 
-                            // If adding this gets us closer to target, add it
-                            if (totalMins < targetMins) {
-                                taskIds.push(l.id);
-                                totalMins += l.duration;
-                            } else {
-                                // We're at or over target - check if we should add one more
-                                const withoutThis = Math.abs(totalMins - targetMins);
-                                const withThis = Math.abs(totalMins + l.duration - targetMins);
-                                if (withThis < withoutThis) {
-                                    // Adding this gets us closer - add it (lean towards more)
-                                    taskIds.push(l.id);
-                                    totalMins += l.duration;
-                                }
-                                break;
-                            }
+                            // If we reached or exceeded the target, stop.
+                            if (totalMins >= targetMins) return taskIds;
                         }
-                        if (totalMins >= targetMins) break;
                     }
                     return taskIds;
                 },
