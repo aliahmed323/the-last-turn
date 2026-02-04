@@ -883,7 +883,12 @@ Lecture 3 - 60"></textarea>
                         <p class="text-sm text-gray-500 mt-1">إذا كانت المحاضرات فارغة</p>
                     </div>
                     <div class="stat-card border-red-500/30">
-                        <button @click="resetAll()" class="text-red-400 font-bold">🗑️ حذف جميع البيانات</button>
+                        <button @click="resetAll()" class="text-red-400 font-bold mb-2 block">🗑️ حذف بياناتي
+                            الشخصية</button>
+                        <button @click="deleteSharedMedicine()"
+                            class="w-full py-2 bg-red-900/50 hover:bg-red-900 text-red-200 rounded border border-red-500 mb-1">
+                            ⚠️ حذف "الباطنة" من السيرفر
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1430,6 +1435,19 @@ Lecture 3 - 60"></textarea>
                 // Admin Functions
                 get isAdmin() {
                     return true;
+                },
+
+                async deleteSharedMedicine() {
+                    if (confirm('تنبيه خطير! ⚠️\nسيتم حذف جميع محاضرات "الباطنة" من السيرفر نهائياً.\nهل أنت متأكد؟ (لا يمكن التراجع)')) {
+                        try {
+                            await window.fb.setDoc(window.fb.doc(window.fb.db, 'courses', 'medicine'), { chapters: [] });
+                            this.data.medicine = [];
+                            alert('تم حذف باطنة السيرفر بنجاح.');
+                            location.reload();
+                        } catch (e) {
+                            alert('خطأ: ' + e.message);
+                        }
+                    }
                 },
 
                 async migrateDataToCourses() {
