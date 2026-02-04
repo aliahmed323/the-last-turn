@@ -1429,7 +1429,7 @@ Lecture 3 - 60"></textarea>
 
                 // Admin Functions
                 get isAdmin() {
-                    return this.user?.email === 'dr.aliahmed089@gmail.com';
+                    return this.user?.email?.toLowerCase() === 'dr.aliahmed089@gmail.com';
                 },
 
                 async migrateDataToCourses() {
