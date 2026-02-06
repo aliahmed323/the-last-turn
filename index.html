@@ -779,7 +779,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex gap-2 mr-4">
-                                                    <button @click="lec.done=!lec.done;touchedLectures.add(lec.id);save()" class="icon-btn"
+                                                    <button @click="toggleLectureDone(lec)" class="icon-btn"
                                                         :class="lec.done?'bg-green-500 text-white':'tag-none'"
                                                         title="مكتمل">✓</button>
                                                     <button @click="cycleTag(lec)" class="icon-btn"
@@ -1709,6 +1709,27 @@ Lecture 3 - 60"></textarea>
                     }
                 },
 
+                // ✅ Toggle lecture done/undone with proper daily history tracking
+                toggleLectureDone(lec) {
+                    const wasDone = lec.done;
+                    lec.done = !lec.done;
+                    this.touchedLectures.add(lec.id);
+                    
+                    // ✅ تحديث السجل اليومي
+                    const today = this.getToday();
+                    const hours = lec.duration / 60;
+                    
+                    if (!wasDone && lec.done) {
+                        // أصبحت مُنجزة → أضف الساعات
+                        this.dailyHistory[today] = (this.dailyHistory[today] || 0) + hours;
+                    } else if (wasDone && !lec.done) {
+                        // أصبحت غير مُنجزة → اطرح الساعات
+                        this.dailyHistory[today] = Math.max(0, (this.dailyHistory[today] || 0) - hours);
+                    }
+                    
+                    this.save();
+                },
+
                 // Admin Functions
                 get isAdmin() {
                     return true;
@@ -1822,7 +1843,37 @@ Lecture 3 - 60"></textarea>
                 },
 
                 // ✅ Statistics Functions
+                
+                // حساب السجل اليومي من البيانات الموجودة (للأيام السابقة)
+                calculateHistoryFromData() {
+                    // إذا كان السجل فارغاً، نحسبه من البيانات
+                    if (Object.keys(this.dailyHistory).length === 0) {
+                        const totalCompleted = this.getCompletedHours('medicine') + this.getCompletedHours('pediatrics');
+                        const daysPassed = this.planDaysPassed;
+                        
+                        if (daysPassed > 0 && totalCompleted > 0) {
+                            // وزع الساعات المُنجزة على الأيام الماضية بالتساوي
+                            const avgPerDay = totalCompleted / daysPassed;
+                            const startDate = new Date(this.settings.planStartDate);
+                            
+                            for (let i = 0; i < daysPassed; i++) {
+                                const date = new Date(startDate);
+                                date.setDate(date.getDate() + i);
+                                const dateStr = date.toISOString().split('T')[0];
+                                
+                                // لا نكتب على اليوم الحالي
+                                if (dateStr !== this.getToday()) {
+                                    this.dailyHistory[dateStr] = avgPerDay;
+                                }
+                            }
+                        }
+                    }
+                },
+                
                 getDailyReadingHistory() {
+                    // ✅ احسب السجل من البيانات إذا كان فارغاً
+                    this.calculateHistoryFromData();
+                    
                     const history = [];
                     const startDate = new Date(this.settings.planStartDate);
                     const today = new Date();
@@ -1862,6 +1913,9 @@ Lecture 3 - 60"></textarea>
                 },
 
                 getMonthCalendar() {
+                    // ✅ احسب السجل من البيانات إذا كان فارغاً
+                    this.calculateHistoryFromData();
+                    
                     const now = new Date();
                     const year = now.getFullYear();
                     const month = now.getMonth();
