@@ -706,7 +706,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex gap-2 mr-4">
-                                                    <button @click="lec.done=!lec.done;save()" class="icon-btn"
+                                                    <button @click="lec.done=!lec.done;touchedLectures.add(lec.id);save()" class="icon-btn"
                                                         :class="lec.done?'bg-green-500 text-white':'tag-none'"
                                                         title="مكتمل">✓</button>
                                                     <button @click="cycleTag(lec)" class="icon-btn"
@@ -1035,6 +1035,7 @@ Lecture 3 - 60"></textarea>
                 parser: { subject: 'medicine', chapter: '', newName: '', newIcon: '📚', text: '' },
                 data: { medicine: [], pediatrics: [] },
                 todayCache: { date: '', medicine: [], pediatrics: [] },
+                touchedLectures: new Set(), // ✅ تتبع المحاضرات المُعدلة
                 leaderboardData: { medicine: [], pediatrics: [] },
                 leaderboardLoading: false,
                 enrolledCourses: [], // 'medicine', 'pediatrics'
@@ -1178,7 +1179,11 @@ Lecture 3 - 60"></textarea>
                     for (const subject of ['medicine', 'pediatrics']) {
                         this.data[subject]?.forEach(chapter => {
                             chapter.lectures?.forEach(lecture => {
-                                if (lecture.done || lecture.tag !== 'none') {
+                                // ✅ احفظ المحاضرة إذا:
+                                // 1. تم التفاعل معها (في قائمة touched)
+                                // 2. أو done = true
+                                // 3. أو tag ≠ none
+                                if (this.touchedLectures.has(lecture.id) || lecture.done || lecture.tag !== 'none') {
                                     progress[subject][lecture.id] = {
                                         done: lecture.done || false,
                                         tag: lecture.tag || 'none'
@@ -1319,6 +1324,7 @@ Lecture 3 - 60"></textarea>
                     if (!lec.tag || lec.tag === 'none') lec.tag = 'review';
                     else if (lec.tag === 'review') lec.tag = 'mastered';
                     else lec.tag = 'none';
+                    this.touchedLectures.add(lec.id); // ✅ تتبع المحاضرة
                     this.save();
                 },
 
@@ -1326,7 +1332,12 @@ Lecture 3 - 60"></textarea>
                     for (const s of ['medicine', 'pediatrics']) {
                         for (const ch of this.data[s] || []) {
                             for (const l of ch.lectures || []) {
-                                if (l.id === item.id) { l.tag = tag; this.save(); return; }
+                                if (l.id === item.id) { 
+                                    l.tag = tag; 
+                                    this.touchedLectures.add(l.id); // ✅ تتبع المحاضرة
+                                    this.save(); 
+                                    return; 
+                                }
                             }
                         }
                     }
@@ -1602,7 +1613,12 @@ Lecture 3 - 60"></textarea>
                     for (const s of ['medicine', 'pediatrics']) {
                         for (const ch of (this.data[s] || [])) {
                             for (const l of (ch.lectures || [])) {
-                                if (l.id === task.id) { l.done = true; this.save(); return; }
+                                if (l.id === task.id) { 
+                                    l.done = true; 
+                                    this.touchedLectures.add(l.id); // ✅ تتبع المحاضرة
+                                    this.save(); 
+                                    return; 
+                                }
                             }
                         }
                     }
