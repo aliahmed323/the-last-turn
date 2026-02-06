@@ -317,7 +317,7 @@
             <!-- Dashboard -->
             <div x-show="tab==='dashboard'" x-transition>
                 <!-- Stats Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">⏰ أيام للامتحان</p>
                         <p class="text-4xl font-bold text-purple-400" x-text="daysToExam"></p>
@@ -325,6 +325,11 @@
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">📅 أيام الخطة المتبقية</p>
                         <p class="text-4xl font-bold text-blue-400" x-text="planDaysRemaining"></p>
+                    </div>
+                    <div class="stat-card border-cyan-500/30">
+                        <p class="text-gray-400 text-sm mb-2">📆 أيام في الخطة</p>
+                        <p class="text-4xl font-bold text-cyan-400" x-text="planDaysPassed"></p>
+                        <p class="text-xs text-gray-500 mt-1" x-text="'من '+totalPlanDays+' يوم'"></p>
                     </div>
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">🎯 المعدل اليومي المطلوب</p>
@@ -424,10 +429,50 @@
                             <h3 class="text-xl font-bold text-orange-400 mb-2"
                                 x-text="getMotivationalTitle('encourage')">لا تستسلم!</h3>
                             <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('encourage')"></p>
+                            
+                            <!-- إجمالي التأخير -->
                             <div class="bg-black/30 rounded-xl p-4 mb-3">
-                                <p class="text-gray-400 text-sm">متأخر بـ</p>
+                                <p class="text-gray-400 text-sm">إجمالي التأخير</p>
                                 <p class="text-2xl font-bold text-orange-400" x-text="formatHours(delayHours)"></p>
                             </div>
+                            
+                            <!-- تفصيل التأخير حسب المادة -->
+                            <div class="grid md:grid-cols-2 gap-3 mb-3">
+                                <!-- الباطنة -->
+                                <div class="bg-black/30 rounded-xl p-4" x-show="isEnrolled('medicine')">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-xl">🫀</span>
+                                        <p class="text-gray-400 text-sm font-bold">الباطنة</p>
+                                    </div>
+                                    <template x-if="getDelayHours('medicine') > 0">
+                                        <p class="text-lg font-bold text-red-400" x-text="'متأخر '+formatHours(getDelayHours('medicine'))"></p>
+                                    </template>
+                                    <template x-if="getDelayHours('medicine') <= 0 && getDelayHours('medicine') > -0.5">
+                                        <p class="text-lg font-bold text-green-400">✅ على المسار</p>
+                                    </template>
+                                    <template x-if="getDelayHours('medicine') <= -0.5">
+                                        <p class="text-lg font-bold text-green-400" x-text="'متقدم '+formatHours(Math.abs(getDelayHours('medicine')))"></p>
+                                    </template>
+                                </div>
+                                
+                                <!-- الأطفال -->
+                                <div class="bg-black/30 rounded-xl p-4" x-show="isEnrolled('pediatrics')">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-xl">👶</span>
+                                        <p class="text-gray-400 text-sm font-bold">الأطفال</p>
+                                    </div>
+                                    <template x-if="getDelayHours('pediatrics') > 0">
+                                        <p class="text-lg font-bold text-red-400" x-text="'متأخر '+formatHours(getDelayHours('pediatrics'))"></p>
+                                    </template>
+                                    <template x-if="getDelayHours('pediatrics') <= 0 && getDelayHours('pediatrics') > -0.5">
+                                        <p class="text-lg font-bold text-green-400">✅ على المسار</p>
+                                    </template>
+                                    <template x-if="getDelayHours('pediatrics') <= -0.5">
+                                        <p class="text-lg font-bold text-green-400" x-text="'متقدم '+formatHours(Math.abs(getDelayHours('pediatrics')))"></p>
+                                    </template>
+                                </div>
+                            </div>
+                            
                             <div class="bg-black/30 rounded-xl p-4">
                                 <p class="text-gray-400 text-sm">للتعويض، أضف يومياً:</p>
                                 <p class="text-2xl font-bold text-yellow-400" x-text="extraMinutes+' دقيقة'"></p>
@@ -1307,6 +1352,28 @@ Lecture 3 - 60"></textarea>
                     if (this.totalPlanDays <= 0 || this.planDaysPassed <= 0) return 0;
                     return (this.totalHoursNum / this.totalPlanDays) * this.planDaysPassed;
                 },
+                
+                // ✅ حساب الساعات المنجزة من مادة معينة
+                getCompletedHours(subj) {
+                    const total = this.getTotalHours(subj);
+                    const remaining = this.getRemainingHours(subj);
+                    return total - remaining;
+                },
+                
+                // ✅ حساب الساعات المتوقع إنجازها من مادة معينة
+                getExpectedHours(subj) {
+                    if (this.totalPlanDays <= 0 || this.planDaysPassed <= 0) return 0;
+                    const totalHoursForSubj = this.getTotalHours(subj);
+                    return (totalHoursForSubj / this.totalPlanDays) * this.planDaysPassed;
+                },
+                
+                // ✅ حساب التأخير في مادة معينة
+                getDelayHours(subj) {
+                    const expected = this.getExpectedHours(subj);
+                    const completed = this.getCompletedHours(subj);
+                    return expected - completed;
+                },
+                
                 get delayHours() {
                     const done = this.totalHoursNum - this.remainingHoursNum;
                     return Math.max(0, this.expectedHours - done);
