@@ -291,6 +291,8 @@
                 <nav class="flex gap-2 flex-wrap">
                     <button @click="tab='dashboard'" :class="tab==='dashboard'?'active':''" class="tab-btn">📊 لوحة
                         التحكم</button>
+                    <button @click="tab='stats'" :class="tab==='stats'?'active':''" class="tab-btn">📈
+                        إحصائياتي</button>
                     <button x-show="isEnrolled('medicine')" @click="tab='medicine'"
                         :class="tab==='medicine'?'active':''" class="tab-btn">🫀
                         الباطنة</button>
@@ -608,6 +610,77 @@
                                     class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
                             </div>
                         </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ Statistics Tab (إحصائياتي) -->
+            <div x-show="tab==='stats'" x-transition>
+                <h2 class="text-3xl font-bold mb-6">📈 إحصائيات القراءة اليومية</h2>
+                
+                <!-- Daily Reading List -->
+                <div class="stat-card mb-6">
+                    <h3 class="text-xl font-bold text-purple-400 mb-4">📋 سجل القراءة اليومي</h3>
+                    <div class="space-y-2 max-h-96 overflow-y-auto">
+                        <template x-for="day in getDailyReadingHistory()" :key="day.date">
+                            <div class="flex items-center justify-between p-3 rounded-lg"
+                                :class="day.isToday ? 'bg-purple-500/20 border border-purple-500/30' : 'bg-white/5'">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl" x-text="day.isToday ? '📅' : '📆'"></span>
+                                    <div>
+                                        <p class="font-bold" x-text="day.label"></p>
+                                        <p class="text-xs text-gray-500" x-text="day.dateFormatted"></p>
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-2xl font-bold" 
+                                        :class="day.hours >= getDailyRequired('medicine') + getDailyRequired('pediatrics') ? 'text-green-400' : (day.hours > 0 ? 'text-yellow-400' : 'text-gray-500')"
+                                        x-text="formatHours(day.hours)"></p>
+                                    <p class="text-xs text-gray-500" x-text="day.hours > 0 ? 'مُنجز' : 'لم تقرأ'"></p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Monthly Calendar -->
+                <div class="stat-card">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-4">📅 تقويم الشهر</h3>
+                    <div class="overflow-x-auto">
+                        <div class="min-w-max">
+                            <!-- Month/Year Header -->
+                            <div class="text-center mb-4">
+                                <p class="text-lg font-bold" x-text="getCurrentMonthYear()"></p>
+                            </div>
+                            
+                            <!-- Days of Week -->
+                            <div class="grid grid-cols-7 gap-2 mb-2">
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الأحد</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الإثنين</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الثلاثاء</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الأربعاء</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الخميس</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الجمعة</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">السبت</div>
+                            </div>
+                            
+                            <!-- Calendar Grid -->
+                            <div class="grid grid-cols-7 gap-2">
+                                <template x-for="day in getMonthCalendar()" :key="day.key">
+                                    <div class="aspect-square p-2 rounded-lg border text-center"
+                                        :class="day.isEmpty ? 'border-transparent' : (day.isToday ? 'border-purple-500 bg-purple-500/20' : (day.hours > 0 ? 'border-green-500/30 bg-green-500/10' : 'border-white/10 bg-white/5'))">
+                                        <template x-if="!day.isEmpty">
+                                            <div>
+                                                <p class="text-sm font-bold mb-1" x-text="day.dayNum"></p>
+                                                <p class="text-xs font-bold"
+                                                    :class="day.hours >= getDailyRequired('medicine') + getDailyRequired('pediatrics') ? 'text-green-400' : (day.hours > 0 ? 'text-yellow-400' : 'text-gray-600')"
+                                                    x-text="day.hours > 0 ? (Math.round(day.hours * 10) / 10 + 'h') : '-'"></p>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1036,6 +1109,7 @@ Lecture 3 - 60"></textarea>
                 data: { medicine: [], pediatrics: [] },
                 todayCache: { date: '', medicine: [], pediatrics: [] },
                 touchedLectures: new Set(), // ✅ تتبع المحاضرات المُعدلة
+                dailyHistory: {}, // ✅ تتبع الساعات المقروءة يومياً: { 'YYYY-MM-DD': hours }
                 leaderboardData: { medicine: [], pediatrics: [] },
                 leaderboardLoading: false,
                 enrolledCourses: [], // 'medicine', 'pediatrics'
@@ -1149,6 +1223,7 @@ Lecture 3 - 60"></textarea>
                                 // Load settings
                                 if (userData.settings) this.settings = { ...this.settings, ...userData.settings };
                                 if (userData.todayCache) this.todayCache = userData.todayCache;
+                                if (userData.dailyHistory) this.dailyHistory = userData.dailyHistory; // ✅ تحميل السجل اليومي
 
                                 // Load Enrollment
                                 this.enrolledCourses = userData.enrolledCourses || ['medicine', 'pediatrics'];
@@ -1197,6 +1272,7 @@ Lecture 3 - 60"></textarea>
                         progress: progress,
                         settings: this.settings,
                         todayCache: this.todayCache,
+                        dailyHistory: this.dailyHistory, // ✅ حفظ السجل اليومي
                         enrolledCourses: this.enrolledCourses,
                         profile: {
                             name: this.user.displayName,
@@ -1614,8 +1690,17 @@ Lecture 3 - 60"></textarea>
                         for (const ch of (this.data[s] || [])) {
                             for (const l of (ch.lectures || [])) {
                                 if (l.id === task.id) { 
+                                    const wasUndone = !l.done;
                                     l.done = true; 
                                     this.touchedLectures.add(l.id); // ✅ تتبع المحاضرة
+                                    
+                                    // ✅ تحديث السجل اليومي
+                                    if (wasUndone) {
+                                        const today = this.getToday();
+                                        const hours = l.duration / 60;
+                                        this.dailyHistory[today] = (this.dailyHistory[today] || 0) + hours;
+                                    }
+                                    
                                     this.save(); 
                                     return; 
                                 }
@@ -1734,6 +1819,86 @@ Lecture 3 - 60"></textarea>
                     this.refreshTodayTasks();
                     this.save();
                     this.$nextTick(() => this.initSortable());
+                },
+
+                // ✅ Statistics Functions
+                getDailyReadingHistory() {
+                    const history = [];
+                    const startDate = new Date(this.settings.planStartDate);
+                    const today = new Date();
+                    
+                    // احسب من اليوم ورجع للخلف 30 يوم أو حتى بداية الخطة
+                    for (let i = 0; i < 30; i++) {
+                        const date = new Date(today);
+                        date.setDate(date.getDate() - i);
+                        
+                        // لا تعرض أيام قبل بداية الخطة
+                        if (date < startDate) break;
+                        
+                        const dateStr = date.toISOString().split('T')[0];
+                        const hours = this.dailyHistory[dateStr] || 0;
+                        
+                        let label = '';
+                        if (i === 0) label = 'اليوم';
+                        else if (i === 1) label = 'أمس';
+                        else if (i === 2) label = 'أول أمس';
+                        else label = dateStr;
+                        
+                        history.push({
+                            date: dateStr,
+                            dateFormatted: date.toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }),
+                            label: label,
+                            hours: hours,
+                            isToday: i === 0
+                        });
+                    }
+                    
+                    return history;
+                },
+
+                getCurrentMonthYear() {
+                    const now = new Date();
+                    return now.toLocaleDateString('ar-EG', { month: 'long', year: 'numeric' });
+                },
+
+                getMonthCalendar() {
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = now.getMonth();
+                    
+                    // أول يوم في الشهر
+                    const firstDay = new Date(year, month, 1);
+                    const firstDayOfWeek = firstDay.getDay(); // 0 = Sunday
+                    
+                    // آخر يوم في الشهر
+                    const lastDay = new Date(year, month + 1, 0);
+                    const daysInMonth = lastDay.getDate();
+                    
+                    const calendar = [];
+                    
+                    // أيام فارغة في البداية
+                    for (let i = 0; i < firstDayOfWeek; i++) {
+                        calendar.push({ isEmpty: true, key: 'empty-' + i });
+                    }
+                    
+                    // أيام الشهر
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const date = new Date(year, month, day);
+                        const dateStr = date.toISOString().split('T')[0];
+                        const hours = this.dailyHistory[dateStr] || 0;
+                        const isToday = dateStr === this.getToday();
+                        
+                        calendar.push({
+                            isEmpty: false,
+                            dayNum: day,
+                            date: dateStr,
+                            hours: hours,
+                            isToday: isToday,
+                            key: dateStr
+                        });
+                    }
+                    
+                    return calendar;
                 }
             };
         }
