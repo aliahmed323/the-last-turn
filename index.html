@@ -1359,13 +1359,17 @@ Lecture 3 - 60"></textarea>
 
                 refreshTodayTasks() {
                     const today = this.getToday();
-                    // Always recalculate to reflect current order (Sequential)
-                    this.todayCache = {
-                        date: today,
-                        medicine: this.calculateTodayTasks('medicine'),
-                        pediatrics: this.calculateTodayTasks('pediatrics')
-                    };
-                    this.save();
+                    
+                    // ✅ فقط أعد الحساب إذا كان يوم جديد
+                    if (this.todayCache.date !== today) {
+                        this.todayCache = {
+                            date: today,
+                            medicine: this.calculateTodayTasks('medicine'),
+                            pediatrics: this.calculateTodayTasks('pediatrics')
+                        };
+                        this.save();
+                    }
+                    // ⛔ لا تعيد الحساب إذا كان نفس اليوم = القائمة ثابتة!
                 },
 
                 calculateTodayTasks(subj) {
