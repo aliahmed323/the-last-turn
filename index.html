@@ -291,6 +291,8 @@
                 <nav class="flex gap-2 flex-wrap">
                     <button @click="tab='dashboard'" :class="tab==='dashboard'?'active':''" class="tab-btn">📊 لوحة
                         التحكم</button>
+                    <button @click="tab='stats'" :class="tab==='stats'?'active':''" class="tab-btn">📈
+                        إحصائياتي</button>
                     <button x-show="isEnrolled('medicine')" @click="tab='medicine'"
                         :class="tab==='medicine'?'active':''" class="tab-btn">🫀
                         الباطنة</button>
@@ -317,7 +319,7 @@
             <!-- Dashboard -->
             <div x-show="tab==='dashboard'" x-transition>
                 <!-- Stats Grid -->
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">⏰ أيام للامتحان</p>
                         <p class="text-4xl font-bold text-purple-400" x-text="daysToExam"></p>
@@ -325,6 +327,11 @@
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">📅 أيام الخطة المتبقية</p>
                         <p class="text-4xl font-bold text-blue-400" x-text="planDaysRemaining"></p>
+                    </div>
+                    <div class="stat-card border-cyan-500/30">
+                        <p class="text-gray-400 text-sm mb-2">📆 أيام في الخطة</p>
+                        <p class="text-4xl font-bold text-cyan-400" x-text="planDaysPassed"></p>
+                        <p class="text-xs text-gray-500 mt-1" x-text="'من '+totalPlanDays+' يوم'"></p>
                     </div>
                     <div class="stat-card">
                         <p class="text-gray-400 text-sm mb-2">🎯 المعدل اليومي المطلوب</p>
@@ -362,10 +369,15 @@
                             <div class="progress-fill progress-purple" :style="'width:'+getProgress('medicine')+'%'">
                             </div>
                         </div>
-                        <div class="flex justify-between mt-3 text-sm">
-                            <div class="mini-card flex-1 ml-2">
+                        <div class="flex justify-between mt-3 text-sm gap-2">
+                            <div class="mini-card flex-1">
                                 <p class="text-gray-500 text-xs">الكلية</p>
                                 <p class="text-purple-300 font-bold" x-text="formatHours(getTotalHours('medicine'))">
+                                </p>
+                            </div>
+                            <div class="mini-card flex-1 border border-green-500/30 bg-green-500/10">
+                                <p class="text-gray-500 text-xs">المُنجز ✅</p>
+                                <p class="text-green-300 font-bold" x-text="formatHours(getCompletedHours('medicine'))">
                                 </p>
                             </div>
                             <div class="mini-card flex-1">
@@ -384,10 +396,15 @@
                             <div class="progress-fill progress-cyan" :style="'width:'+getProgress('pediatrics')+'%'">
                             </div>
                         </div>
-                        <div class="flex justify-between mt-3 text-sm">
-                            <div class="mini-card flex-1 ml-2">
+                        <div class="flex justify-between mt-3 text-sm gap-2">
+                            <div class="mini-card flex-1">
                                 <p class="text-gray-500 text-xs">الكلية</p>
                                 <p class="text-cyan-300 font-bold" x-text="formatHours(getTotalHours('pediatrics'))">
+                                </p>
+                            </div>
+                            <div class="mini-card flex-1 border border-green-500/30 bg-green-500/10">
+                                <p class="text-gray-500 text-xs">المُنجز ✅</p>
+                                <p class="text-green-300 font-bold" x-text="formatHours(getCompletedHours('pediatrics'))">
                                 </p>
                             </div>
                             <div class="mini-card flex-1">
@@ -424,10 +441,50 @@
                             <h3 class="text-xl font-bold text-orange-400 mb-2"
                                 x-text="getMotivationalTitle('encourage')">لا تستسلم!</h3>
                             <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('encourage')"></p>
+                            
+                            <!-- إجمالي التأخير -->
                             <div class="bg-black/30 rounded-xl p-4 mb-3">
-                                <p class="text-gray-400 text-sm">متأخر بـ</p>
+                                <p class="text-gray-400 text-sm">إجمالي التأخير</p>
                                 <p class="text-2xl font-bold text-orange-400" x-text="formatHours(delayHours)"></p>
                             </div>
+                            
+                            <!-- تفصيل التأخير حسب المادة -->
+                            <div class="grid md:grid-cols-2 gap-3 mb-3">
+                                <!-- الباطنة -->
+                                <div class="bg-black/30 rounded-xl p-4" x-show="isEnrolled('medicine')">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-xl">🫀</span>
+                                        <p class="text-gray-400 text-sm font-bold">الباطنة</p>
+                                    </div>
+                                    <template x-if="getDelayHours('medicine') > 0">
+                                        <p class="text-lg font-bold text-red-400" x-text="'متأخر '+formatHours(getDelayHours('medicine'))"></p>
+                                    </template>
+                                    <template x-if="getDelayHours('medicine') <= 0 && getDelayHours('medicine') > -0.5">
+                                        <p class="text-lg font-bold text-green-400">✅ على المسار</p>
+                                    </template>
+                                    <template x-if="getDelayHours('medicine') <= -0.5">
+                                        <p class="text-lg font-bold text-green-400" x-text="'متقدم '+formatHours(Math.abs(getDelayHours('medicine')))"></p>
+                                    </template>
+                                </div>
+                                
+                                <!-- الأطفال -->
+                                <div class="bg-black/30 rounded-xl p-4" x-show="isEnrolled('pediatrics')">
+                                    <div class="flex items-center gap-2 mb-2">
+                                        <span class="text-xl">👶</span>
+                                        <p class="text-gray-400 text-sm font-bold">الأطفال</p>
+                                    </div>
+                                    <template x-if="getDelayHours('pediatrics') > 0">
+                                        <p class="text-lg font-bold text-red-400" x-text="'متأخر '+formatHours(getDelayHours('pediatrics'))"></p>
+                                    </template>
+                                    <template x-if="getDelayHours('pediatrics') <= 0 && getDelayHours('pediatrics') > -0.5">
+                                        <p class="text-lg font-bold text-green-400">✅ على المسار</p>
+                                    </template>
+                                    <template x-if="getDelayHours('pediatrics') <= -0.5">
+                                        <p class="text-lg font-bold text-green-400" x-text="'متقدم '+formatHours(Math.abs(getDelayHours('pediatrics')))"></p>
+                                    </template>
+                                </div>
+                            </div>
+                            
                             <div class="bg-black/30 rounded-xl p-4">
                                 <p class="text-gray-400 text-sm">للتعويض، أضف يومياً:</p>
                                 <p class="text-2xl font-bold text-yellow-400" x-text="extraMinutes+' دقيقة'"></p>
@@ -470,6 +527,36 @@
                             </div>
                         </template>
                     </div>
+                    
+                    <!-- ✅ مربع التعويض - الباطنة -->
+                    <div class="stat-card border-orange-500/30 bg-orange-500/5" x-show="getDelayHours('medicine') > 0">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-orange-400 text-lg">🔥 تعويض التأخير - الباطنة</h3>
+                            <span class="text-sm bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full"
+                                x-text="formatMins(getCatchupTasksTime('medicine'))"></span>
+                        </div>
+                        <div class="bg-black/30 rounded-xl p-3 mb-3">
+                            <p class="text-gray-400 text-sm">متأخر بـ:</p>
+                            <p class="text-xl font-bold text-orange-400" x-text="formatHours(getDelayHours('medicine'))"></p>
+                        </div>
+                        <div x-show="getCatchupTasks('medicine').length === 0" class="text-center py-6 text-gray-500">
+                            <span class="text-4xl">✅</span>
+                            <p class="mt-2 text-sm">لا توجد محاضرات إضافية للتعويض</p>
+                        </div>
+                        <template x-for="task in getCatchupTasks('medicine')" :key="task.id">
+                            <div class="task-card flex items-center justify-between" x-show="!task.done"
+                                style="border-color:rgba(249,115,22,0.3);background:linear-gradient(135deg,rgba(249,115,22,0.15),rgba(249,115,22,0.05))">
+                                <div class="flex-1">
+                                    <p class="font-medium text-base" x-text="task.title"></p>
+                                    <p class="text-sm text-gray-400" x-text="task.duration+' دقيقة • '+task.chapter">
+                                    </p>
+                                </div>
+                                <button @click="markDone(task)"
+                                    class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
+                            </div>
+                        </template>
+                    </div>
+                    
                     <!-- Pediatrics Tasks -->
                     <div class="stat-card">
                         <div class="flex justify-between items-center mb-4">
@@ -494,6 +581,106 @@
                                     class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
                             </div>
                         </template>
+                    </div>
+                    
+                    <!-- ✅ مربع التعويض - الأطفال -->
+                    <div class="stat-card border-orange-500/30 bg-orange-500/5" x-show="getDelayHours('pediatrics') > 0">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-orange-400 text-lg">🔥 تعويض التأخير - الأطفال</h3>
+                            <span class="text-sm bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full"
+                                x-text="formatMins(getCatchupTasksTime('pediatrics'))"></span>
+                        </div>
+                        <div class="bg-black/30 rounded-xl p-3 mb-3">
+                            <p class="text-gray-400 text-sm">متأخر بـ:</p>
+                            <p class="text-xl font-bold text-orange-400" x-text="formatHours(getDelayHours('pediatrics'))"></p>
+                        </div>
+                        <div x-show="getCatchupTasks('pediatrics').length === 0" class="text-center py-6 text-gray-500">
+                            <span class="text-4xl">✅</span>
+                            <p class="mt-2 text-sm">لا توجد محاضرات إضافية للتعويض</p>
+                        </div>
+                        <template x-for="task in getCatchupTasks('pediatrics')" :key="task.id">
+                            <div class="task-card flex items-center justify-between" x-show="!task.done"
+                                style="border-color:rgba(249,115,22,0.3);background:linear-gradient(135deg,rgba(249,115,22,0.15),rgba(249,115,22,0.05))">
+                                <div class="flex-1">
+                                    <p class="font-medium text-base" x-text="task.title"></p>
+                                    <p class="text-sm text-gray-400" x-text="task.duration+' دقيقة • '+task.chapter">
+                                    </p>
+                                </div>
+                                <button @click="markDone(task)"
+                                    class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ✅ Statistics Tab (إحصائياتي) -->
+            <div x-show="tab==='stats'" x-transition>
+                <h2 class="text-3xl font-bold mb-6">📈 إحصائيات القراءة اليومية</h2>
+                
+                <!-- Daily Reading List -->
+                <div class="stat-card mb-6">
+                    <h3 class="text-xl font-bold text-purple-400 mb-4">📋 سجل القراءة اليومي</h3>
+                    <div class="space-y-2 max-h-96 overflow-y-auto">
+                        <template x-for="day in getDailyReadingHistory()" :key="day.date">
+                            <div class="flex items-center justify-between p-3 rounded-lg"
+                                :class="day.isToday ? 'bg-purple-500/20 border border-purple-500/30' : 'bg-white/5'">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-2xl" x-text="day.isToday ? '📅' : '📆'"></span>
+                                    <div>
+                                        <p class="font-bold" x-text="day.label"></p>
+                                        <p class="text-xs text-gray-500" x-text="day.dateFormatted"></p>
+                                    </div>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-2xl font-bold" 
+                                        :class="day.hours >= getDailyRequired('medicine') + getDailyRequired('pediatrics') ? 'text-green-400' : (day.hours > 0 ? 'text-yellow-400' : 'text-gray-500')"
+                                        x-text="formatHours(day.hours)"></p>
+                                    <p class="text-xs text-gray-500" x-text="day.hours > 0 ? 'مُنجز' : 'لم تقرأ'"></p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- Monthly Calendar -->
+                <div class="stat-card">
+                    <h3 class="text-xl font-bold text-cyan-400 mb-4">📅 تقويم الشهر</h3>
+                    <div class="overflow-x-auto">
+                        <div class="min-w-max">
+                            <!-- Month/Year Header -->
+                            <div class="text-center mb-4">
+                                <p class="text-lg font-bold" x-text="getCurrentMonthYear()"></p>
+                            </div>
+                            
+                            <!-- Days of Week -->
+                            <div class="grid grid-cols-7 gap-2 mb-2">
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الأحد</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الإثنين</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الثلاثاء</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الأربعاء</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الخميس</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">الجمعة</div>
+                                <div class="text-center text-sm font-bold text-gray-400 p-2">السبت</div>
+                            </div>
+                            
+                            <!-- Calendar Grid -->
+                            <div class="grid grid-cols-7 gap-2">
+                                <template x-for="day in getMonthCalendar()" :key="day.key">
+                                    <div class="aspect-square p-2 rounded-lg border text-center"
+                                        :class="day.isEmpty ? 'border-transparent' : (day.isToday ? 'border-purple-500 bg-purple-500/20' : (day.hours > 0 ? 'border-green-500/30 bg-green-500/10' : 'border-white/10 bg-white/5'))">
+                                        <template x-if="!day.isEmpty">
+                                            <div>
+                                                <p class="text-sm font-bold mb-1" x-text="day.dayNum"></p>
+                                                <p class="text-xs font-bold"
+                                                    :class="day.hours >= getDailyRequired('medicine') + getDailyRequired('pediatrics') ? 'text-green-400' : (day.hours > 0 ? 'text-yellow-400' : 'text-gray-600')"
+                                                    x-text="day.hours > 0 ? (Math.round(day.hours * 10) / 10 + 'h') : '-'"></p>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -592,7 +779,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="flex gap-2 mr-4">
-                                                    <button @click="lec.done=!lec.done;save()" class="icon-btn"
+                                                    <button @click="toggleLectureDone(lec)" class="icon-btn"
                                                         :class="lec.done?'bg-green-500 text-white':'tag-none'"
                                                         title="مكتمل">✓</button>
                                                     <button @click="cycleTag(lec)" class="icon-btn"
@@ -921,6 +1108,8 @@ Lecture 3 - 60"></textarea>
                 parser: { subject: 'medicine', chapter: '', newName: '', newIcon: '📚', text: '' },
                 data: { medicine: [], pediatrics: [] },
                 todayCache: { date: '', medicine: [], pediatrics: [] },
+                touchedLectures: new Set(), // ✅ تتبع المحاضرات المُعدلة
+                dailyHistory: {}, // ✅ تتبع الساعات المقروءة يومياً: { 'YYYY-MM-DD': hours }
                 leaderboardData: { medicine: [], pediatrics: [] },
                 leaderboardLoading: false,
                 enrolledCourses: [], // 'medicine', 'pediatrics'
@@ -1034,6 +1223,7 @@ Lecture 3 - 60"></textarea>
                                 // Load settings
                                 if (userData.settings) this.settings = { ...this.settings, ...userData.settings };
                                 if (userData.todayCache) this.todayCache = userData.todayCache;
+                                if (userData.dailyHistory) this.dailyHistory = userData.dailyHistory; // ✅ تحميل السجل اليومي
 
                                 // Load Enrollment
                                 this.enrolledCourses = userData.enrolledCourses || ['medicine', 'pediatrics'];
@@ -1064,7 +1254,11 @@ Lecture 3 - 60"></textarea>
                     for (const subject of ['medicine', 'pediatrics']) {
                         this.data[subject]?.forEach(chapter => {
                             chapter.lectures?.forEach(lecture => {
-                                if (lecture.done || lecture.tag !== 'none') {
+                                // ✅ احفظ المحاضرة إذا:
+                                // 1. تم التفاعل معها (في قائمة touched)
+                                // 2. أو done = true
+                                // 3. أو tag ≠ none
+                                if (this.touchedLectures.has(lecture.id) || lecture.done || lecture.tag !== 'none') {
                                     progress[subject][lecture.id] = {
                                         done: lecture.done || false,
                                         tag: lecture.tag || 'none'
@@ -1078,6 +1272,7 @@ Lecture 3 - 60"></textarea>
                         progress: progress,
                         settings: this.settings,
                         todayCache: this.todayCache,
+                        dailyHistory: this.dailyHistory, // ✅ حفظ السجل اليومي
                         enrolledCourses: this.enrolledCourses,
                         profile: {
                             name: this.user.displayName,
@@ -1185,6 +1380,7 @@ Lecture 3 - 60"></textarea>
                     if (!lec.tag || lec.tag === 'none') lec.tag = 'review';
                     else if (lec.tag === 'review') lec.tag = 'mastered';
                     else lec.tag = 'none';
+                    this.touchedLectures.add(lec.id); // ✅ تتبع المحاضرة
                     this.save();
                 },
 
@@ -1192,7 +1388,12 @@ Lecture 3 - 60"></textarea>
                     for (const s of ['medicine', 'pediatrics']) {
                         for (const ch of this.data[s] || []) {
                             for (const l of ch.lectures || []) {
-                                if (l.id === item.id) { l.tag = tag; this.save(); return; }
+                                if (l.id === item.id) { 
+                                    l.tag = tag; 
+                                    this.touchedLectures.add(l.id); // ✅ تتبع المحاضرة
+                                    this.save(); 
+                                    return; 
+                                }
                             }
                         }
                     }
@@ -1287,6 +1488,28 @@ Lecture 3 - 60"></textarea>
                     if (this.totalPlanDays <= 0 || this.planDaysPassed <= 0) return 0;
                     return (this.totalHoursNum / this.totalPlanDays) * this.planDaysPassed;
                 },
+                
+                // ✅ حساب الساعات المنجزة من مادة معينة
+                getCompletedHours(subj) {
+                    const total = this.getTotalHours(subj);
+                    const remaining = this.getRemainingHours(subj);
+                    return total - remaining;
+                },
+                
+                // ✅ حساب الساعات المتوقع إنجازها من مادة معينة
+                getExpectedHours(subj) {
+                    if (this.totalPlanDays <= 0 || this.planDaysPassed <= 0) return 0;
+                    const totalHoursForSubj = this.getTotalHours(subj);
+                    return (totalHoursForSubj / this.totalPlanDays) * this.planDaysPassed;
+                },
+                
+                // ✅ حساب التأخير في مادة معينة
+                getDelayHours(subj) {
+                    const expected = this.getExpectedHours(subj);
+                    const completed = this.getCompletedHours(subj);
+                    return expected - completed;
+                },
+                
                 get delayHours() {
                     const done = this.totalHoursNum - this.remainingHoursNum;
                     return Math.max(0, this.expectedHours - done);
@@ -1339,13 +1562,17 @@ Lecture 3 - 60"></textarea>
 
                 refreshTodayTasks() {
                     const today = this.getToday();
-                    // Always recalculate to reflect current order (Sequential)
-                    this.todayCache = {
-                        date: today,
-                        medicine: this.calculateTodayTasks('medicine'),
-                        pediatrics: this.calculateTodayTasks('pediatrics')
-                    };
-                    this.save();
+                    
+                    // ✅ فقط أعد الحساب إذا كان يوم جديد
+                    if (this.todayCache.date !== today) {
+                        this.todayCache = {
+                            date: today,
+                            medicine: this.calculateTodayTasks('medicine'),
+                            pediatrics: this.calculateTodayTasks('pediatrics')
+                        };
+                        this.save();
+                    }
+                    // ⛔ لا تعيد الحساب إذا كان نفس اليوم = القائمة ثابتة!
                 },
 
                 calculateTodayTasks(subj) {
@@ -1399,14 +1626,95 @@ Lecture 3 - 60"></textarea>
                     return tasks.length > 0 && tasks.every(t => t.done);
                 },
 
+                // ✅ دالة جلب مهام التعويض
+                getCatchupTasks(subj) {
+                    const delayHrs = this.getDelayHours(subj);
+                    if (delayHrs <= 0) return []; // لا يوجد تأخير
+                    
+                    const targetMins = delayHrs * 60;
+                    const todayTaskIds = this.todayCache[subj] || [];
+                    const catchupTasks = [];
+                    let totalMins = 0;
+                    let foundLastTodayTask = todayTaskIds.length === 0; // إذا لم يكن هناك مهام اليوم، ابدأ من الأول
+                    
+                    // البحث عن المحاضرات بعد مهام اليوم
+                    for (const ch of (this.data[subj] || [])) {
+                        if (ch.ignored) continue;
+                        for (const l of (ch.lectures || [])) {
+                            // تخطى المحاضرات حتى نصل لما بعد آخر مهمة في اليوم
+                            if (!foundLastTodayTask) {
+                                if (todayTaskIds.includes(l.id)) {
+                                    // آخر محاضرة في مهام اليوم
+                                    if (l.id === todayTaskIds[todayTaskIds.length - 1]) {
+                                        foundLastTodayTask = true;
+                                    }
+                                }
+                                continue;
+                            }
+                            
+                            // تخطى المحاضرات المُنجزة
+                            if (l.done) continue;
+                            
+                            // أضف للتعويض
+                            catchupTasks.push({ ...l, chapter: ch.name });
+                            totalMins += l.duration;
+                            
+                            // إذا وصلنا للهدف، توقف
+                            if (totalMins >= targetMins) break;
+                        }
+                        if (totalMins >= targetMins) break;
+                    }
+                    
+                    return catchupTasks;
+                },
+                
+                getCatchupTasksTime(subj) {
+                    return this.getCatchupTasks(subj).reduce((a, t) => a + t.duration, 0);
+                },
+
                 markDone(task) {
                     for (const s of ['medicine', 'pediatrics']) {
                         for (const ch of (this.data[s] || [])) {
                             for (const l of (ch.lectures || [])) {
-                                if (l.id === task.id) { l.done = true; this.save(); return; }
+                                if (l.id === task.id) { 
+                                    const wasUndone = !l.done;
+                                    l.done = true; 
+                                    this.touchedLectures.add(l.id); // ✅ تتبع المحاضرة
+                                    
+                                    // ✅ تحديث السجل اليومي
+                                    if (wasUndone) {
+                                        const today = this.getToday();
+                                        const hours = l.duration / 60;
+                                        this.dailyHistory[today] = (this.dailyHistory[today] || 0) + hours;
+                                    }
+                                    
+                                    this.save(); 
+                                    return; 
+                                }
                             }
                         }
                     }
+                },
+
+                // ✅ Toggle lecture done/undone with proper daily history tracking
+                toggleLectureDone(lec) {
+                    const wasDone = lec.done;
+                    lec.done = !lec.done;
+                    this.touchedLectures.add(lec.id);
+                    
+                    // ✅ تحديث السجل اليومي
+                    const today = this.getToday();
+                    const hours = lec.duration / 60;
+                    
+                    if (!wasDone && lec.done) {
+                        // أصبحت مُنجزة → أضف الساعات
+                        this.dailyHistory[today] = (this.dailyHistory[today] || 0) + hours;
+                    } else if (wasDone && !lec.done) {
+                        // أصبحت غير مُنجزة → اطرح الساعات
+                        this.dailyHistory[today] = Math.max(0, (this.dailyHistory[today] || 0) - hours);
+                    }
+                    
+                    this.save();
                 },
 
                 // Admin Functions
@@ -1520,6 +1828,119 @@ Lecture 3 - 60"></textarea>
                     this.refreshTodayTasks();
                     this.save();
                     this.$nextTick(() => this.initSortable());
+                },
+
+                // ✅ Statistics Functions
+                
+                // حساب السجل اليومي من البيانات الموجودة (للأيام السابقة)
+                calculateHistoryFromData() {
+                    // إذا كان السجل فارغاً، نحسبه من البيانات
+                    if (Object.keys(this.dailyHistory).length === 0) {
+                        const totalCompleted = this.getCompletedHours('medicine') + this.getCompletedHours('pediatrics');
+                        const daysPassed = this.planDaysPassed;
+                        
+                        if (daysPassed > 0 && totalCompleted > 0) {
+                            // وزع الساعات المُنجزة على الأيام الماضية بالتساوي
+                            const avgPerDay = totalCompleted / daysPassed;
+                            const startDate = new Date(this.settings.planStartDate);
+                            
+                            for (let i = 0; i < daysPassed; i++) {
+                                const date = new Date(startDate);
+                                date.setDate(date.getDate() + i);
+                                const dateStr = date.toISOString().split('T')[0];
+                                
+                                // لا نكتب على اليوم الحالي
+                                if (dateStr !== this.getToday()) {
+                                    this.dailyHistory[dateStr] = avgPerDay;
+                                }
+                            }
+                        }
+                    }
+                },
+                
+                getDailyReadingHistory() {
+                    // ✅ احسب السجل من البيانات إذا كان فارغاً
+                    this.calculateHistoryFromData();
+                    
+                    const history = [];
+                    const startDate = new Date(this.settings.planStartDate);
+                    const today = new Date();
+                    
+                    // احسب من اليوم ورجع للخلف 30 يوم أو حتى بداية الخطة
+                    for (let i = 0; i < 30; i++) {
+                        const date = new Date(today);
+                        date.setDate(date.getDate() - i);
+                        
+                        // لا تعرض أيام قبل بداية الخطة
+                        if (date < startDate) break;
+                        
+                        const dateStr = date.toISOString().split('T')[0];
+                        const hours = this.dailyHistory[dateStr] || 0;
+                        
+                        let label = '';
+                        if (i === 0) label = 'اليوم';
+                        else if (i === 1) label = 'أمس';
+                        else if (i === 2) label = 'أول أمس';
+                        else label = dateStr;
+                        
+                        history.push({
+                            date: dateStr,
+                            dateFormatted: date.toLocaleDateString('ar-EG', { day: 'numeric', month: 'long', year: 'numeric' }),
+                            label: label,
+                            hours: hours,
+                            isToday: i === 0
+                        });
+                    }
+                    
+                    return history;
+                },
+
+                getCurrentMonthYear() {
+                    const now = new Date();
+                    return now.toLocaleDateString('ar-EG', { month: 'long', year: 'numeric' });
+                },
+
+                getMonthCalendar() {
+                    // ✅ احسب السجل من البيانات إذا كان فارغاً
+                    this.calculateHistoryFromData();
+                    
+                    const now = new Date();
+                    const year = now.getFullYear();
+                    const month = now.getMonth();
+                    
+                    // أول يوم في الشهر
+                    const firstDay = new Date(year, month, 1);
+                    const firstDayOfWeek = firstDay.getDay(); // 0 = Sunday
+                    
+                    // آخر يوم في الشهر
+                    const lastDay = new Date(year, month + 1, 0);
+                    const daysInMonth = lastDay.getDate();
+                    
+                    const calendar = [];
+                    
+                    // أيام فارغة في البداية
+                    for (let i = 0; i < firstDayOfWeek; i++) {
+                        calendar.push({ isEmpty: true, key: 'empty-' + i });
+                    }
+                    
+                    // أيام الشهر
+                    for (let day = 1; day <= daysInMonth; day++) {
+                        const date = new Date(year, month, day);
+                        const dateStr = date.toISOString().split('T')[0];
+                        const hours = this.dailyHistory[dateStr] || 0;
+                        const isToday = dateStr === this.getToday();
+                        
+                        calendar.push({
+                            isEmpty: false,
+                            dayNum: day,
+                            date: dateStr,
+                            hours: hours,
+                            isToday: isToday,
+                            key: dateStr
+                        });
+                    }
+                    
+                    return calendar;
                 }
             };
         }
