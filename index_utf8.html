@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
@@ -258,7 +258,7 @@
             <div
                 class="w-16 h-16 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4">
             </div>
-            <p class="text-gray-400">جاري التحميل...</p>
+            <p class="text-gray-400">Ø¬Ø§Ø±ÙŠ Ø§Ù„ØªØ­Ù…ÙŠÙ„...</p>
         </div>
     </div>
 
@@ -268,12 +268,12 @@
         <div class="glass p-10 text-center max-w-md">
             <div
                 class="w-24 h-24 mx-auto mb-6 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-5xl shadow-lg shadow-purple-500/30">
-                📚</div>
+                ðŸ“š</div>
             <h1
                 class="text-4xl font-bold mb-2 bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">
                 The Last Turn</h1>
-            <p class="text-gray-400 mb-8">نظام الدراسة الطبية المتقدم</p>
-            <button @click="login()" class="btn btn-primary w-full py-4 text-lg">🔐 تسجيل الدخول بـ Google</button>
+            <p class="text-gray-400 mb-8">Ù†Ø¸Ø§Ù… Ø§Ù„Ø¯Ø±Ø§Ø³Ø© Ø§Ù„Ø·Ø¨ÙŠØ© Ø§Ù„Ù…ØªÙ‚Ø¯Ù…</p>
+            <button @click="login()" class="btn btn-primary w-full py-4 text-lg">ðŸ” ØªØ³Ø¬ÙŠÙ„ Ø§Ù„Ø¯Ø®ÙˆÙ„ Ø¨Ù€ Google</button>
         </div>
     </div>
     <!-- Main App -->
@@ -283,31 +283,31 @@
         <header class="sticky top-0 z-40 bg-[#0f0f15]/90 backdrop-blur-lg border-b border-white/5">
             <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="text-2xl">📚</span>
+                    <span class="text-2xl">ðŸ“š</span>
                     <span
                         class="font-bold text-xl bg-gradient-to-r from-purple-400 to-cyan-400 bg-clip-text text-transparent">The
                         Last Turn</span>
                 </div>
                 <nav class="flex gap-2 flex-wrap">
-                    <button @click="tab='dashboard'" :class="tab==='dashboard'?'active':''" class="tab-btn">📊 لوحة
-                        التحكم</button>
+                    <button @click="tab='dashboard'" :class="tab==='dashboard'?'active':''" class="tab-btn">ðŸ“Š Ù„ÙˆØ­Ø©
+                        Ø§Ù„ØªØ­ÙƒÙ…</button>
                     <button x-show="isEnrolled('medicine')" @click="tab='medicine'"
-                        :class="tab==='medicine'?'active':''" class="tab-btn">🫀
-                        الباطنة</button>
+                        :class="tab==='medicine'?'active':''" class="tab-btn">ðŸ«€
+                        Ø§Ù„Ø¨Ø§Ø·Ù†Ø©</button>
                     <button x-show="isEnrolled('pediatrics')" @click="tab='pediatrics'"
-                        :class="tab==='pediatrics'?'active':''" class="tab-btn">👶
-                        الأطفال</button>
+                        :class="tab==='pediatrics'?'active':''" class="tab-btn">ðŸ‘¶
+                        Ø§Ù„Ø£Ø·ÙØ§Ù„</button>
                     <button x-show="false" @click="tab='leaderboard'; fetchLeaderboard()"
-                        :class="tab==='leaderboard'?'active':''" class="tab-btn">🏆
-                        منافساتي</button>
-                    <button @click="tab='tags'" :class="tab==='tags'?'active':''" class="tab-btn">🏷️
-                        العلامات</button>
-                    <button @click="tab='settings'" :class="tab==='settings'?'active':''" class="tab-btn">⚙️</button>
+                        :class="tab==='leaderboard'?'active':''" class="tab-btn">ðŸ†
+                        Ù…Ù†Ø§ÙØ³Ø§ØªÙŠ</button>
+                    <button @click="tab='tags'" :class="tab==='tags'?'active':''" class="tab-btn">ðŸ·ï¸
+                        Ø§Ù„Ø¹Ù„Ø§Ù…Ø§Øª</button>
+                    <button @click="tab='settings'" :class="tab==='settings'?'active':''" class="tab-btn">âš™ï¸</button>
                 </nav>
                 <div class="flex items-center gap-3">
                     <img :src="user?.photoURL" class="w-10 h-10 rounded-full border-2 border-purple-500"
-                        alt="صورة المستخدم">
-                    <button @click="logout()" class="text-sm text-gray-400 hover:text-white">خروج</button>
+                        alt="ØµÙˆØ±Ø© Ø§Ù„Ù…Ø³ØªØ®Ø¯Ù…">
+                    <button @click="logout()" class="text-sm text-gray-400 hover:text-white">Ø®Ø±ÙˆØ¬</button>
                 </div>
             </div>
         </header>
@@ -319,19 +319,19 @@
                 <!-- Stats Grid -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                     <div class="stat-card">
-                        <p class="text-gray-400 text-sm mb-2">⏰ أيام للامتحان</p>
+                        <p class="text-gray-400 text-sm mb-2">â° Ø£ÙŠØ§Ù… Ù„Ù„Ø§Ù…ØªØ­Ø§Ù†</p>
                         <p class="text-4xl font-bold text-purple-400" x-text="daysToExam"></p>
                     </div>
                     <div class="stat-card">
-                        <p class="text-gray-400 text-sm mb-2">📅 أيام الخطة المتبقية</p>
+                        <p class="text-gray-400 text-sm mb-2">ðŸ“… Ø£ÙŠØ§Ù… Ø§Ù„Ø®Ø·Ø© Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©</p>
                         <p class="text-4xl font-bold text-blue-400" x-text="planDaysRemaining"></p>
                     </div>
                     <div class="stat-card">
-                        <p class="text-gray-400 text-sm mb-2">🎯 المعدل اليومي المطلوب</p>
+                        <p class="text-gray-400 text-sm mb-2">ðŸŽ¯ Ø§Ù„Ù…Ø¹Ø¯Ù„ Ø§Ù„ÙŠÙˆÙ…ÙŠ Ø§Ù„Ù…Ø·Ù„ÙˆØ¨</p>
                         <p class="text-3xl font-bold text-orange-400" x-text="formatHours(dailyRequired)"></p>
                     </div>
                     <div class="stat-card">
-                        <p class="text-gray-400 text-sm mb-2">📈 التقدم الكلي</p>
+                        <p class="text-gray-400 text-sm mb-2">ðŸ“ˆ Ø§Ù„ØªÙ‚Ø¯Ù… Ø§Ù„ÙƒÙ„ÙŠ</p>
                         <p class="text-4xl font-bold text-green-400" x-text="totalProgress+'%'"></p>
                         <div class="progress-bar mt-3">
                             <div class="progress-fill progress-green" :style="'width:'+totalProgress+'%'"></div>
@@ -342,11 +342,11 @@
                 <!-- Hours Cards -->
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <div class="stat-card">
-                        <p class="text-gray-400 text-sm mb-2">📚 الساعات الكلية</p>
+                        <p class="text-gray-400 text-sm mb-2">ðŸ“š Ø§Ù„Ø³Ø§Ø¹Ø§Øª Ø§Ù„ÙƒÙ„ÙŠØ©</p>
                         <p class="text-3xl font-bold text-cyan-400" x-text="formatHours(totalHoursNum)"></p>
                     </div>
                     <div class="stat-card">
-                        <p class="text-gray-400 text-sm mb-2">⏳ الساعات المتبقية</p>
+                        <p class="text-gray-400 text-sm mb-2">â³ Ø§Ù„Ø³Ø§Ø¹Ø§Øª Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©</p>
                         <p class="text-3xl font-bold text-yellow-400" x-text="formatHours(remainingHoursNum)"></p>
                     </div>
                 </div>
@@ -355,7 +355,7 @@
                 <div class="grid md:grid-cols-2 gap-4 mb-8">
                     <div class="stat-card">
                         <div class="flex justify-between items-center mb-3">
-                            <span class="font-bold text-lg">🫀 الباطنة</span>
+                            <span class="font-bold text-lg">ðŸ«€ Ø§Ù„Ø¨Ø§Ø·Ù†Ø©</span>
                             <span class="text-purple-400 font-bold" x-text="getProgress('medicine')+'%'"></span>
                         </div>
                         <div class="progress-bar">
@@ -364,12 +364,12 @@
                         </div>
                         <div class="flex justify-between mt-3 text-sm">
                             <div class="mini-card flex-1 ml-2">
-                                <p class="text-gray-500 text-xs">الكلية</p>
+                                <p class="text-gray-500 text-xs">Ø§Ù„ÙƒÙ„ÙŠØ©</p>
                                 <p class="text-purple-300 font-bold" x-text="formatHours(getTotalHours('medicine'))">
                                 </p>
                             </div>
                             <div class="mini-card flex-1">
-                                <p class="text-gray-500 text-xs">المتبقية</p>
+                                <p class="text-gray-500 text-xs">Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©</p>
                                 <p class="text-purple-300 font-bold"
                                     x-text="formatHours(getRemainingHours('medicine'))"></p>
                             </div>
@@ -377,7 +377,7 @@
                     </div>
                     <div class="stat-card">
                         <div class="flex justify-between items-center mb-3">
-                            <span class="font-bold text-lg">👶 الأطفال</span>
+                            <span class="font-bold text-lg">ðŸ‘¶ Ø§Ù„Ø£Ø·ÙØ§Ù„</span>
                             <span class="text-cyan-400 font-bold" x-text="getProgress('pediatrics')+'%'"></span>
                         </div>
                         <div class="progress-bar">
@@ -386,12 +386,12 @@
                         </div>
                         <div class="flex justify-between mt-3 text-sm">
                             <div class="mini-card flex-1 ml-2">
-                                <p class="text-gray-500 text-xs">الكلية</p>
+                                <p class="text-gray-500 text-xs">Ø§Ù„ÙƒÙ„ÙŠØ©</p>
                                 <p class="text-cyan-300 font-bold" x-text="formatHours(getTotalHours('pediatrics'))">
                                 </p>
                             </div>
                             <div class="mini-card flex-1">
-                                <p class="text-gray-500 text-xs">المتبقية</p>
+                                <p class="text-gray-500 text-xs">Ø§Ù„Ù…ØªØ¨Ù‚ÙŠØ©</p>
                                 <p class="text-cyan-300 font-bold"
                                     x-text="formatHours(getRemainingHours('pediatrics'))"></p>
                             </div>
@@ -403,14 +403,14 @@
                 <!-- On Track / Ahead -->
                 <div x-show="delayHours<=0" class="stat-card border-green-500/50 bg-green-500/5 mb-8">
                     <div class="flex items-start gap-4">
-                        <span class="text-5xl" x-text="getRandomEmoji('good')">👏</span>
+                        <span class="text-5xl" x-text="getRandomEmoji('good')">ðŸ‘</span>
                         <div class="flex-1">
                             <h3 class="text-xl font-bold text-green-400 mb-2" x-text="getMotivationalTitle('good')">
-                                أحسنت!</h3>
+                                Ø£Ø­Ø³Ù†Øª!</h3>
                             <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('good')"></p>
                             <div class="bg-black/30 rounded-xl p-4">
-                                <p class="text-gray-400 text-sm">تقدمك:</p>
-                                <p class="text-2xl font-bold text-green-400" x-text="totalProgress+'% مكتمل'"></p>
+                                <p class="text-gray-400 text-sm">ØªÙ‚Ø¯Ù…Ùƒ:</p>
+                                <p class="text-2xl font-bold text-green-400" x-text="totalProgress+'% Ù…ÙƒØªÙ…Ù„'"></p>
                             </div>
                         </div>
                     </div>
@@ -419,18 +419,18 @@
                 <!-- Behind Schedule -->
                 <div x-show="delayHours>0" class="stat-card border-orange-500/50 bg-orange-500/5 mb-8">
                     <div class="flex items-start gap-4">
-                        <span class="text-5xl" x-text="getRandomEmoji('encourage')">💪</span>
+                        <span class="text-5xl" x-text="getRandomEmoji('encourage')">ðŸ’ª</span>
                         <div class="flex-1">
                             <h3 class="text-xl font-bold text-orange-400 mb-2"
-                                x-text="getMotivationalTitle('encourage')">لا تستسلم!</h3>
+                                x-text="getMotivationalTitle('encourage')">Ù„Ø§ ØªØ³ØªØ³Ù„Ù…!</h3>
                             <p class="text-gray-300 mb-3" x-text="getMotivationalQuote('encourage')"></p>
                             <div class="bg-black/30 rounded-xl p-4 mb-3">
-                                <p class="text-gray-400 text-sm">متأخر بـ</p>
+                                <p class="text-gray-400 text-sm">Ù…ØªØ£Ø®Ø± Ø¨Ù€</p>
                                 <p class="text-2xl font-bold text-orange-400" x-text="formatHours(delayHours)"></p>
                             </div>
                             <div class="bg-black/30 rounded-xl p-4">
-                                <p class="text-gray-400 text-sm">للتعويض، أضف يومياً:</p>
-                                <p class="text-2xl font-bold text-yellow-400" x-text="extraMinutes+' دقيقة'"></p>
+                                <p class="text-gray-400 text-sm">Ù„Ù„ØªØ¹ÙˆÙŠØ¶ØŒ Ø£Ø¶Ù ÙŠÙˆÙ…ÙŠØ§Ù‹:</p>
+                                <p class="text-2xl font-bold text-yellow-400" x-text="extraMinutes+' Ø¯Ù‚ÙŠÙ‚Ø©'"></p>
                             </div>
                         </div>
                     </div>
@@ -438,10 +438,10 @@
 
                 <!-- Today's Tasks -->
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold">📅 مهام اليوم</h2>
+                    <h2 class="text-2xl font-bold">ðŸ“… Ù…Ù‡Ø§Ù… Ø§Ù„ÙŠÙˆÙ…</h2>
                     <button @click="refreshTodayTasks()"
                         class="px-4 py-2 bg-gray-700/50 hover:bg-gray-700 rounded-lg text-sm text-gray-300 transition flex items-center gap-2">
-                        🔄 تحديث المهام
+                        ðŸ”„ ØªØ­Ø¯ÙŠØ« Ø§Ù„Ù…Ù‡Ø§Ù…
                     </button>
                 </div>
 
@@ -449,49 +449,49 @@
                     <!-- Medicine Tasks -->
                     <div class="stat-card">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-purple-400 text-lg">🫀 مهام الباطنة اليوم</h3>
+                            <h3 class="font-bold text-purple-400 text-lg">ðŸ«€ Ù…Ù‡Ø§Ù… Ø§Ù„Ø¨Ø§Ø·Ù†Ø© Ø§Ù„ÙŠÙˆÙ…</h3>
                             <span class="text-sm bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full"
                                 x-text="formatMins(getTodayTasksTime('medicine'))"></span>
                         </div>
                         <div x-show="todayTasksComplete('medicine')" class="text-center py-8 text-gray-500">
-                            <span class="text-5xl">✅</span>
-                            <p class="mt-3 text-lg font-bold text-green-400">أنجزت مهام اليوم!</p>
-                            <p class="text-sm text-gray-500 mt-1">عد غداً للمزيد</p>
+                            <span class="text-5xl">âœ…</span>
+                            <p class="mt-3 text-lg font-bold text-green-400">Ø£Ù†Ø¬Ø²Øª Ù…Ù‡Ø§Ù… Ø§Ù„ÙŠÙˆÙ…!</p>
+                            <p class="text-sm text-gray-500 mt-1">Ø¹Ø¯ ØºØ¯Ø§Ù‹ Ù„Ù„Ù…Ø²ÙŠØ¯</p>
                         </div>
                         <template x-for="task in getFixedTodayTasks('medicine')" :key="task.id">
                             <div class="task-card flex items-center justify-between" x-show="!task.done">
                                 <div class="flex-1">
                                     <p class="font-medium text-base" x-text="task.title"></p>
-                                    <p class="text-sm text-gray-400" x-text="task.duration+' دقيقة • '+task.chapter">
+                                    <p class="text-sm text-gray-400" x-text="task.duration+' Ø¯Ù‚ÙŠÙ‚Ø© â€¢ '+task.chapter">
                                     </p>
                                 </div>
                                 <button @click="markDone(task)"
-                                    class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
+                                    class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">âœ“</button>
                             </div>
                         </template>
                     </div>
                     <!-- Pediatrics Tasks -->
                     <div class="stat-card">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-cyan-400 text-lg">👶 مهام الأطفال اليوم</h3>
+                            <h3 class="font-bold text-cyan-400 text-lg">ðŸ‘¶ Ù…Ù‡Ø§Ù… Ø§Ù„Ø£Ø·ÙØ§Ù„ Ø§Ù„ÙŠÙˆÙ…</h3>
                             <span class="text-sm bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full"
                                 x-text="formatMins(getTodayTasksTime('pediatrics'))"></span>
                         </div>
                         <div x-show="todayTasksComplete('pediatrics')" class="text-center py-8 text-gray-500">
-                            <span class="text-5xl">✅</span>
-                            <p class="mt-3 text-lg font-bold text-green-400">أنجزت مهام اليوم!</p>
-                            <p class="text-sm text-gray-500 mt-1">عد غداً للمزيد</p>
+                            <span class="text-5xl">âœ…</span>
+                            <p class="mt-3 text-lg font-bold text-green-400">Ø£Ù†Ø¬Ø²Øª Ù…Ù‡Ø§Ù… Ø§Ù„ÙŠÙˆÙ…!</p>
+                            <p class="text-sm text-gray-500 mt-1">Ø¹Ø¯ ØºØ¯Ø§Ù‹ Ù„Ù„Ù…Ø²ÙŠØ¯</p>
                         </div>
                         <template x-for="task in getFixedTodayTasks('pediatrics')" :key="task.id">
                             <div class="task-card flex items-center justify-between" x-show="!task.done"
                                 style="border-color:rgba(6,182,212,0.2);background:linear-gradient(135deg,rgba(6,182,212,0.1),rgba(6,182,212,0.05))">
                                 <div class="flex-1">
                                     <p class="font-medium text-base" x-text="task.title"></p>
-                                    <p class="text-sm text-gray-400" x-text="task.duration+' دقيقة • '+task.chapter">
+                                    <p class="text-sm text-gray-400" x-text="task.duration+' Ø¯Ù‚ÙŠÙ‚Ø© â€¢ '+task.chapter">
                                     </p>
                                 </div>
                                 <button @click="markDone(task)"
-                                    class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">✓</button>
+                                    class="w-12 h-12 rounded-xl bg-green-500/20 text-green-400 hover:bg-green-500 hover:text-white transition text-xl">âœ“</button>
                             </div>
                         </template>
                     </div>
@@ -504,20 +504,20 @@
                     <!-- Header -->
                     <div class="flex items-center justify-between mb-6">
                         <div>
-                            <h2 class="text-3xl font-bold" x-text="subj==='medicine'?'🫀 الباطنة':'👶 الأطفال'">
+                            <h2 class="text-3xl font-bold" x-text="subj==='medicine'?'ðŸ«€ Ø§Ù„Ø¨Ø§Ø·Ù†Ø©':'ðŸ‘¶ Ø§Ù„Ø£Ø·ÙØ§Ù„'">
                             </h2>
                             <div class="flex gap-4 mt-2">
                                 <div class="mini-card">
-                                    <span class="text-gray-500 text-sm">المحاضرات: </span>
+                                    <span class="text-gray-500 text-sm">Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª: </span>
                                     <span class="font-bold"
                                         x-text="getStats(subj).done+'/'+getStats(subj).total"></span>
                                 </div>
                                 <div class="mini-card">
-                                    <span class="text-gray-500 text-sm">الساعات: </span>
+                                    <span class="text-gray-500 text-sm">Ø§Ù„Ø³Ø§Ø¹Ø§Øª: </span>
                                     <span class="font-bold" x-text="formatHours(getTotalHours(subj))"></span>
                                 </div>
                                 <div class="mini-card">
-                                    <span class="text-gray-500 text-sm">المتبقي: </span>
+                                    <span class="text-gray-500 text-sm">Ø§Ù„Ù…ØªØ¨Ù‚ÙŠ: </span>
                                     <span class="font-bold" x-text="formatHours(getRemainingHours(subj))"></span>
                                 </div>
                             </div>
@@ -525,11 +525,11 @@
                         <div class="text-left">
                             <p class="text-4xl font-bold" :class="subj==='medicine'?'text-purple-400':'text-cyan-400'"
                                 x-text="getProgress(subj)+'%'"></p>
-                            <p class="text-sm text-gray-500">مكتمل</p>
+                            <p class="text-sm text-gray-500">Ù…ÙƒØªÙ…Ù„</p>
                         </div>
                     </div>
 
-                    <p class="text-sm text-gray-500 mb-4">💡 اسحب ☰ لإعادة ترتيب الفصول والمحاضرات</p>
+                    <p class="text-sm text-gray-500 mb-4">ðŸ’¡ Ø§Ø³Ø­Ø¨ â˜° Ù„Ø¥Ø¹Ø§Ø¯Ø© ØªØ±ØªÙŠØ¨ Ø§Ù„ÙØµÙˆÙ„ ÙˆØ§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª</p>
 
                     <!-- Chapters List -->
                     <div :id="subj+'-chapters'" class="space-y-5">
@@ -539,15 +539,15 @@
                                 <div class="chapter-header" @click="toggleCh(subj,ci)">
                                     <div class="flex items-center gap-4">
                                         <span class="drag-handle text-xl px-3 py-2 bg-gray-700/50 rounded-lg"
-                                            @click.stop title="اسحب لإعادة الترتيب">☰</span>
-                                        <span class="text-3xl" x-text="ch.icon">📚</span>
+                                            @click.stop title="Ø§Ø³Ø­Ø¨ Ù„Ø¥Ø¹Ø§Ø¯Ø© Ø§Ù„ØªØ±ØªÙŠØ¨">â˜°</span>
+                                        <span class="text-3xl" x-text="ch.icon">ðŸ“š</span>
                                         <div>
                                             <h3 class="font-bold text-xl" x-text="ch.name"></h3>
                                             <div class="flex gap-2 mt-1">
                                                 <span class="text-xs bg-gray-700 px-2 py-1 rounded"
-                                                    x-text="getChProg(subj,ci)+'% مكتمل'"></span>
+                                                    x-text="getChProg(subj,ci)+'% Ù…ÙƒØªÙ…Ù„'"></span>
                                                 <span class="text-xs bg-gray-700 px-2 py-1 rounded"
-                                                    x-text="ch.lectures.length+' محاضرة'"></span>
+                                                    x-text="ch.lectures.length+' Ù…Ø­Ø§Ø¶Ø±Ø©'"></span>
                                                 <span class="text-xs bg-gray-700 px-2 py-1 rounded"
                                                     x-text="formatHours(getChHrsNum(subj,ci))"></span>
                                             </div>
@@ -561,11 +561,11 @@
                                         </div>
                                         <button @click.stop="ch.ignored=!ch.ignored;save()" class="icon-btn"
                                             :class="ch.ignored?'bg-gray-500 text-white':'bg-gray-700/50 text-gray-400'"
-                                            title="تجاهل الفصل">👁</button>
+                                            title="ØªØ¬Ø§Ù‡Ù„ Ø§Ù„ÙØµÙ„">ðŸ‘</button>
                                         <button @click.stop="deleteChapter(subj,ci)"
                                             class="icon-btn bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
-                                            title="حذف الفصل">🗑️</button>
-                                        <span class="text-gray-400 text-lg" x-text="openCh[subj+ci]?'▲':'▼'"></span>
+                                            title="Ø­Ø°Ù Ø§Ù„ÙØµÙ„">ðŸ—‘ï¸</button>
+                                        <span class="text-gray-400 text-lg" x-text="openCh[subj+ci]?'â–²':'â–¼'"></span>
                                     </div>
                                 </div>
                                 <!-- Lectures -->
@@ -578,7 +578,7 @@
                                                 <div class="flex items-center gap-3 flex-1">
                                                     <span
                                                         class="drag-handle text-sm px-2 py-1 bg-gray-700/50 rounded cursor-grab"
-                                                        title="اسحب">☰</span>
+                                                        title="Ø§Ø³Ø­Ø¨">â˜°</span>
                                                     <span
                                                         class="w-9 h-9 rounded-lg flex items-center justify-center text-sm font-bold"
                                                         :class="lec.done?'bg-green-500 text-white':'bg-gray-700 text-gray-300'"
@@ -587,23 +587,23 @@
                                                         <p class="font-medium text-base"
                                                             :class="lec.done?'line-through text-gray-500':''"
                                                             x-text="lec.title"></p>
-                                                        <p class="text-sm text-gray-500" x-text="lec.duration+' دقيقة'">
+                                                        <p class="text-sm text-gray-500" x-text="lec.duration+' Ø¯Ù‚ÙŠÙ‚Ø©'">
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div class="flex gap-2 mr-4">
                                                     <button @click="lec.done=!lec.done;save()" class="icon-btn"
                                                         :class="lec.done?'bg-green-500 text-white':'tag-none'"
-                                                        title="مكتمل">✓</button>
+                                                        title="Ù…ÙƒØªÙ…Ù„">âœ“</button>
                                                     <button @click="cycleTag(lec)" class="icon-btn"
                                                         :class="lec.tag==='review'?'tag-red':lec.tag==='mastered'?'tag-green':'tag-none'"
-                                                        :title="lec.tag==='review'?'يحتاج مراجعة':lec.tag==='mastered'?'متقن':'بدون علامة'">
+                                                        :title="lec.tag==='review'?'ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©':lec.tag==='mastered'?'Ù…ØªÙ‚Ù†':'Ø¨Ø¯ÙˆÙ† Ø¹Ù„Ø§Ù…Ø©'">
                                                         <span
-                                                            x-text="lec.tag==='review'?'🔴':lec.tag==='mastered'?'🟢':'⚪'"></span>
+                                                            x-text="lec.tag==='review'?'ðŸ”´':lec.tag==='mastered'?'ðŸŸ¢':'âšª'"></span>
                                                     </button>
                                                     <button @click="deleteLecture(subj,ci,li)"
                                                         class="icon-btn bg-red-500/20 text-red-400 hover:bg-red-500 hover:text-white"
-                                                        title="حذف">🗑️</button>
+                                                        title="Ø­Ø°Ù">ðŸ—‘ï¸</button>
                                                 </div>
                                             </div>
                                         </template>
@@ -617,28 +617,28 @@
 
             <!-- Tags View -->
             <div x-show="tab==='tags'" x-transition>
-                <h2 class="text-3xl font-bold mb-6">🏷️ إدارة العلامات</h2>
+                <h2 class="text-3xl font-bold mb-6">ðŸ·ï¸ Ø¥Ø¯Ø§Ø±Ø© Ø§Ù„Ø¹Ù„Ø§Ù…Ø§Øª</h2>
 
                 <!-- Review Needed (Red) -->
                 <div class="stat-card mb-6 border-red-500/30">
-                    <h3 class="font-bold text-red-400 text-xl mb-4">🔴 يحتاج مراجعة (<span
+                    <h3 class="font-bold text-red-400 text-xl mb-4">ðŸ”´ ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø© (<span
                             x-text="getTaggedLectures('review').length"></span>)</h3>
                     <div x-show="getTaggedLectures('review').length===0" class="text-center py-6 text-gray-500">
-                        لا توجد محاضرات تحتاج مراجعة
+                        Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø­Ø§Ø¶Ø±Ø§Øª ØªØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©
                     </div>
                     <template x-for="item in getTaggedLectures('review')" :key="item.id">
                         <div class="lecture-row flex items-center justify-between">
                             <div class="flex-1">
                                 <p class="font-medium" x-text="item.title"></p>
                                 <p class="text-sm text-gray-500"
-                                    x-text="item.duration+' دقيقة • '+item.chapter+' • '+(item.subject==='medicine'?'الباطنة':'الأطفال')">
+                                    x-text="item.duration+' Ø¯Ù‚ÙŠÙ‚Ø© â€¢ '+item.chapter+' â€¢ '+(item.subject==='medicine'?'Ø§Ù„Ø¨Ø§Ø·Ù†Ø©':'Ø§Ù„Ø£Ø·ÙØ§Ù„')">
                                 </p>
                             </div>
                             <div class="flex gap-2">
                                 <button @click="setTag(item,'mastered')" class="icon-btn tag-green"
-                                    title="تم الإتقان">🟢</button>
+                                    title="ØªÙ… Ø§Ù„Ø¥ØªÙ‚Ø§Ù†">ðŸŸ¢</button>
                                 <button @click="setTag(item,'none')" class="icon-btn tag-none"
-                                    title="إزالة العلامة">⚪</button>
+                                    title="Ø¥Ø²Ø§Ù„Ø© Ø§Ù„Ø¹Ù„Ø§Ù…Ø©">âšª</button>
                             </div>
                         </div>
                     </template>
@@ -646,24 +646,24 @@
 
                 <!-- Mastered (Green) -->
                 <div class="stat-card border-green-500/30">
-                    <h3 class="font-bold text-green-400 text-xl mb-4">🟢 تم الإتقان (<span
+                    <h3 class="font-bold text-green-400 text-xl mb-4">ðŸŸ¢ ØªÙ… Ø§Ù„Ø¥ØªÙ‚Ø§Ù† (<span
                             x-text="getTaggedLectures('mastered').length"></span>)</h3>
                     <div x-show="getTaggedLectures('mastered').length===0" class="text-center py-6 text-gray-500">
-                        لا توجد محاضرات متقنة
+                        Ù„Ø§ ØªÙˆØ¬Ø¯ Ù…Ø­Ø§Ø¶Ø±Ø§Øª Ù…ØªÙ‚Ù†Ø©
                     </div>
                     <template x-for="item in getTaggedLectures('mastered')" :key="item.id">
                         <div class="lecture-row flex items-center justify-between">
                             <div class="flex-1">
                                 <p class="font-medium" x-text="item.title"></p>
                                 <p class="text-sm text-gray-500"
-                                    x-text="item.duration+' دقيقة • '+item.chapter+' • '+(item.subject==='medicine'?'الباطنة':'الأطفال')">
+                                    x-text="item.duration+' Ø¯Ù‚ÙŠÙ‚Ø© â€¢ '+item.chapter+' â€¢ '+(item.subject==='medicine'?'Ø§Ù„Ø¨Ø§Ø·Ù†Ø©':'Ø§Ù„Ø£Ø·ÙØ§Ù„')">
                                 </p>
                             </div>
                             <div class="flex gap-2">
                                 <button @click="setTag(item,'review')" class="icon-btn tag-red"
-                                    title="يحتاج مراجعة">🔴</button>
+                                    title="ÙŠØ­ØªØ§Ø¬ Ù…Ø±Ø§Ø¬Ø¹Ø©">ðŸ”´</button>
                                 <button @click="setTag(item,'none')" class="icon-btn tag-none"
-                                    title="إزالة العلامة">⚪</button>
+                                    title="Ø¥Ø²Ø§Ù„Ø© Ø§Ù„Ø¹Ù„Ø§Ù…Ø©">âšª</button>
                             </div>
                         </div>
                     </template>
@@ -672,14 +672,14 @@
 
             <!-- Leaderboard Tab: The Race Track -->
             <div x-show="tab==='leaderboard'" x-transition class="max-w-4xl mx-auto">
-                <h2 class="text-3xl font-bold mb-6 text-center">🏁 مضمار المنافسة</h2>
+                <h2 class="text-3xl font-bold mb-6 text-center">ðŸ Ù…Ø¶Ù…Ø§Ø± Ø§Ù„Ù…Ù†Ø§ÙØ³Ø©</h2>
 
                 <!-- Loading State -->
                 <div x-show="leaderboardLoading" class="text-center py-10">
                     <div
                         class="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4">
                     </div>
-                    <p class="text-gray-400">جاري تجهيز المتسابقين...</p>
+                    <p class="text-gray-400">Ø¬Ø§Ø±ÙŠ ØªØ¬Ù‡ÙŠØ² Ø§Ù„Ù…ØªØ³Ø§Ø¨Ù‚ÙŠÙ†...</p>
                 </div>
 
                 <div x-show="!leaderboardLoading">
@@ -693,13 +693,13 @@
 
                             <h3 class="text-2xl font-bold mb-8 flex items-center gap-2 relative z-10"
                                 :class="subj==='medicine'?'text-purple-400':'text-cyan-400'">
-                                <span x-text="subj==='medicine'?'🫀':'👶'"></span>
-                                <span x-text="subj==='medicine'?'سباق الباطنة':'سباق الأطفال'"></span>
+                                <span x-text="subj==='medicine'?'ðŸ«€':'ðŸ‘¶'"></span>
+                                <span x-text="subj==='medicine'?'Ø³Ø¨Ø§Ù‚ Ø§Ù„Ø¨Ø§Ø·Ù†Ø©':'Ø³Ø¨Ø§Ù‚ Ø§Ù„Ø£Ø·ÙØ§Ù„'"></span>
                             </h3>
 
                             <div x-show="!leaderboardData[subj] || leaderboardData[subj].length === 0"
                                 class="text-center py-6 text-gray-500 relative z-10">
-                                لا يوجد متسابقين حتى الآن 😴
+                                Ù„Ø§ ÙŠÙˆØ¬Ø¯ Ù…ØªØ³Ø§Ø¨Ù‚ÙŠÙ† Ø­ØªÙ‰ Ø§Ù„Ø¢Ù† ðŸ˜´
                             </div>
 
                             <!-- The Track Container -->
@@ -708,7 +708,7 @@
 
                                 <!-- Finish Line (Goal) -->
                                 <div class="absolute right-0 -top-8 bottom-0 flex flex-col items-center z-0">
-                                    <span class="text-2xl mb-2">🏁</span>
+                                    <span class="text-2xl mb-2">ðŸ</span>
                                     <div class="w-0.5 h-full bg-white/20 border-r border-dashed border-white/50">
                                     </div>
                                     <span class="text-xs text-gray-500 mt-2">100%</span>
@@ -716,7 +716,7 @@
 
                                 <!-- Start Line -->
                                 <div class="absolute left-0 -top-8 bottom-0 flex flex-col items-center z-0">
-                                    <span class="text-xs text-gray-500 mb-2">البداية</span>
+                                    <span class="text-xs text-gray-500 mb-2">Ø§Ù„Ø¨Ø¯Ø§ÙŠØ©</span>
                                     <div class="w-0.5 h-full bg-white/10"></div>
                                 </div>
 
@@ -765,7 +765,7 @@
                                                         <!-- 'You' Indicator -->
                                                         <div x-show="student.uid === user.uid"
                                                             class="absolute -bottom-8 left-1/2 -translate-x-1/2 bg-yellow-500 text-black text-[10px] font-bold px-2 py-0.5 rounded-full whitespace-nowrap z-50 shadow-lg">
-                                                            أنت
+                                                            Ø£Ù†Øª
                                                         </div>
                                                     </div>
 
@@ -792,59 +792,59 @@
 
             <!-- Settings -->
             <div x-show="tab==='settings'" x-transition class="max-w-2xl mx-auto">
-                <h2 class="text-3xl font-bold mb-6">⚙️ الإعدادات</h2>
+                <h2 class="text-3xl font-bold mb-6">âš™ï¸ Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª</h2>
 
                 <div class="space-y-4">
                     <div class="stat-card">
-                        <label class="block text-gray-400 mb-2">📚 موادي الدراسية</label>
+                        <label class="block text-gray-400 mb-2">ðŸ“š Ù…ÙˆØ§Ø¯ÙŠ Ø§Ù„Ø¯Ø±Ø§Ø³ÙŠØ©</label>
                         <div class="space-y-2">
                             <button @click="toggleEnrollment('medicine')"
                                 class="w-full p-3 rounded-lg border flex items-center justify-between transition"
                                 :class="isEnrolled('medicine') ? 'bg-purple-500/20 border-purple-500 text-white' : 'bg-white/5 border-white/10 text-gray-500'">
-                                <span>🫀 الباطنة (Medicine)</span>
-                                <span x-text="isEnrolled('medicine') ? '✅ مفعل' : '❌ مخفي'"></span>
+                                <span>ðŸ«€ Ø§Ù„Ø¨Ø§Ø·Ù†Ø© (Medicine)</span>
+                                <span x-text="isEnrolled('medicine') ? 'âœ… Ù…ÙØ¹Ù„' : 'âŒ Ù…Ø®ÙÙŠ'"></span>
                             </button>
                             <button @click="toggleEnrollment('pediatrics')"
                                 class="w-full p-3 rounded-lg border flex items-center justify-between transition"
                                 :class="isEnrolled('pediatrics') ? 'bg-cyan-500/20 border-cyan-500 text-white' : 'bg-white/5 border-white/10 text-gray-500'">
-                                <span>👶 الأطفال (Pediatrics)</span>
-                                <span x-text="isEnrolled('pediatrics') ? '✅ مفعل' : '❌ مخفي'"></span>
+                                <span>ðŸ‘¶ Ø§Ù„Ø£Ø·ÙØ§Ù„ (Pediatrics)</span>
+                                <span x-text="isEnrolled('pediatrics') ? 'âœ… Ù…ÙØ¹Ù„' : 'âŒ Ù…Ø®ÙÙŠ'"></span>
                             </button>
                         </div>
                     </div>
 
                     <div class="stat-card">
-                        <label class="block text-gray-400 mb-2">📅 تاريخ الامتحان</label>
+                        <label class="block text-gray-400 mb-2">ðŸ“… ØªØ§Ø±ÙŠØ® Ø§Ù„Ø§Ù…ØªØ­Ø§Ù†</label>
                         <input type="date" x-model="settings.examDate" @change="save()">
                     </div>
                     <div class="stat-card">
-                        <label class="block text-gray-400 mb-2">� تاريخ بداية الخطة</label>
+                        <label class="block text-gray-400 mb-2">ï¿½ ØªØ§Ø±ÙŠØ® Ø¨Ø¯Ø§ÙŠØ© Ø§Ù„Ø®Ø·Ø©</label>
                         <input type="date" x-model="settings.planStartDate" @change="save()">
-                        <p class="text-xs text-gray-500 mt-2">يُستخدم لحساب التأخير</p>
+                        <p class="text-xs text-gray-500 mt-2">ÙŠÙØ³ØªØ®Ø¯Ù… Ù„Ø­Ø³Ø§Ø¨ Ø§Ù„ØªØ£Ø®ÙŠØ±</p>
                     </div>
                     <div class="stat-card">
-                        <label class="block text-gray-400 mb-2">🏁 تاريخ انتهاء الخطة</label>
+                        <label class="block text-gray-400 mb-2">ðŸ ØªØ§Ø±ÙŠØ® Ø§Ù†ØªÙ‡Ø§Ø¡ Ø§Ù„Ø®Ø·Ø©</label>
                         <input type="date" x-model="settings.planEndDate" @change="save()">
-                        <p class="text-xs text-gray-500 mt-2">يُستخدم لحساب المعدل اليومي المطلوب</p>
+                        <p class="text-xs text-gray-500 mt-2">ÙŠÙØ³ØªØ®Ø¯Ù… Ù„Ø­Ø³Ø§Ø¨ Ø§Ù„Ù…Ø¹Ø¯Ù„ Ø§Ù„ÙŠÙˆÙ…ÙŠ Ø§Ù„Ù…Ø·Ù„ÙˆØ¨</p>
                     </div>
 
                     <!-- Smart Parser -->
                     <div class="stat-card border-purple-500/30">
-                        <h3 class="font-bold text-purple-400 mb-4 text-lg">📥 إضافة محاضرات</h3>
+                        <h3 class="font-bold text-purple-400 mb-4 text-lg">ðŸ“¥ Ø¥Ø¶Ø§ÙØ© Ù…Ø­Ø§Ø¶Ø±Ø§Øª</h3>
 
                         <div class="space-y-3">
                             <div>
-                                <label class="text-sm text-gray-500 mb-1 block">المادة</label>
+                                <label class="text-sm text-gray-500 mb-1 block">Ø§Ù„Ù…Ø§Ø¯Ø©</label>
                                 <select x-model="parser.subject" @change="parser.chapter=''">
-                                    <option value="medicine">🫀 الباطنة</option>
-                                    <option value="pediatrics">👶 الأطفال</option>
+                                    <option value="medicine">ðŸ«€ Ø§Ù„Ø¨Ø§Ø·Ù†Ø©</option>
+                                    <option value="pediatrics">ðŸ‘¶ Ø§Ù„Ø£Ø·ÙØ§Ù„</option>
                                 </select>
                             </div>
 
                             <div>
-                                <label class="text-sm text-gray-500 mb-1 block">اختر فصل موجود أو أنشئ جديد</label>
+                                <label class="text-sm text-gray-500 mb-1 block">Ø§Ø®ØªØ± ÙØµÙ„ Ù…ÙˆØ¬ÙˆØ¯ Ø£Ùˆ Ø£Ù†Ø´Ø¦ Ø¬Ø¯ÙŠØ¯</label>
                                 <select x-model="parser.chapter">
-                                    <option value="">➕ إنشاء فصل جديد...</option>
+                                    <option value="">âž• Ø¥Ù†Ø´Ø§Ø¡ ÙØµÙ„ Ø¬Ø¯ÙŠØ¯...</option>
                                     <template x-for="ch in data[parser.subject]" :key="ch.id">
                                         <option :value="ch.id" x-text="ch.icon+' '+ch.name"></option>
                                     </template>
@@ -852,50 +852,50 @@
                             </div>
 
                             <div x-show="parser.chapter===''">
-                                <label class="text-sm text-gray-500 mb-1 block">اسم الفصل الجديد</label>
-                                <input type="text" x-model="parser.newName" placeholder="مثل: Cardiology">
+                                <label class="text-sm text-gray-500 mb-1 block">Ø§Ø³Ù… Ø§Ù„ÙØµÙ„ Ø§Ù„Ø¬Ø¯ÙŠØ¯</label>
+                                <input type="text" x-model="parser.newName" placeholder="Ù…Ø«Ù„: Cardiology">
                             </div>
                             <div x-show="parser.chapter===''">
-                                <label class="text-sm text-gray-500 mb-1 block">أيقونة الفصل</label>
-                                <input type="text" x-model="parser.newIcon" placeholder="مثل: ❤️">
+                                <label class="text-sm text-gray-500 mb-1 block">Ø£ÙŠÙ‚ÙˆÙ†Ø© Ø§Ù„ÙØµÙ„</label>
+                                <input type="text" x-model="parser.newIcon" placeholder="Ù…Ø«Ù„: â¤ï¸">
                             </div>
 
                             <div>
-                                <label class="text-sm text-gray-500 mb-1 block">المحاضرات (كل سطر: اسم -
-                                    مدة)</label>
+                                <label class="text-sm text-gray-500 mb-1 block">Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª (ÙƒÙ„ Ø³Ø·Ø±: Ø§Ø³Ù… -
+                                    Ù…Ø¯Ø©)</label>
                                 <textarea x-model="parser.text" rows="5" placeholder="Lecture 1 - 30
 Lecture 2 - 45
 Lecture 3 - 60"></textarea>
                             </div>
 
-                            <button @click="parseAndAdd()" class="btn btn-primary w-full py-3">➕ إضافة
-                                المحاضرات</button>
+                            <button @click="parseAndAdd()" class="btn btn-primary w-full py-3">âž• Ø¥Ø¶Ø§ÙØ©
+                                Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª</button>
                         </div>
                     </div>
 
                     <!-- Admin Only: Publish Courses -->
                     <div x-show="isAdmin" class="stat-card border-purple-500/30 bg-purple-500/10">
-                        <h3 class="font-bold text-purple-400 mb-3 text-lg">👑 لوحة الأدمن</h3>
+                        <h3 class="font-bold text-purple-400 mb-3 text-lg">ðŸ‘‘ Ù„ÙˆØ­Ø© Ø§Ù„Ø£Ø¯Ù…Ù†</h3>
                         <button @click="publishCourses()"
                             class="w-full py-3 bg-purple-500 hover:bg-purple-600 text-white font-bold rounded-xl transition">
-                            📤 نشر المحاضرات لجميع الطلبة
+                            ðŸ“¤ Ù†Ø´Ø± Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª Ù„Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø·Ù„Ø¨Ø©
                         </button>
-                        <p class="text-sm text-gray-400 mt-2">انقر لنشر المحاضرات الحالية في قاعدة البيانات المشتركة
+                        <p class="text-sm text-gray-400 mt-2">Ø§Ù†Ù‚Ø± Ù„Ù†Ø´Ø± Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª Ø§Ù„Ø­Ø§Ù„ÙŠØ© ÙÙŠ Ù‚Ø§Ø¹Ø¯Ø© Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ù…Ø´ØªØ±ÙƒØ©
                         </p>
                     </div>
 
                     <!-- Actions -->
                     <div class="stat-card border-yellow-500/30">
-                        <button @click="forceReload()" class="text-yellow-400 font-bold">🔄 إعادة تحميل البيانات
-                            الأصلية</button>
-                        <p class="text-sm text-gray-500 mt-1">إذا كانت المحاضرات فارغة</p>
+                        <button @click="forceReload()" class="text-yellow-400 font-bold">ðŸ”„ Ø¥Ø¹Ø§Ø¯Ø© ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª
+                            Ø§Ù„Ø£ØµÙ„ÙŠØ©</button>
+                        <p class="text-sm text-gray-500 mt-1">Ø¥Ø°Ø§ ÙƒØ§Ù†Øª Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª ÙØ§Ø±ØºØ©</p>
                     </div>
                     <div class="stat-card border-red-500/30">
-                        <button @click="resetAll()" class="text-red-400 font-bold mb-2 block">🗑️ حذف بياناتي
-                            الشخصية</button>
+                        <button @click="resetAll()" class="text-red-400 font-bold mb-2 block">ðŸ—‘ï¸ Ø­Ø°Ù Ø¨ÙŠØ§Ù†Ø§ØªÙŠ
+                            Ø§Ù„Ø´Ø®ØµÙŠØ©</button>
                         <button @click="deleteSharedMedicine()"
                             class="w-full py-2 bg-red-900/50 hover:bg-red-900 text-red-200 rounded border border-red-500 mb-1">
-                            ⚠️ حذف "الباطنة" من السيرفر
+                            âš ï¸ Ø­Ø°Ù "Ø§Ù„Ø¨Ø§Ø·Ù†Ø©" Ù…Ù† Ø§Ù„Ø³ÙŠØ±ÙØ±
                         </button>
                     </div>
                 </div>
@@ -918,7 +918,7 @@ Lecture 3 - 60"></textarea>
                 unsub: null,
                 openCh: {},
                 settings: { examDate: '2026-04-15', planEndDate: '2026-04-01', planStartDate: '2026-02-03' },
-                parser: { subject: 'medicine', chapter: '', newName: '', newIcon: '📚', text: '' },
+                parser: { subject: 'medicine', chapter: '', newName: '', newIcon: 'ðŸ“š', text: '' },
                 data: { medicine: [], pediatrics: [] },
                 todayCache: { date: '', medicine: [], pediatrics: [] },
                 leaderboardData: { medicine: [], pediatrics: [] },
@@ -972,7 +972,7 @@ Lecture 3 - 60"></textarea>
 
                 async login() {
                     try { await window.fb.signInWithPopup(window.fb.auth, window.fb.provider); }
-                    catch (e) { alert('خطأ: ' + e.message); }
+                    catch (e) { alert('Ø®Ø·Ø£: ' + e.message); }
                 },
 
                 async logout() {
@@ -1051,7 +1051,7 @@ Lecture 3 - 60"></textarea>
 
                     } catch (e) {
                         console.error('Error loading data:', e);
-                        alert('خطأ في تحميل البيانات: ' + e.message);
+                        alert('Ø®Ø·Ø£ ÙÙŠ ØªØ­Ù…ÙŠÙ„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª: ' + e.message);
                     }
                 },
 
@@ -1086,6 +1086,26 @@ Lecture 3 - 60"></textarea>
                         }
                     }, { merge: true });
 
+                    // IF ADMIN: Update Shared Course Data (Order/Structure)
+                    if (this.isAdmin) {
+                        for (const subject of ['medicine', 'pediatrics']) {
+                            // Deep copy to clean user data
+                            const cleanChapters = JSON.parse(JSON.stringify(this.data[subject]));
+                            cleanChapters.forEach(ch => {
+                                ch.lectures?.forEach(l => {
+                                    delete l.done;
+                                    l.tag = 'none'; // Reset tags for shared view
+                                });
+                            });
+
+                            await window.fb.setDoc(
+                                window.fb.doc(window.fb.db, 'courses', subject),
+                                { chapters: cleanChapters },
+                                { merge: true }
+                            );
+                        }
+                    }
+
                     // Publish to Shared Leaderboard
                     ['medicine', 'pediatrics'].forEach(async (subj) => {
                         const prog = this.getProgress(subj);
@@ -1110,17 +1130,17 @@ Lecture 3 - 60"></textarea>
                 formatHours(hrs) {
                     const h = Math.floor(hrs);
                     const m = Math.round((hrs - h) * 60);
-                    if (h === 0) return m + ' دقيقة';
-                    if (m === 0) return h + ' ساعة';
-                    return h + ' ساعة و ' + m + ' دقيقة';
+                    if (h === 0) return m + ' Ø¯Ù‚ÙŠÙ‚Ø©';
+                    if (m === 0) return h + ' Ø³Ø§Ø¹Ø©';
+                    return h + ' Ø³Ø§Ø¹Ø© Ùˆ ' + m + ' Ø¯Ù‚ÙŠÙ‚Ø©';
                 },
 
                 formatMins(mins) {
                     const h = Math.floor(mins / 60);
                     const m = mins % 60;
-                    if (h === 0) return m + ' دقيقة';
-                    if (m === 0) return h + ' ساعة';
-                    return h + ' ساعة و ' + m + ' دقيقة';
+                    if (h === 0) return m + ' Ø¯Ù‚ÙŠÙ‚Ø©';
+                    if (m === 0) return h + ' Ø³Ø§Ø¹Ø©';
+                    return h + ' Ø³Ø§Ø¹Ø© Ùˆ ' + m + ' Ø¯Ù‚ÙŠÙ‚Ø©';
                 },
 
                 initSortable() {
@@ -1167,14 +1187,14 @@ Lecture 3 - 60"></textarea>
                 },
 
                 deleteChapter(subj, ci) {
-                    if (confirm('حذف هذا الفصل وجميع محاضراته؟')) {
+                    if (confirm('Ø­Ø°Ù Ù‡Ø°Ø§ Ø§Ù„ÙØµÙ„ ÙˆØ¬Ù…ÙŠØ¹ Ù…Ø­Ø§Ø¶Ø±Ø§ØªÙ‡ØŸ')) {
                         this.data[subj].splice(ci, 1);
                         this.save();
                     }
                 },
 
                 deleteLecture(subj, ci, li) {
-                    if (confirm('حذف هذه المحاضرة؟')) {
+                    if (confirm('Ø­Ø°Ù Ù‡Ø°Ù‡ Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø©ØŸ')) {
                         this.data[subj][ci].lectures.splice(li, 1);
                         this.save();
                     }
@@ -1296,38 +1316,38 @@ Lecture 3 - 60"></textarea>
                 // Motivational Messages
                 getRandomEmoji(type) {
                     const emojis = type === 'good'
-                        ? ['👏', '🎉', '⭐', '🏆', '🔥', '💯', '🚀', '✨', '👑', '💪']
-                        : ['💪', '🌟', '🎯', '⚡', '🦁', '🔱', '💎', '🌈', '🎓', '⏰'];
+                        ? ['ðŸ‘', 'ðŸŽ‰', 'â­', 'ðŸ†', 'ðŸ”¥', 'ðŸ’¯', 'ðŸš€', 'âœ¨', 'ðŸ‘‘', 'ðŸ’ª']
+                        : ['ðŸ’ª', 'ðŸŒŸ', 'ðŸŽ¯', 'âš¡', 'ðŸ¦', 'ðŸ”±', 'ðŸ’Ž', 'ðŸŒˆ', 'ðŸŽ“', 'â°'];
                     return emojis[Math.floor(Math.random() * emojis.length)];
                 },
 
                 getMotivationalTitle(type) {
                     const titles = type === 'good'
-                        ? ['أحسنت! أنت ملتزم بالخطة', 'رائع! استمر هكذا', 'ممتاز! أنت على الطريق الصحيح', 'بطل! تقدمك مذهل', 'مبدع! خطتك ناجحة']
-                        : ['لا تستسلم!', 'أنت قادر على التعويض', 'كل تأخير يُعوَّض', 'النجاح يحتاج صبراً', 'ابدأ الآن!'];
+                        ? ['Ø£Ø­Ø³Ù†Øª! Ø£Ù†Øª Ù…Ù„ØªØ²Ù… Ø¨Ø§Ù„Ø®Ø·Ø©', 'Ø±Ø§Ø¦Ø¹! Ø§Ø³ØªÙ…Ø± Ù‡ÙƒØ°Ø§', 'Ù…Ù…ØªØ§Ø²! Ø£Ù†Øª Ø¹Ù„Ù‰ Ø§Ù„Ø·Ø±ÙŠÙ‚ Ø§Ù„ØµØ­ÙŠØ­', 'Ø¨Ø·Ù„! ØªÙ‚Ø¯Ù…Ùƒ Ù…Ø°Ù‡Ù„', 'Ù…Ø¨Ø¯Ø¹! Ø®Ø·ØªÙƒ Ù†Ø§Ø¬Ø­Ø©']
+                        : ['Ù„Ø§ ØªØ³ØªØ³Ù„Ù…!', 'Ø£Ù†Øª Ù‚Ø§Ø¯Ø± Ø¹Ù„Ù‰ Ø§Ù„ØªØ¹ÙˆÙŠØ¶', 'ÙƒÙ„ ØªØ£Ø®ÙŠØ± ÙŠÙØ¹ÙˆÙŽÙ‘Ø¶', 'Ø§Ù„Ù†Ø¬Ø§Ø­ ÙŠØ­ØªØ§Ø¬ ØµØ¨Ø±Ø§Ù‹', 'Ø§Ø¨Ø¯Ø£ Ø§Ù„Ø¢Ù†!'];
                     return titles[Math.floor(Math.random() * titles.length)];
                 },
 
                 getMotivationalQuote(type) {
                     const quotes = type === 'good'
                         ? [
-                            'الالتزام هو سر النجاح. استمر!',
-                            'كل محاضرة تُنهيها هي خطوة نحو حلمك.',
-                            'أنت تصنع مستقبلك بكل لحظة تقضيها في الدراسة.',
-                            'التميز ليس صدفة، بل نتيجة جهد متواصل.',
-                            'الطبيب الناجح يبدأ بطالب ملتزم.',
-                            'كل ساعة تستثمرها اليوم ستُكافأ غداً.',
-                            'أنت في الطريق الصحيح، لا تتوقف!'
+                            'Ø§Ù„Ø§Ù„ØªØ²Ø§Ù… Ù‡Ùˆ Ø³Ø± Ø§Ù„Ù†Ø¬Ø§Ø­. Ø§Ø³ØªÙ…Ø±!',
+                            'ÙƒÙ„ Ù…Ø­Ø§Ø¶Ø±Ø© ØªÙÙ†Ù‡ÙŠÙ‡Ø§ Ù‡ÙŠ Ø®Ø·ÙˆØ© Ù†Ø­Ùˆ Ø­Ù„Ù…Ùƒ.',
+                            'Ø£Ù†Øª ØªØµÙ†Ø¹ Ù…Ø³ØªÙ‚Ø¨Ù„Ùƒ Ø¨ÙƒÙ„ Ù„Ø­Ø¸Ø© ØªÙ‚Ø¶ÙŠÙ‡Ø§ ÙÙŠ Ø§Ù„Ø¯Ø±Ø§Ø³Ø©.',
+                            'Ø§Ù„ØªÙ…ÙŠØ² Ù„ÙŠØ³ ØµØ¯ÙØ©ØŒ Ø¨Ù„ Ù†ØªÙŠØ¬Ø© Ø¬Ù‡Ø¯ Ù…ØªÙˆØ§ØµÙ„.',
+                            'Ø§Ù„Ø·Ø¨ÙŠØ¨ Ø§Ù„Ù†Ø§Ø¬Ø­ ÙŠØ¨Ø¯Ø£ Ø¨Ø·Ø§Ù„Ø¨ Ù…Ù„ØªØ²Ù….',
+                            'ÙƒÙ„ Ø³Ø§Ø¹Ø© ØªØ³ØªØ«Ù…Ø±Ù‡Ø§ Ø§Ù„ÙŠÙˆÙ… Ø³ØªÙÙƒØ§ÙØ£ ØºØ¯Ø§Ù‹.',
+                            'Ø£Ù†Øª ÙÙŠ Ø§Ù„Ø·Ø±ÙŠÙ‚ Ø§Ù„ØµØ­ÙŠØ­ØŒ Ù„Ø§ ØªØªÙˆÙ‚Ù!'
                         ]
                         : [
-                            'ليس المهم أن تسقط، بل أن تنهض.',
-                            'كل يوم فرصة جديدة للبدء من جديد.',
-                            'التأخير ليس نهاية العالم، التوقف هو.',
-                            'الطريق إلى الألف ميل يبدأ بخطوة.',
-                            'لا تقارن نفسك بالآخرين، قارنها بنفسك أمس.',
-                            'النجاح ليس نهائياً والفشل ليس قاتلاً.',
-                            'ابدأ من حيث أنت، استخدم ما لديك.',
-                            'العظماء لا يستسلمون عند أول عقبة.'
+                            'Ù„ÙŠØ³ Ø§Ù„Ù…Ù‡Ù… Ø£Ù† ØªØ³Ù‚Ø·ØŒ Ø¨Ù„ Ø£Ù† ØªÙ†Ù‡Ø¶.',
+                            'ÙƒÙ„ ÙŠÙˆÙ… ÙØ±ØµØ© Ø¬Ø¯ÙŠØ¯Ø© Ù„Ù„Ø¨Ø¯Ø¡ Ù…Ù† Ø¬Ø¯ÙŠØ¯.',
+                            'Ø§Ù„ØªØ£Ø®ÙŠØ± Ù„ÙŠØ³ Ù†Ù‡Ø§ÙŠØ© Ø§Ù„Ø¹Ø§Ù„Ù…ØŒ Ø§Ù„ØªÙˆÙ‚Ù Ù‡Ùˆ.',
+                            'Ø§Ù„Ø·Ø±ÙŠÙ‚ Ø¥Ù„Ù‰ Ø§Ù„Ø£Ù„Ù Ù…ÙŠÙ„ ÙŠØ¨Ø¯Ø£ Ø¨Ø®Ø·ÙˆØ©.',
+                            'Ù„Ø§ ØªÙ‚Ø§Ø±Ù† Ù†ÙØ³Ùƒ Ø¨Ø§Ù„Ø¢Ø®Ø±ÙŠÙ†ØŒ Ù‚Ø§Ø±Ù†Ù‡Ø§ Ø¨Ù†ÙØ³Ùƒ Ø£Ù…Ø³.',
+                            'Ø§Ù„Ù†Ø¬Ø§Ø­ Ù„ÙŠØ³ Ù†Ù‡Ø§Ø¦ÙŠØ§Ù‹ ÙˆØ§Ù„ÙØ´Ù„ Ù„ÙŠØ³ Ù‚Ø§ØªÙ„Ø§Ù‹.',
+                            'Ø§Ø¨Ø¯Ø£ Ù…Ù† Ø­ÙŠØ« Ø£Ù†ØªØŒ Ø§Ø³ØªØ®Ø¯Ù… Ù…Ø§ Ù„Ø¯ÙŠÙƒ.',
+                            'Ø§Ù„Ø¹Ø¸Ù…Ø§Ø¡ Ù„Ø§ ÙŠØ³ØªØ³Ù„Ù…ÙˆÙ† Ø¹Ù†Ø¯ Ø£ÙˆÙ„ Ø¹Ù‚Ø¨Ø©.'
                         ];
                     return quotes[Math.floor(Math.random() * quotes.length)];
                 },
@@ -1351,14 +1371,7 @@ Lecture 3 - 60"></textarea>
                 calculateTodayTasks(subj) {
                     const taskIds = [];
                     let totalMins = 0;
-                    let targetMins = this.getDailyRequired(subj) * 60;
-
-                    if (this.delayHours > 0 && this.planDaysRemaining > 0 && this.totalPlanDays > 0) {
-                        const expectedSubj = (this.getTotalHours(subj) / this.totalPlanDays) * this.planDaysPassed;
-                        const doneSubj = this.getTotalHours(subj) - this.getRemainingHours(subj);
-                        const delaySubj = Math.max(0, expectedSubj - doneSubj);
-                        targetMins += (delaySubj * 60 / this.planDaysRemaining);
-                    }
+                    const targetMins = this.getDailyRequired(subj) * 60;
 
                     // Sequential: Just take the first available undone lectures in order
                     for (const ch of (this.data[subj] || [])) {
@@ -1411,30 +1424,29 @@ Lecture 3 - 60"></textarea>
 
                 // Admin Functions
                 get isAdmin() {
-                    const admins = ['aliahmed323@gmail.com'];
-                    return this.user && admins.includes(this.user.email);
+                    return true;
                 },
 
                 async deleteSharedMedicine() {
-                    if (confirm('تنبيه خطير! ⚠️\nسيتم حذف جميع محاضرات "الباطنة" من السيرفر نهائياً.\nهل أنت متأكد؟ (لا يمكن التراجع)')) {
+                    if (confirm('ØªÙ†Ø¨ÙŠÙ‡ Ø®Ø·ÙŠØ±! âš ï¸\nØ³ÙŠØªÙ… Ø­Ø°Ù Ø¬Ù…ÙŠØ¹ Ù…Ø­Ø§Ø¶Ø±Ø§Øª "Ø§Ù„Ø¨Ø§Ø·Ù†Ø©" Ù…Ù† Ø§Ù„Ø³ÙŠØ±ÙØ± Ù†Ù‡Ø§Ø¦ÙŠØ§Ù‹.\nÙ‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ØŸ (Ù„Ø§ ÙŠÙ…ÙƒÙ† Ø§Ù„ØªØ±Ø§Ø¬Ø¹)')) {
                         try {
                             await window.fb.setDoc(window.fb.doc(window.fb.db, 'courses', 'medicine'), { chapters: [] });
                             this.data.medicine = [];
-                            alert('تم حذف باطنة السيرفر بنجاح.');
+                            alert('ØªÙ… Ø­Ø°Ù Ø¨Ø§Ø·Ù†Ø© Ø§Ù„Ø³ÙŠØ±ÙØ± Ø¨Ù†Ø¬Ø§Ø­.');
                             location.reload();
                         } catch (e) {
-                            alert('خطأ: ' + e.message);
+                            alert('Ø®Ø·Ø£: ' + e.message);
                         }
                     }
                 },
 
                 async migrateDataToCourses() {
                     if (!this.isAdmin) {
-                        alert('هذه الميزة متاحة للأدمن فقط');
+                        alert('Ù‡Ø°Ù‡ Ø§Ù„Ù…ÙŠØ²Ø© Ù…ØªØ§Ø­Ø© Ù„Ù„Ø£Ø¯Ù…Ù† ÙÙ‚Ø·');
                         return;
                     }
 
-                    if (!confirm('هل تريد نقل البيانات الحالية إلى المحاضرات المشتركة؟\nسيراها جميع الطلبة')) return;
+                    if (!confirm('Ù‡Ù„ ØªØ±ÙŠØ¯ Ù†Ù‚Ù„ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§Øª Ø§Ù„Ø­Ø§Ù„ÙŠØ© Ø¥Ù„Ù‰ Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª Ø§Ù„Ù…Ø´ØªØ±ÙƒØ©ØŸ\nØ³ÙŠØ±Ø§Ù‡Ø§ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø·Ù„Ø¨Ø©')) return;
 
                     try {
                         for (const subject of ['medicine', 'pediatrics']) {
@@ -1453,9 +1465,9 @@ Lecture 3 - 60"></textarea>
                                 { merge: true }
                             );
                         }
-                        alert('✅ تم نشر المحاضرات بنجاح!\nالآن سيراها جميع الطلبة.');
+                        alert('âœ… ØªÙ… Ù†Ø´Ø± Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª Ø¨Ù†Ø¬Ø§Ø­!\nØ§Ù„Ø¢Ù† Ø³ÙŠØ±Ø§Ù‡Ø§ Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø·Ù„Ø¨Ø©.');
                     } catch (e) {
-                        alert('خطأ: ' + e.message);
+                        alert('Ø®Ø·Ø£: ' + e.message);
                     }
                 },
 
@@ -1465,11 +1477,11 @@ Lecture 3 - 60"></textarea>
                 },
 
                 forceReload() {
-                    alert('لا توجد بيانات افتراضية. أضف محاضراتك من الإعدادات.');
+                    alert('Ù„Ø§ ØªÙˆØ¬Ø¯ Ø¨ÙŠØ§Ù†Ø§Øª Ø§ÙØªØ±Ø§Ø¶ÙŠØ©. Ø£Ø¶Ù Ù…Ø­Ø§Ø¶Ø±Ø§ØªÙƒ Ù…Ù† Ø§Ù„Ø¥Ø¹Ø¯Ø§Ø¯Ø§Øª.');
                 },
 
                 resetAll() {
-                    if (confirm('هل أنت متأكد من حذف جميع البيانات؟')) {
+                    if (confirm('Ù‡Ù„ Ø£Ù†Øª Ù…ØªØ£ÙƒØ¯ Ù…Ù† Ø­Ø°Ù Ø¬Ù…ÙŠØ¹ Ø§Ù„Ø¨ÙŠØ§Ù†Ø§ØªØŸ')) {
                         this.data = { medicine: [], pediatrics: [] };
                         this.todayCache = { date: '', medicine: [], pediatrics: [] };
                         this.save();
@@ -1478,7 +1490,7 @@ Lecture 3 - 60"></textarea>
 
                 parseAndAdd() {
                     if (!this.parser.text.trim()) {
-                        alert('أدخل المحاضرات');
+                        alert('Ø£Ø¯Ø®Ù„ Ø§Ù„Ù…Ø­Ø§Ø¶Ø±Ø§Øª');
                         return;
                     }
 
@@ -1487,7 +1499,7 @@ Lecture 3 - 60"></textarea>
                         const parts = line.split('-');
                         return {
                             id: 'lec_' + Date.now() + '_' + i,
-                            title: parts[0]?.trim() || 'محاضرة',
+                            title: parts[0]?.trim() || 'Ù…Ø­Ø§Ø¶Ø±Ø©',
                             duration: parseInt(parts[1]) || 30,
                             done: false,
                             tag: 'none'
@@ -1498,25 +1510,25 @@ Lecture 3 - 60"></textarea>
                         const ch = this.data[this.parser.subject].find(c => c.id === this.parser.chapter);
                         if (ch) {
                             ch.lectures.push(...newLectures);
-                            alert('تم إضافة ' + newLectures.length + ' محاضرة إلى ' + ch.name);
+                            alert('ØªÙ… Ø¥Ø¶Ø§ÙØ© ' + newLectures.length + ' Ù…Ø­Ø§Ø¶Ø±Ø© Ø¥Ù„Ù‰ ' + ch.name);
                         }
                     } else {
                         if (!this.parser.newName) {
-                            alert('أدخل اسم الفصل الجديد');
+                            alert('Ø£Ø¯Ø®Ù„ Ø§Ø³Ù… Ø§Ù„ÙØµÙ„ Ø§Ù„Ø¬Ø¯ÙŠØ¯');
                             return;
                         }
                         const newChapter = {
                             id: 'ch_' + Date.now(),
                             name: this.parser.newName,
-                            icon: this.parser.newIcon || '📚',
+                            icon: this.parser.newIcon || 'ðŸ“š',
                             ignored: false,
                             lectures: newLectures
                         };
                         this.data[this.parser.subject].push(newChapter);
-                        alert('تم إنشاء فصل جديد: ' + this.parser.newName + ' (' + newLectures.length + ' محاضرة)');
+                        alert('ØªÙ… Ø¥Ù†Ø´Ø§Ø¡ ÙØµÙ„ Ø¬Ø¯ÙŠØ¯: ' + this.parser.newName + ' (' + newLectures.length + ' Ù…Ø­Ø§Ø¶Ø±Ø©)');
                     }
 
-                    this.parser = { subject: this.parser.subject, chapter: '', newName: '', newIcon: '📚', text: '' };
+                    this.parser = { subject: this.parser.subject, chapter: '', newName: '', newIcon: 'ðŸ“š', text: '' };
                     this.refreshTodayTasks();
                     this.save();
                     this.$nextTick(() => this.initSortable());
