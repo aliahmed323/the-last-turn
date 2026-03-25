@@ -1415,7 +1415,12 @@ Lecture 3 - 60"></textarea>
 
                 // Calculations
                 get daysToExam() { return Math.max(0, Math.ceil((new Date(this.settings.examDate) - new Date()) / 86400000)); },
-                get planDaysRemaining() { return Math.max(1, Math.ceil((new Date(this.settings.planEndDate) - new Date()) / 86400000)); },
+                get planDaysRemaining() { 
+                    const days = Math.ceil((new Date(this.settings.planEndDate) - new Date()) / 86400000);
+                    // If plan has ended, use a minimum of 1 to prevent division by zero
+                    // and show the remaining tasks correctly
+                    return Math.max(1, days);
+                },
                 get planDaysPassed() {
                     const start = new Date(this.settings.planStartDate);
                     const now = new Date();
@@ -1442,7 +1447,9 @@ Lecture 3 - 60"></textarea>
 
                 getDailyRequired(subj) {
                     const remaining = this.getRemainingHours(subj);
-                    return remaining / this.planDaysRemaining;
+                    const days = this.planDaysRemaining;
+                    if (days <= 0 || remaining <= 0) return 0;
+                    return remaining / days;
                 },
 
                 get dailyRequired() {
@@ -1563,8 +1570,18 @@ Lecture 3 - 60"></textarea>
                 refreshTodayTasks() {
                     const today = this.getToday();
                     
-                    // ✅ فقط أعد الحساب إذا كان يوم جديد
-                    if (this.todayCache.date !== today) {
+                    // ✅ أعد الحساب إذا:
+                    // 1. يوم جديد
+                    // 2. أو نفس اليوم لكن القوائم فارغة (حدث بسبب bug سابق)
+                    const cacheIsEmpty = 
+                        (!this.todayCache.medicine || this.todayCache.medicine.length === 0) &&
+                        (!this.todayCache.pediatrics || this.todayCache.pediatrics.length === 0);
+                    
+                    const hasRemainingLectures = 
+                        this.getRemainingHours('medicine') > 0 || 
+                        this.getRemainingHours('pediatrics') > 0;
+
+                    if (this.todayCache.date !== today || (cacheIsEmpty && hasRemainingLectures)) {
                         this.todayCache = {
                             date: today,
                             medicine: this.calculateTodayTasks('medicine'),
@@ -1572,7 +1589,7 @@ Lecture 3 - 60"></textarea>
                         };
                         this.save();
                     }
-                    // ⛔ لا تعيد الحساب إذا كان نفس اليوم = القائمة ثابتة!
+                    // ⛔ لا تعيد الحساب إذا كان نفس اليوم والقائمة ممتلئة = القائمة ثابتة!
                 },
 
                 calculateTodayTasks(subj) {
