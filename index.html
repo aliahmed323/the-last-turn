@@ -730,13 +730,16 @@
                                         <span class="text-3xl" x-text="ch.icon">📚</span>
                                         <div>
                                             <h3 class="font-bold text-xl" x-text="ch.name"></h3>
-                                            <div class="flex gap-2 mt-1">
+                                            <div class="flex gap-2 mt-1 flex-wrap">
                                                 <span class="text-xs bg-gray-700 px-2 py-1 rounded"
                                                     x-text="getChProg(subj,ci)+'% مكتمل'"></span>
                                                 <span class="text-xs bg-gray-700 px-2 py-1 rounded"
                                                     x-text="ch.lectures.length+' محاضرة'"></span>
                                                 <span class="text-xs bg-gray-700 px-2 py-1 rounded"
                                                     x-text="formatHours(getChHrsNum(subj,ci))"></span>
+                                                <span x-show="getChClinicalCount(subj,ci) > 0"
+                                                    class="text-xs bg-teal-500/20 text-teal-300 border border-teal-500/30 px-2 py-1 rounded"
+                                                    x-text="'🩺 ' + getChClinicalCount(subj,ci) + ' كلينيك متبقية'"></span>
                                             </div>
                                         </div>
                                     </div>
@@ -782,6 +785,9 @@
                                                     <button @click="toggleLectureDone(lec)" class="icon-btn"
                                                         :class="lec.done?'bg-green-500 text-white':'tag-none'"
                                                         title="مكتمل">✓</button>
+                                                    <button @click="toggleClinical(lec)" class="icon-btn"
+                                                        :class="lec.priority?'bg-teal-500 text-white':'tag-none'"
+                                                        title="أولوية كلينيك">🩺</button>
                                                     <button @click="cycleTag(lec)" class="icon-btn"
                                                         :class="lec.tag==='review'?'tag-red':lec.tag==='mastered'?'tag-green':'tag-none'"
                                                         :title="lec.tag==='review'?'يحتاج مراجعة':lec.tag==='mastered'?'متقن':'بدون علامة'">
@@ -1072,6 +1078,10 @@ Lecture 3 - 60"></textarea>
                     </div>
 
                     <!-- Actions -->
+                    <div class="stat-card border-blue-500/30">
+                        <button @click="resetPlan()" class="text-blue-400 font-bold">🔄 تصفير الخطة (بداية جديدة)</button>
+                        <p class="text-sm text-gray-500 mt-1">يصفر سجل الساعات اليومية ويُعيد حساب الخطة من اليوم — المحاضرات المكتملة تبقى كما هي</p>
+                    </div>
                     <div class="stat-card border-yellow-500/30">
                         <button @click="forceReload()" class="text-yellow-400 font-bold">🔄 إعادة تحميل البيانات
                             الأصلية</button>
@@ -1214,6 +1224,7 @@ Lecture 3 - 60"></textarea>
                                                 if (lectureProgress) {
                                                     lecture.done = lectureProgress.done || false;
                                                     lecture.tag = lectureProgress.tag || 'none';
+                                                    lecture.priority = lectureProgress.priority || false;
                                                 }
                                             });
                                         });
@@ -1258,10 +1269,11 @@ Lecture 3 - 60"></textarea>
                                 // 1. تم التفاعل معها (في قائمة touched)
                                 // 2. أو done = true
                                 // 3. أو tag ≠ none
-                                if (this.touchedLectures.has(lecture.id) || lecture.done || lecture.tag !== 'none') {
+                                if (this.touchedLectures.has(lecture.id) || lecture.done || lecture.tag !== 'none' || lecture.priority) {
                                     progress[subject][lecture.id] = {
                                         done: lecture.done || false,
-                                        tag: lecture.tag || 'none'
+                                        tag: lecture.tag || 'none',
+                                        priority: lecture.priority || false
                                     };
                                 }
                             });
@@ -1384,6 +1396,12 @@ Lecture 3 - 60"></textarea>
                     this.save();
                 },
 
+                toggleClinical(lec) {
+                    lec.priority = !lec.priority;
+                    this.touchedLectures.add(lec.id);
+                    this.save();
+                },
+
                 setTag(item, tag) {
                     for (const s of ['medicine', 'pediatrics']) {
                         for (const ch of this.data[s] || []) {
@@ -1488,6 +1506,12 @@ Lecture 3 - 60"></textarea>
                     const ch = this.data[subj]?.[i];
                     if (!ch) return 0;
                     return ch.lectures?.reduce((a, l) => a + l.duration, 0) / 60;
+                },
+
+                getChClinicalCount(subj, i) {
+                    const ch = this.data[subj]?.[i];
+                    if (!ch) return 0;
+                    return ch.lectures?.filter(l => l.priority && !l.done).length || 0;
                 },
 
                 get expectedHours() {
@@ -1604,21 +1628,39 @@ Lecture 3 - 60"></textarea>
                         targetMins += (delaySubj * 60 / this.planDaysRemaining);
                     }
 
-                    // Sequential: Just take the first available undone lectures in order
+                    // FIRST PASS: Clinical priority lectures (🩺)
                     for (const ch of (this.data[subj] || [])) {
                         if (ch.ignored) continue;
                         for (const l of (ch.lectures || [])) {
-                            if (l.done) continue;
-
-                            // Add lecture
+                            if (l.done || !l.priority) continue;
                             taskIds.push(l.id);
                             totalMins += l.duration;
+                            if (totalMins >= targetMins) return taskIds;
+                        }
+                    }
 
-                            // If we reached or exceeded the target, stop.
+                    // SECOND PASS: Regular lectures (if target not yet reached)
+                    for (const ch of (this.data[subj] || [])) {
+                        if (ch.ignored) continue;
+                        for (const l of (ch.lectures || [])) {
+                            if (l.done || l.priority) continue; // skip done & already-added clinical
+                            taskIds.push(l.id);
+                            totalMins += l.duration;
                             if (totalMins >= targetMins) return taskIds;
                         }
                     }
                     return taskIds;
+                },
+
+                resetPlan() {
+                    if (!confirm('هل تريد تصفير الخطة؟\nسيبدأ الحساب من اليوم بناءً على ما تبقى.\n✅ المحاضرات المكتملة لن تُحذف.')) return;
+                    const today = new Date().toISOString().split('T')[0];
+                    this.settings.planStartDate = today;
+                    this.dailyHistory = {};
+                    this.todayCache = { date: '', medicine: [], pediatrics: [] };
+                    this.save();
+                    this.refreshTodayTasks();
+                    alert('✅ تم تصفير الخطة! يُحسب الآن من اليوم.');
                 },
 
                 getFixedTodayTasks(subj) {
