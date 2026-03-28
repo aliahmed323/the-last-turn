@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
@@ -358,7 +358,7 @@
                     </div>
                 </div>
 
-                <!-- Progress Bars (only enrolled subjects) -->
+                <!-- Progress Bars (enrolled only) -->
                 <div class="grid md:grid-cols-2 gap-4 mb-8">
                     <div class="stat-card" x-show="isEnrolled('medicine')">
                         <div class="flex justify-between items-center mb-3">
@@ -467,8 +467,8 @@
                                     </template>
                                 </div>
                                 
-                                <!-- الأطفال — تظهر فقط إذا كانت مسجلة -->
-                                <template x-if="isEnrolled('pediatrics')"><div class="bg-black/30 rounded-xl p-4">
+                                <!-- الأطفال - تظهر فقط إذا مسجلة -->
+                                <div class="bg-black/30 rounded-xl p-4" x-show="isEnrolled('pediatrics')">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-xl">👶</span>
                                         <p class="text-gray-400 text-sm font-bold">الأطفال</p>
@@ -529,7 +529,7 @@
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <!-- Medicine Tasks (only if enrolled) -->
+                    <!-- Medicine Tasks -->
                     <div class="stat-card" x-show="isEnrolled('medicine')">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-purple-400 text-lg">🫀 مهام الباطنة اليوم</h3>
@@ -554,7 +554,7 @@
                         </template>
                     </div>
                     
-                    <!-- مربع التعويض - الباطنة (only if enrolled) -->
+                    <!-- تعويض التأخير - الباطنة -->
                     <div class="stat-card border-orange-500/30 bg-orange-500/5" x-show="isEnrolled('medicine') && getDelayHours('medicine') > 0">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-orange-400 text-lg">🔥 تعويض التأخير - الباطنة</h3>
@@ -583,7 +583,7 @@
                         </template>
                     </div>
                     
-                    <!-- Pediatrics Tasks (only if enrolled) -->
+                    <!-- Pediatrics Tasks -->
                     <div class="stat-card" x-show="isEnrolled('pediatrics')">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-cyan-400 text-lg">👶 مهام الأطفال اليوم</h3>
@@ -609,7 +609,7 @@
                         </template>
                     </div>
                     
-                    <!-- مربع التعويض - الأطفال (only if enrolled) -->
+                    <!-- تعويض التأخير - الأطفال -->
                     <div class="stat-card border-orange-500/30 bg-orange-500/5" x-show="isEnrolled('pediatrics') && getDelayHours('pediatrics') > 0">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-orange-400 text-lg">🔥 تعويض التأخير - الأطفال</h3>
@@ -1578,7 +1578,7 @@ Lecture 3 - 60"></textarea>
                     return expected - completed;
                 },
 
-                // ✅ قائمة المحاضرات الكلينيكية (🩺) من المواد المسجلة فقط
+                // ✅ قائمة المحاضرات الكلينيكية من المواد المسجلة فقط
                 getClinicalPriorityLectures() {
                     const list = [];
                     for (const s of ['medicine', 'pediatrics']) {
