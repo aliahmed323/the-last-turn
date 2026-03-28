@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 
 <head>
@@ -358,9 +358,9 @@
                     </div>
                 </div>
 
-                <!-- Progress Bars (only enrolled subjects) -->
+                <!-- Progress Bars -->
                 <div class="grid md:grid-cols-2 gap-4 mb-8">
-                    <div class="stat-card" x-show="isEnrolled('medicine')">
+                    <div class="stat-card">
                         <div class="flex justify-between items-center mb-3">
                             <span class="font-bold text-lg">🫀 الباطنة</span>
                             <span class="text-purple-400 font-bold" x-text="getProgress('medicine')+'%'"></span>
@@ -387,7 +387,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="stat-card" x-show="isEnrolled('pediatrics')">
+                    <div class="stat-card">
                         <div class="flex justify-between items-center mb-3">
                             <span class="font-bold text-lg">👶 الأطفال</span>
                             <span class="text-cyan-400 font-bold" x-text="getProgress('pediatrics')+'%'"></span>
@@ -467,8 +467,8 @@
                                     </template>
                                 </div>
                                 
-                                <!-- الأطفال — تظهر فقط إذا كانت مسجلة -->
-                                <template x-if="isEnrolled('pediatrics')"><div class="bg-black/30 rounded-xl p-4">
+                                <!-- الأطفال -->
+                                <div class="bg-black/30 rounded-xl p-4" x-show="isEnrolled('pediatrics')">
                                     <div class="flex items-center gap-2 mb-2">
                                         <span class="text-xl">👶</span>
                                         <p class="text-gray-400 text-sm font-bold">الأطفال</p>
@@ -502,35 +502,9 @@
                     </button>
                 </div>
 
-                <!-- Clinical Priority Lectures Panel -->
-                <div class="stat-card border-teal-500/40 bg-teal-500/5 mb-6" x-show="getClinicalPriorityLectures().length > 0">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-teal-300 text-lg">🩺 المحاضرات الكلينيكية — ذات الأولوية</h3>
-                        <span class="text-sm bg-teal-500/20 text-teal-300 px-3 py-1 rounded-full"
-                            x-text="getClinicalPriorityLectures().length + ' محاضرة'"></span>
-                    </div>
-                    <div class="space-y-2">
-                        <template x-for="task in getClinicalPriorityLectures()" :key="task.id">
-                            <div class="task-card flex items-center justify-between"
-                                style="border-color:rgba(20,184,166,0.4);background:linear-gradient(135deg,rgba(20,184,166,0.12),rgba(20,184,166,0.04))">
-                                <div class="flex-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-teal-400">🩺</span>
-                                        <p class="font-medium text-base" x-text="task.title"></p>
-                                    </div>
-                                    <p class="text-sm text-gray-400 mt-1"
-                                        x-text="task.duration+' دقيقة • '+task.chapter+' • '+(task.subject==='medicine'?'🫀 الباطنة':'👶 الأطفال')"></p>
-                                </div>
-                                <button @click="markDone(task)"
-                                    class="w-12 h-12 rounded-xl bg-teal-500/20 text-teal-400 hover:bg-teal-500 hover:text-white transition text-xl">✓</button>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
                 <div class="grid md:grid-cols-2 gap-6 mb-8">
-                    <!-- Medicine Tasks (only if enrolled) -->
-                    <div class="stat-card" x-show="isEnrolled('medicine')">
+                    <!-- Medicine Tasks -->
+                    <div class="stat-card">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-purple-400 text-lg">🫀 مهام الباطنة اليوم</h3>
                             <span class="text-sm bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full"
@@ -554,8 +528,8 @@
                         </template>
                     </div>
                     
-                    <!-- مربع التعويض - الباطنة (only if enrolled) -->
-                    <div class="stat-card border-orange-500/30 bg-orange-500/5" x-show="isEnrolled('medicine') && getDelayHours('medicine') > 0">
+                    <!-- ✅ مربع التعويض - الباطنة -->
+                    <div class="stat-card border-orange-500/30 bg-orange-500/5" x-show="getDelayHours('medicine') > 0">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-orange-400 text-lg">🔥 تعويض التأخير - الباطنة</h3>
                             <span class="text-sm bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full"
@@ -583,8 +557,8 @@
                         </template>
                     </div>
                     
-                    <!-- Pediatrics Tasks (only if enrolled) -->
-                    <div class="stat-card" x-show="isEnrolled('pediatrics')">
+                    <!-- Pediatrics Tasks -->
+                    <div class="stat-card">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-cyan-400 text-lg">👶 مهام الأطفال اليوم</h3>
                             <span class="text-sm bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full"
@@ -609,8 +583,8 @@
                         </template>
                     </div>
                     
-                    <!-- مربع التعويض - الأطفال (only if enrolled) -->
-                    <div class="stat-card border-orange-500/30 bg-orange-500/5" x-show="isEnrolled('pediatrics') && getDelayHours('pediatrics') > 0">
+                    <!-- ✅ مربع التعويض - الأطفال -->
+                    <div class="stat-card border-orange-500/30 bg-orange-500/5" x-show="getDelayHours('pediatrics') > 0">
                         <div class="flex justify-between items-center mb-4">
                             <h3 class="font-bold text-orange-400 text-lg">🔥 تعويض التأخير - الأطفال</h3>
                             <span class="text-sm bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full"
@@ -1497,24 +1471,15 @@ Lecture 3 - 60"></textarea>
                 },
 
                 get dailyRequired() {
-                    let total = 0;
-                    if (this.isEnrolled('medicine')) total += this.getDailyRequired('medicine');
-                    if (this.isEnrolled('pediatrics')) total += this.getDailyRequired('pediatrics');
-                    return total;
+                    return this.getDailyRequired('medicine') + this.getDailyRequired('pediatrics');
                 },
 
                 get totalHoursNum() {
-                    let total = 0;
-                    if (this.isEnrolled('medicine')) total += this.getTotalHours('medicine');
-                    if (this.isEnrolled('pediatrics')) total += this.getTotalHours('pediatrics');
-                    return total;
+                    return this.getTotalHours('medicine') + this.getTotalHours('pediatrics');
                 },
 
                 get remainingHoursNum() {
-                    let total = 0;
-                    if (this.isEnrolled('medicine')) total += this.getRemainingHours('medicine');
-                    if (this.isEnrolled('pediatrics')) total += this.getRemainingHours('pediatrics');
-                    return total;
+                    return this.getRemainingHours('medicine') + this.getRemainingHours('pediatrics');
                 },
 
                 get totalProgress() {
@@ -1564,35 +1529,16 @@ Lecture 3 - 60"></textarea>
                 
                 // ✅ حساب الساعات المتوقع إنجازها من مادة معينة
                 getExpectedHours(subj) {
-                    if (!this.isEnrolled(subj)) return 0;
                     if (this.totalPlanDays <= 0 || this.planDaysPassed <= 0) return 0;
                     const totalHoursForSubj = this.getTotalHours(subj);
                     return (totalHoursForSubj / this.totalPlanDays) * this.planDaysPassed;
                 },
                 
-                // ✅ حساب التأخير في مادة معينة (صفر إذا كانت مخفية)
+                // ✅ حساب التأخير في مادة معينة
                 getDelayHours(subj) {
-                    if (!this.isEnrolled(subj)) return 0;
                     const expected = this.getExpectedHours(subj);
                     const completed = this.getCompletedHours(subj);
                     return expected - completed;
-                },
-
-                // ✅ قائمة المحاضرات الكلينيكية (🩺) من المواد المسجلة فقط
-                getClinicalPriorityLectures() {
-                    const list = [];
-                    for (const s of ['medicine', 'pediatrics']) {
-                        if (!this.isEnrolled(s)) continue;
-                        for (const ch of (this.data[s] || [])) {
-                            if (ch.ignored) continue;
-                            for (const l of (ch.lectures || [])) {
-                                if (l.priority && !l.done) {
-                                    list.push({ ...l, subject: s, chapter: ch.name });
-                                }
-                            }
-                        }
-                    }
-                    return list;
                 },
                 
                 get delayHours() {
